@@ -75,7 +75,7 @@ a{color:var(--acc)}
 .panel{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:5;min-width:0}
 .phead{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
 .phead h2{font-size:17px;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ptabs{flex:none;display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.ptabs{flex:none;display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2;background:var(--bg)}
 .ptabs button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 4px;font-weight:600;font-size:15px;color:var(--ink2);min-width:0}
 .ptabs button.on{background:var(--acc2);border-color:var(--acc);color:#0f3c70}
 .pbody{padding:12px 14px 30px}
@@ -145,7 +145,9 @@ details.grp summary::-webkit-details-marker{display:none}
   .side .placeholder{margin:auto;color:var(--ink3);padding:20px;text-align:center}
   .gal{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   #detail .back{display:none}
+  .hero .ph{width:34%;max-width:170px}
 }
+@media (orientation:landscape) and (max-height:460px){.hero{margin-bottom:0}.hero .ph{width:26%;max-width:120px}.hero .meta b{font-size:15px}#detail .pbody{padding:8px 12px 24px}}
 @media (orientation:landscape) and (max-height:460px){
   .brand{display:none}
   .r1,.r2{display:inline-flex}
@@ -408,7 +410,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
   if(t==="rec"){const figs=s.figs||[],fx=new Set(r.fx||[]);
     b+=`<div class="rec"><span>Condition</span><span>${esc(r.now||s.cond||"Not recorded")}</span>${s.qty>1?`<span>Copies</span><span>${s.qty}</span>`:""}<span>Set</span>${yesno(r.cset)}<span>Box</span>${yesno(r.cbox)}<span>Instructions</span>${yesno(r.cinst)}<span>Minifigs</span>${figs.length?yesno(r.cfigs):`<span class="dim">None in this set</span>`}<span>Stickers</span><span>${s.stk===1?"Set has stickers":s.stk===0?"No stickers in this set":`<span class="dim">Unknown</span>`}</span>${r.qn?`<span>Quality now</span><span>${esc(r.qn)}</span>`:""}${(r.miss||[]).length?`<span>Missing pieces</span><span class="bad">${r.miss.reduce((a,m)=>a+(+m.q||1),0)}</span>`:""}</div>`;
     if(role==="admin")b+=`<h3>Purchase</h3><div class="rec"><span>Paid</span><span>${money(r.paid!=null?+r.paid:null)}</span><span>Bought</span><span>${esc(r.bought||"—")}</span><span>Store</span><span>${esc(r.store||"—")}</span><span>Quality when bought</span><span>${esc(r.q||"—")}</span>${pv.tax!=null?`<span>Tax and shipping</span><span>${money(+pv.tax)}</span>`:""}</div>${r.notes?`<h3>Notes</h3><p>${esc(r.notes)}</p>`:""}`;
-    if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?"":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${have?`<span class="ok">Have it</span>`:`<span class="dim">Not marked</span>`}</button>`}).join("")}</div>`;
+    if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?"":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${have?`<span class="ok">${fx.size?"Have it":"You own one"}</span>`:`<span class="dim">${fx.size?"Missing":"Not owned"}</span>`}</button>`}).join("")}</div>`;
     if(!Object.keys(r).length)b+=`<p class="note">Nothing recorded for this set yet. Box, instructions and minifig checks come from your record on the full Brick Holocron${D.script?"":", and show here once the Google Sheet sign-in is live"}.</p>`}
   if(t==="val"){const nv=setPrice(s,"n"),uv=setPrice(s,"u"),mine=oc==="u"?uv:nv,fv=figVal(s,oc);
     b+=`<div class="big"><div class="${oc==="n"?"on":""}"><span>New, sealed</span><b>${money0(nv)}</b></div><div class="${oc==="u"?"on":""}"><span>Used</span><b>${money0(uv)}</b></div></div>
