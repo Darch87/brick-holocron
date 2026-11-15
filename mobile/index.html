@@ -282,6 +282,8 @@ details.grp>:not(summary){margin:10px 12px 12px}
 .pbody:not(.tb){padding-bottom:0}.pbody:not(.tb) .hero{margin-bottom:10px}
 .ptabs{margin:0 10px 10px}
 #gate{align-items:flex-start}#gate .box{margin:auto}
+#list:not(.mixed) .row.own,#list:not(.mixed) .card.own{background:var(--sub);border-color:var(--line2)}
+#list .row.sel,#list .card.sel{border-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -434,7 +436,7 @@ function showVal(page,x){const k=S.sort[page][0];
 let cur=[];
 function render(){const page=S.page;cur=sorted(page,page==="sets"?setList():figList());
   $("#count").textContent=cur.length+(page==="sets"?" set":" fig")+(cur.length===1?"":"s");
-  const box=$("#list"),lim=Math.min(cur.length,S.limit),sel=detail&&detail.id;
+  const box=$("#list"),lim=Math.min(cur.length,S.limit),sel=detail&&detail.id;box.classList.toggle("mixed",S.scope[page]==="all");
   if(!cur.length){box.innerHTML=`<div class="empty">Nothing matches.${S.q||activeCount()?` <br><br><button class="btn" id="clr-all">Clear search and filters</button>`:""}</div>`;const c=$("#clr-all");if(c)c.onclick=clearAll;return}
   let h="";
   if(S.view==="gal"){h='<div class="gal">';for(let i=0;i<lim;i++){const x=cur[i],v=showVal(page,x);
@@ -452,7 +454,7 @@ function setSeg(id,v){document.querySelectorAll(id+" button").forEach(b=>b.class
 function resetScroll(){S.limit=80;$("#scroller").scrollTop=0}
 function goPage(p){if(p===S.page)return;S.qs[S.page]=S.q;S.page=p;S.q=S.qs[p]||"";$("#q").value=S.q;$("#qx").hidden=!S.q}
 function setPage(p){goPage(p);$("#pg-sets").classList.toggle("on",p==="sets");$("#pg-figs").classList.toggle("on",p==="figs");setSeg("#scope",S.scope[p]);
-  $("#q").placeholder=p==="sets"?"Search set name, number, character":"Search minifig name, number, character";hidePanel("browse");resetScroll();drawActive();render()}
+  $("#q").placeholder=p==="sets"?"Search sets":"Search minifigs";hidePanel("browse");resetScroll();drawActive();render()}
 $("#pg-sets").onclick=()=>setPage("sets");$("#pg-figs").onclick=()=>setPage("figs");
 document.querySelectorAll("#scope button").forEach(b=>b.onclick=()=>{S.scope[S.page]=b.dataset.v;setSeg("#scope",b.dataset.v);resetScroll();render();if(!$("#browse").hidden)drawBrowse()});
 document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{S.view=b.dataset.v;store.set("view",S.view);setSeg("#view",S.view);render()});
