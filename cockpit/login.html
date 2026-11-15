@@ -1,0 +1,291 @@
+<!doctype html><html lang="en" data-side="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex">
+<title>Brick Holocron Cockpit Login</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>/* Brick Holocron shared theme (round 7): Light side and Dark side.
+   Used by the main page (inlined at build) and the phone page (link theme.css from the repo root).
+   Set the side with <html data-side="light"> or <html data-side="dark">. Light is the default.
+   Layers: --bg (console base) > --panel (panel) > --slot (sub-frame) > --sub2 (inner sub-frame).
+   One glow colour per side: blue saber for light, red saber for dark. */
+:root{
+  --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
+  --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
+  --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
+  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
+  --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
+  --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+  /* type scale: label, small, body, title, heading, figure */
+  --t-lab:11.5px;--t-sm:13px;--t-md:14.5px;--t-title:17px;--t-head:22px;--t-fig:28px;
+  --r:4px;color-scheme:light;
+}
+:root[data-side="dark"]{
+  --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
+  --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
+  --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
+  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body);margin:0}
+
+/* console panel: frame line, light top bevel, small corner brackets in the saber colour */
+.hc-panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.08);
+  background-image:
+    linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),
+    linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber));
+  background-size:14px 2px,2px 14px,14px 2px,2px 14px;
+  background-position:left -1px top -1px,left -1px top -1px,right -1px bottom -1px,right -1px bottom -1px;
+  background-repeat:no-repeat}
+/* sub-frames step one shade off the panel, and again inside */
+.hc-frame{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
+.hc-frame .hc-frame{background:var(--sub2)}
+/* readout strip at the top of a panel or frame */
+.hc-strip{display:flex;align-items:center;gap:8px;font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line2);padding:0 0 6px;margin:0 0 8px}
+.hc-strip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--saber);box-shadow:0 0 6px var(--saber);flex:none}
+
+/* type scale */
+.hc-lab{font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hc-title{font:700 var(--t-title)/1.2 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin:0}
+.hc-head{font:700 var(--t-head)/1.15 var(--display);letter-spacing:.03em;color:var(--ink);margin:0}
+.hc-fig{font:700 var(--t-fig)/1.05 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.hc-text{font:400 var(--t-md)/1.45 var(--body);color:var(--ink)}
+.hc-small{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted)}
+
+/* keys: every button looks like a console key; the active one glows like a saber */
+.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:var(--slot);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;cursor:pointer;
+  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.15)}
+.hc-key:hover{border-color:var(--saber)}
+.hc-key.on,.hc-key[aria-pressed="true"]{background:var(--chipon);border-color:var(--saber);color:var(--ink);box-shadow:var(--glow)}
+.hc-key:disabled{opacity:.45;cursor:default}
+
+/* the side switch: two keys, the active side's saber lit */
+.hc-side{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--slot)}
+.hc-side button{font:700 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;border:0;background:none;color:var(--muted);padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.hc-side button i{width:22px;height:4px;border-radius:2px;background:var(--line);flex:none}
+.hc-side button[data-side="light"].on i{background:#e9f5ff;box-shadow:0 0 0 1px #2a9bff,0 0 8px 2px #2a9bff}
+.hc-side button[data-side="dark"].on i{background:#ffe9e9;box-shadow:0 0 0 1px #ff2a2a,0 0 8px 2px #ff2a2a}
+.hc-side button.on{color:var(--ink);background:var(--panel)}
+
+/* ===== Cockpit console skin (sample) ===== */
+/* saber colours: --saber blade glow, --core blade core, --accent text-safe accent, --chipon lit key fill */
+:root{--saber:#2a9bff;--core:#eef8ff;--accent:#1468c8;--chipon:#d9ecff;--sabername:"Blue";
+  --bg:#d3d1cb;--panel:#eceae5;--slot:#e1dfd9;--sub2:#d7d5ce;--line:#8f8b82;--line2:#b6b2a9;--ink:#15130e;--muted:#3f3c35;
+  --metal1:#f6f5f2;--metal2:#c9c6be;--rim:#5d5a53;--screw:#a9a59c;--led-off:#7d7a72;
+  --glow:0 0 0 1px var(--saber),0 0 10px 1px var(--saber),0 0 22px 2px color-mix(in srgb,var(--saber) 55%,transparent)}
+:root[data-side="dark"]{--bg:#0a0c0f;--panel:#161a20;--slot:#1d222a;--sub2:#252b34;--line:#4a5361;--line2:#333b46;--ink:#f1f4f7;--muted:#b9c2cd;
+  --metal1:#3a414c;--metal2:#14181d;--rim:#000;--screw:#59616d;--led-off:#2c323b;--chipon:color-mix(in srgb,var(--saber) 22%,#161a20)}
+:root[data-saber="blue"]{--saber:#2a9bff;--core:#eef8ff;--accent:#1468c8;--chipon:#d9ecff}
+:root[data-saber="green"]{--saber:#22e04a;--core:#effff1;--accent:#13852c;--chipon:#d8f7dd}
+:root[data-saber="red"]{--saber:#ff2424;--core:#fff0f0;--accent:#c41b1b;--chipon:#ffdede}
+:root[data-saber="purple"]{--saber:#b44dff;--core:#f8efff;--accent:#7a2bc4;--chipon:#efdfff}
+:root[data-saber="yellow"]{--saber:#ffd21a;--core:#fffbe6;--accent:#8a6a00;--chipon:#fff3c4}
+:root[data-saber="white"]{--saber:#bfe3ff;--core:#ffffff;--accent:#3d5a78;--chipon:#ffffff}
+:root[data-saber="darksaber"]{--saber:#f2f2f2;--core:#0b0b0b;--accent:#1d1d1d;--chipon:#e6e6e6}
+:root[data-side="dark"][data-saber]{--chipon:color-mix(in srgb,var(--saber) 22%,#161a20)}
+:root[data-side="dark"][data-saber="blue"]{--accent:#6cb8ff}
+:root[data-side="dark"][data-saber="green"]{--accent:#4be36a}
+:root[data-side="dark"][data-saber="red"]{--accent:#ff5c5c}
+:root[data-side="dark"][data-saber="purple"]{--accent:#c98bff}
+:root[data-side="dark"][data-saber="yellow"]{--accent:#ffd84a}
+:root[data-side="dark"][data-saber="white"]{--accent:#e8f4ff}
+:root[data-side="dark"][data-saber="darksaber"]{--accent:#f2f2f2}
+
+/* hull plating behind everything */
+body{background-color:var(--bg);background-image:
+  linear-gradient(90deg,transparent calc(100% - 1px),color-mix(in srgb,var(--rim) 22%,transparent) 0),
+  linear-gradient(transparent calc(100% - 1px),color-mix(in srgb,var(--rim) 22%,transparent) 0);
+  background-size:240px 160px}
+#holo.wrap{background:transparent;gap:8px;padding-top:8px}
+
+/* every console panel: bezel, rim, four screws */
+.cp-bezel,.side,.side.right,.folder,.hd{position:relative;border:2px solid var(--rim)!important;border-radius:12px!important;
+  background-color:var(--panel)!important;
+  box-shadow:inset 0 2px 0 var(--metal1),inset 0 -3px 0 var(--metal2),0 3px 0 color-mix(in srgb,var(--rim) 60%,transparent)!important;
+  background-image:
+    radial-gradient(circle at 9px 9px,var(--metal1) 0 1.5px,var(--screw) 2px 4px,var(--rim) 4.5px,transparent 5px),
+    radial-gradient(circle at calc(100% - 9px) 9px,var(--metal1) 0 1.5px,var(--screw) 2px 4px,var(--rim) 4.5px,transparent 5px),
+    radial-gradient(circle at 9px calc(100% - 9px),var(--metal1) 0 1.5px,var(--screw) 2px 4px,var(--rim) 4.5px,transparent 5px),
+    radial-gradient(circle at calc(100% - 9px) calc(100% - 9px),var(--metal1) 0 1.5px,var(--screw) 2px 4px,var(--rim) 4.5px,transparent 5px)!important;
+  background-repeat:no-repeat!important;background-size:auto!important;background-position:0 0!important}
+.side{padding:14px 12px!important}
+/* inner screens keep a flat recessed look */
+.tlscroll,.soscroll,.mfstage,.pcgrid.r6>.panel,.ptmain>*{background-image:none!important;border:2px solid var(--rim)!important;border-radius:8px!important;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.28)!important}
+
+/* ===== header: one short console bar ===== */
+.hd{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:14px!important;padding:8px 22px!important}
+.hd .ttl{display:flex;align-items:center;gap:12px;min-width:0}
+.hd h1{font-size:22px!important;padding-left:0!important;white-space:nowrap;text-shadow:0 1px 0 var(--metal1)}
+.hd h1::before{display:none}
+.hd .sub{display:none}
+.hdtools{margin-left:auto;flex-wrap:nowrap!important}
+
+/* holocron: a glowing cube that turns slowly */
+.cp-holo{width:34px;height:34px;perspective:240px;flex:none}
+.cp-holo .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:cp-spin 14s linear infinite}
+.cp-holo .cube i{position:absolute;inset:0;border:2px solid var(--saber);border-radius:3px;
+  background:radial-gradient(circle,color-mix(in srgb,var(--core) 85%,transparent) 0 18%,color-mix(in srgb,var(--saber) 35%,transparent) 19% 40%,color-mix(in srgb,var(--saber) 12%,transparent) 41%),
+    linear-gradient(45deg,transparent 46%,var(--saber) 47% 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,var(--saber) 47% 53%,transparent 54%);
+  box-shadow:0 0 8px var(--saber),inset 0 0 8px var(--saber)}
+.cp-holo .cube i:nth-child(1){transform:translateZ(17px)}
+.cp-holo .cube i:nth-child(2){transform:rotateY(180deg) translateZ(17px)}
+.cp-holo .cube i:nth-child(3){transform:rotateY(90deg) translateZ(17px)}
+.cp-holo .cube i:nth-child(4){transform:rotateY(-90deg) translateZ(17px)}
+.cp-holo .cube i:nth-child(5){transform:rotateX(90deg) translateZ(17px)}
+.cp-holo .cube i:nth-child(6){transform:rotateX(-90deg) translateZ(17px)}
+@keyframes cp-spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+
+/* bank of coloured indicator keys */
+.cp-bank{display:grid;grid-template-columns:repeat(8,12px);grid-template-rows:repeat(2,9px);gap:3px;padding:5px 6px;border-radius:5px;background:var(--rim);flex:none}
+.cp-bank b{border-radius:2px;background:var(--c);opacity:.35;box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
+.cp-bank b.lit{opacity:1;box-shadow:0 0 6px var(--c),inset 0 -2px 0 rgba(0,0,0,.25)}
+/* targeting radar */
+.cp-radar{width:38px;height:38px;border-radius:50%;flex:none;position:relative;overflow:hidden;border:2px solid var(--rim);
+  background:repeating-radial-gradient(circle,#0c2a12 0 6px,#13421d 6px 7px);box-shadow:inset 0 0 8px #000}
+.cp-radar::before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,rgba(80,255,120,.75),transparent 70deg);animation:cp-sweep 3s linear infinite}
+.cp-radar::after{content:"";position:absolute;left:62%;top:30%;width:4px;height:4px;border-radius:50%;background:#7dff9a;box-shadow:0 0 5px #7dff9a;animation:cp-blip 3s linear infinite}
+@keyframes cp-sweep{to{transform:rotate(360deg)}}
+@keyframes cp-blip{0%,20%{opacity:.15}30%{opacity:1}100%{opacity:.15}}
+
+/* saber selector knob */
+.cp-knob{display:flex;align-items:center;gap:9px;background:none;border:0;padding:0;cursor:pointer;color:var(--ink);font:700 11.5px/1.1 var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:left}
+.cp-knob .dial{width:36px;height:36px;border-radius:50%;position:relative;flex:none;border:2px solid var(--rim);
+  background:radial-gradient(circle at 35% 30%,var(--metal1),var(--metal2) 60%,var(--rim));box-shadow:0 2px 0 var(--rim),inset 0 0 0 4px color-mix(in srgb,var(--rim) 20%,transparent);transition:transform .25s}
+.cp-knob .dial::after{content:"";position:absolute;left:50%;top:3px;width:4px;height:13px;margin-left:-2px;border-radius:2px;background:var(--core);box-shadow:0 0 0 1px var(--saber),0 0 7px 2px var(--saber)}
+.cp-knob small{display:block;font-size:10px;color:var(--muted);letter-spacing:.12em}
+.cp-knob:focus-visible .dial{outline:2px solid var(--saber);outline-offset:3px}
+
+/* side switch as a rocker */
+.hc-side{border:2px solid var(--rim)!important;border-radius:6px!important;background:var(--rim)!important;padding:2px;gap:2px!important}
+.hc-side button{border-radius:3px;background:var(--slot)!important;box-shadow:inset 0 -3px 0 var(--metal2)}
+.hc-side button.on{background:var(--panel)!important;box-shadow:inset 0 2px 3px rgba(0,0,0,.25)}
+
+/* ===== console keys ===== */
+.chip,.seg button,.zoom button,.signin button,.tlbar .zoom button,.side .chip.clr{
+  border:1px solid var(--rim)!important;border-radius:4px!important;
+  background:linear-gradient(var(--metal1),var(--slot) 55%,var(--metal2))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 0 var(--rim)!important;transition:transform .06s,box-shadow .06s}
+.chip:active,.seg button:active,.zoom button:active,.signin button:active{transform:translateY(2px);box-shadow:inset 0 1px 2px rgba(0,0,0,.3),0 0 0 var(--rim)!important}
+/* each key has an LED that lights in the saber colour when on */
+.chip:not(.tog):not(.clr)::before{content:""!important;display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:0;background:var(--led-off);box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+.chip.on{background:linear-gradient(color-mix(in srgb,var(--chipon) 80%,#fff),var(--chipon))!important;border-color:var(--rim)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 0 var(--rim),0 0 0 2px var(--saber),0 0 14px 2px color-mix(in srgb,var(--saber) 60%,transparent)!important}
+.chip.on:not(.tog):not(.clr)::before{background:var(--core);box-shadow:0 0 0 1.5px var(--saber),0 0 8px 2px var(--saber)}
+.seg.small{border:2px solid var(--rim)!important;background:var(--rim)!important;gap:2px;padding:2px}
+.seg.small button{border:0!important;box-shadow:inset 0 -3px 0 var(--metal2)!important}
+.seg.small button.on{background:var(--chipon)!important;color:var(--ink)!important;box-shadow:inset 0 0 0 2px var(--saber),0 0 12px 1px var(--saber)!important}
+/* Start / End as coloured console caps */
+#tl-start{background:linear-gradient(#7be38f,#2f9a47)!important;color:#05210c!important}
+#tl-end{background:linear-gradient(#ff8f8f,#c72f2f)!important;color:#2a0505!important}
+.side input[type=search]{border:2px solid var(--rim)!important;border-radius:5px!important;background:var(--well,#fff)!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+:root[data-side="dark"] .side input[type=search]{background:#0d1014!important}
+
+/* step headers as engraved label plates */
+.step,.steps>.step{border:1px solid var(--line)!important;border-radius:6px!important;background:var(--slot)!important;box-shadow:inset 0 1px 0 var(--metal1)}
+.steps>.step>.sth,.step>.sth{text-shadow:0 1px 0 var(--metal1)}
+.steps>.step:not([hidden])>.sth::before{background:var(--rim)!important;color:var(--core)!important;box-shadow:0 0 0 1px var(--saber),0 0 6px var(--saber)!important}
+
+/* ===== tabs as file folders on the centre panel ===== */
+.main{display:flex;flex-direction:column}
+.main>.tabs{all:unset;display:flex;gap:2px;padding:0 10px;position:relative;z-index:2;margin-bottom:-2px;flex-wrap:nowrap}
+.main>.tabs .tab{font:700 12.5px/1 var(--display)!important;letter-spacing:.08em!important;text-transform:uppercase;cursor:pointer;
+  padding:10px 16px 9px!important;border:2px solid var(--rim)!important;border-bottom:0!important;border-radius:9px 9px 0 0!important;
+  background:linear-gradient(var(--sub2),var(--metal2))!important;color:var(--muted)!important;box-shadow:none!important;
+  top:3px;position:relative;white-space:nowrap;transition:top .15s,background .15s}
+.main>.tabs .tab:hover{top:0;color:var(--ink)!important}
+.main>.tabs .tab.on{top:0;background:var(--panel)!important;color:var(--ink)!important;padding-bottom:12px!important;
+  box-shadow:inset 0 3px 0 var(--saber),0 -4px 14px -4px var(--saber)!important}
+.folder{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 12px 10px}
+.folder>.pane{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.folder.flip>.pane:not([hidden]){animation:cp-flip .38s cubic-bezier(.2,.7,.3,1)}
+@keyframes cp-flip{0%{transform:perspective(1400px) rotateX(-9deg) translateY(-10px);transform-origin:50% 0;opacity:.35}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.cp-holo .cube,.cp-radar::before,.cp-radar::after,.folder.flip>.pane{animation:none!important}}
+
+/* stronger saber glow on the lit things */
+.hc-side button.on i{box-shadow:0 0 0 1px var(--saber),0 0 10px 3px var(--saber)!important;background:var(--core)!important}
+.drawer h2,.side.right h2{text-shadow:0 0 12px color-mix(in srgb,var(--saber) 45%,transparent)}
+.note.foot{opacity:.85}
+.cp-tag{position:fixed;right:14px;bottom:10px;z-index:50;font:700 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  background:var(--rim);color:#fff;padding:5px 9px;border-radius:4px;box-shadow:0 0 0 1px var(--saber),0 0 10px var(--saber)}
+@media (max-width:900px){.cp-bank,.cp-radar{display:none}.hd{flex-wrap:wrap!important}.main>.tabs{flex-wrap:wrap}}
+
+body{min-height:100vh;min-height:100dvh}
+.cp-login{min-height:100vh;min-height:100dvh;display:grid;place-items:center;box-sizing:border-box;padding:20px max(16px,env(safe-area-inset-left,0px)) 20px max(16px,env(safe-area-inset-right,0px))}
+.cp-console{width:min(860px,100%);box-sizing:border-box;padding:22px 26px 18px;display:flex;flex-direction:column;gap:16px}
+.cp-lhead{display:flex;align-items:center;gap:14px}
+.cp-lhead h1{margin:0;font:700 28px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 0 var(--metal1)}
+.cp-lhead p{margin:4px 0 0;color:var(--muted);font:500 14px var(--body)}
+.cp-lhead .cp-bank{margin-left:auto}
+.cp-lhead .cp-holo{width:44px;height:44px}
+.cp-lhead .cp-holo .cube i:nth-child(1){transform:translateZ(22px)}.cp-lhead .cp-holo .cube i:nth-child(2){transform:rotateY(180deg) translateZ(22px)}
+.cp-lhead .cp-holo .cube i:nth-child(3){transform:rotateY(90deg) translateZ(22px)}.cp-lhead .cp-holo .cube i:nth-child(4){transform:rotateY(-90deg) translateZ(22px)}
+.cp-lhead .cp-holo .cube i:nth-child(5){transform:rotateX(90deg) translateZ(22px)}.cp-lhead .cp-holo .cube i:nth-child(6){transform:rotateX(-90deg) translateZ(22px)}
+.cp-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cp-fields label{display:flex;flex-direction:column;gap:6px}
+.cp-fields span,.cp-pick legend{font:700 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cp-fields input{font:500 17px/1.2 var(--body);padding:12px;border:2px solid var(--rim);border-radius:6px;background:#fff;color:#15130e;box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+:root[data-side="dark"] .cp-fields input{background:#0d1014;color:#f1f4f7}
+.cp-fields input:focus{outline:none;box-shadow:var(--glow)}
+.cp-pick{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.cp-pick legend{padding:0 0 10px}
+.cp-sabers{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.cp-saber{--s:#2a9bff;--k:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 6px 10px;cursor:pointer;
+  border:2px solid var(--rim);border-radius:8px;background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--s) 18%,var(--slot)),var(--slot) 70%);
+  box-shadow:inset 0 1px 0 var(--metal1),0 2px 0 var(--rim);font:inherit;color:var(--ink);transition:box-shadow .2s,transform .1s}
+.cp-saber:hover{transform:translateY(-2px);box-shadow:0 0 0 2px var(--s),0 0 18px 2px color-mix(in srgb,var(--s) 55%,transparent)}
+.cp-saber[aria-pressed="true"]{border-color:var(--s);box-shadow:0 0 0 3px var(--s),0 0 26px 6px color-mix(in srgb,var(--s) 70%,transparent),inset 0 0 18px color-mix(in srgb,var(--s) 35%,transparent)}
+.cp-saber .blade{width:7px;height:96px;border-radius:4px 4px 2px 2px;background:var(--k);
+  box-shadow:0 0 0 2px var(--s),0 0 10px 4px var(--s),0 0 26px 8px color-mix(in srgb,var(--s) 60%,transparent);animation:cp-hum 2.4s ease-in-out infinite}
+.cp-saber .hilt{width:13px;height:30px;margin-top:-8px;border-radius:2px;background:linear-gradient(90deg,#4a4a4a,#d8d8d8 40%,#6a6a6a);
+  box-shadow:inset 0 5px 0 #222,inset 0 -6px 0 #222,inset 0 14px 0 -9px #b40}
+.cp-saber b{font:700 13px/1.15 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.cp-saber small{font:500 12px/1.25 var(--body);color:var(--muted);text-align:center}
+@keyframes cp-hum{50%{box-shadow:0 0 0 2px var(--s),0 0 13px 5px var(--s),0 0 34px 11px color-mix(in srgb,var(--s) 65%,transparent)}}
+.cp-go{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cp-go .go{flex:1;min-width:220px;font:700 15px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;padding:15px;border-radius:6px;cursor:pointer;
+  border:2px solid var(--rim);background:var(--chipon);color:var(--ink);box-shadow:0 0 0 2px var(--saber),0 0 22px 4px color-mix(in srgb,var(--saber) 65%,transparent)}
+.cp-fine{margin:0;color:var(--muted);font:500 12.5px var(--body)}
+@media (max-width:720px){.cp-sabers{grid-template-columns:repeat(4,minmax(0,1fr))}.cp-fields{grid-template-columns:1fr}.cp-lhead .cp-bank,.cp-lhead .cp-radar{display:none}}
+@media (prefers-reduced-motion:reduce){.cp-saber .blade{animation:none}}
+</style></head><body>
+<div class="cp-login">
+ <form class="cp-console cp-bezel" id="lg">
+  <header class="cp-lhead">
+   <div class="cp-holo" aria-hidden="true"><div class="cube"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+   <div><h1>Brick Holocron</h1><p>A Star Wars LEGO collection</p></div>
+   <div class="cp-bank" id="bank" aria-hidden="true"></div>
+   <div class="cp-radar" aria-hidden="true"></div>
+  </header>
+  <div class="cp-fields">
+   <label><span>Your name</span><input id="nm" autocomplete="name" placeholder="Name" required></label>
+   <label><span>Passcode</span><input id="pc" type="password" autocomplete="current-password" placeholder="Passcode"></label>
+  </div>
+  <fieldset class="cp-pick"><legend>Choose your lightsaber</legend><div class="cp-sabers" id="sabers"></div></fieldset>
+  <div class="cp-go"><button type="submit" class="go">Open the holocron</button>
+   <div class="hc-side" role="group" aria-label="Side"><button type="button" data-side="light"><i></i>Light side</button><button type="button" data-side="dark"><i></i>Dark side</button></div></div>
+  <p class="cp-fine">Sample login. Any name and passcode opens the sample tool.</p>
+ </form>
+</div>
+
+<script>(function(){
+  const S=[["blue","Blue","Obi-Wan · Anakin","#2a9bff","#eef8ff"],["green","Green","Yoda · Luke","#22e04a","#effff1"],["red","Red","Vader · Maul","#ff2424","#fff0f0"],
+    ["purple","Purple","Mace Windu","#b44dff","#f8efff"],["yellow","Yellow","Rey","#ffd21a","#fffbe6"],["white","White","Ahsoka","#bfe3ff","#ffffff"],["darksaber","Darksaber","Din Djarin","#f2f2f2","#0b0b0b"]];
+  const root=document.documentElement;const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};const put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+  root.dataset.side=get("holo-side")==="dark"?"dark":"light";
+  let pick=get("holo-saber"); if(!S.some(s=>s[0]===pick)) pick=root.dataset.side==="dark"?"red":"blue";
+  const box=document.getElementById("sabers");
+  S.forEach(([id,name,who,s,k])=>{const b=document.createElement("button");b.type="button";b.className="cp-saber";b.style.setProperty("--s",s);b.style.setProperty("--k",k);
+    b.innerHTML=`<span class="blade"></span><span class="hilt"></span><b>${name}</b><small>${who}</small>`;b.dataset.id=id;
+    b.onclick=()=>{pick=id;sync()};box.append(b)});
+  function sync(){root.dataset.saber=pick;box.querySelectorAll(".cp-saber").forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===pick?"true":"false"));
+    document.querySelectorAll(".hc-side button").forEach(b=>b.classList.toggle("on",b.dataset.side===root.dataset.side))}
+  document.querySelectorAll(".hc-side button").forEach(b=>b.onclick=()=>{root.dataset.side=b.dataset.side;put("holo-side",b.dataset.side);sync()});
+  const nm=document.getElementById("nm");nm.value=get("holo-name")||"";
+  const bank=document.getElementById("bank");const cols=["#ff3b30","#ffcc00","#34c759","#0a84ff","#ff9500","#f2f2f2","#ff3b30","#34c759"];
+  for(let i=0;i<16;i++){const x=document.createElement("b");x.style.setProperty("--c",cols[(i*3+Math.floor(i/8))%8]);if(Math.random()<.5)x.className="lit";bank.append(x)}
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(()=>{bank.children[Math.floor(Math.random()*16)].classList.toggle("lit")},420);
+  document.getElementById("lg").onsubmit=e=>{e.preventDefault();put("holo-saber",pick);put("holo-name",nm.value.trim());location.href="./"};
+  sync();
+})();
+</script></body></html>
