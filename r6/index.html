@@ -1692,7 +1692,8 @@ const figHave=(s,num)=>s&&!s.want&&!s.gone?!((status[s.n]||{}).fx||[]).includes(
 const TL={open:{story:true,figs:true,sets:true},focus:"sets",pos:{}};
 const TSZ=[1,.82,.7,.6,.52,.52];
 function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:62,sets:32},W={story:1.35,figs:.7,sets:1.4};let rest=H,ws=0;
-  ks.forEach(k=>{if(!TL.open[k])rest-=FOLD[k];else ws+=W[k]*(TL.focus===k?1.8:1)});const o={};ks.forEach(k=>o[k]=TL.open[k]?Math.max(90,rest*W[k]*(TL.focus===k?1.8:1)/ws):FOLD[k]);return o}
+  ks.forEach(k=>{if(!TL.open[k])rest-=FOLD[k];else ws+=W[k]*(TL.focus===k?1.8:1)});const o={};ks.forEach(k=>o[k]=TL.open[k]?Math.max(90,rest*W[k]*(TL.focus===k?1.8:1)/ws):FOLD[k]);
+  if(TL.open.story&&TL.focus!=="figs"){const need=Math.min(270,H*.42)-o.story;if(need>0){const from=TL.open.sets?"sets":TL.open.figs?"figs":null;if(from&&o[from]-need>=150){o[from]-=need;o.story+=need}}}return o}
 const STILLS={"Battle of Christophsis":[["Christophsis","https://lumiere-a.akamaihd.net/v1/images/databank_christophsis_01_169_2daae94e.jpeg?region=0%2C0%2C1560%2C878"]],
  "Rescue at the Teth monastery":[["Teth monastery","https://lumiere-a.akamaihd.net/v1/images/teth-monastery-main_b1de2d62.jpeg?region=159%2C0%2C962%2C541"],["Teth","https://lumiere-a.akamaihd.net/v1/images/teth-main_aab2cc2e.jpeg?region=159%2C0%2C962%2C541"],["Asajj Ventress","https://lumiere-a.akamaihd.net/v1/images/av-main_4d08b771.jpeg?region=0%2C0%2C1280%2C720"]],
  "Escape in the Twilight":[["The Twilight","https://lumiere-a.akamaihd.net/v1/images/databank_twilight_01_169_9b1eb370.jpeg?region=0%2C0%2C1560%2C878"]],
