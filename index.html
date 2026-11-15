@@ -1652,9 +1652,10 @@ async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…
     if(r.status){Object.keys(status).forEach(k=>{if(!r.status[k])delete status[k]});Object.entries(r.status).forEach(([n,o])=>status[n]=o)}
     if(role==="admin"){canWrite=true;if(r.priv)Object.entries(r.priv).forEach(([n,o])=>{const s=BYN[n];if(s)Object.assign(s,o,{_p:o.paid??s._p,_pr:o.price??s._pr})});
       if(Array.isArray(r.lists)){if(r.lists.length){LISTS=r.lists.filter(l=>l&&l.id&&!l.gone);lsEnsure()}else LISTS.forEach(l=>lsPersist(l))}}
-    $("#subline").textContent=role==="admin"?"Signed in. Tap any set to see its details and change them in the right panel.":"Your guest view of the collection. Tap any set for its details.";
+    {const nS=Object.keys(r.status||{}).length,nP=Object.values(r.status||{}).filter(o=>o.paid!=null).length;
+    $("#subline").textContent=role==="admin"?(nS?`Signed in. Your sheet sent ${nS} sets, ${nP} with a price paid.`:"Signed in, but your sheet sent no sets: its Status tab is empty or named differently."):"Your guest view of the collection. Tap any set for its details.";}
     drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false)}
-  catch(e){PASS="";signMsg="Couldn't reach the sheet. Try again in a moment.";drawSignin()}}
+  catch(e){PASS="";signMsg="The sheet answered with an error ("+String(e&&e.message||e).slice(0,80)+"). Check the script is attached to the sheet.";drawSignin()}}
 // a change saves to the sheet (admin) or, on the old Claude page, to its own store
 async function save(s,patch,quiet){
   status[s.n]={...(status[s.n]||{}),...patch};
