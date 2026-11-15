@@ -1082,7 +1082,7 @@ body{background-color:var(--bg);background-image:
 .chip.on{background:linear-gradient(color-mix(in srgb,var(--chipon) 80%,#fff),var(--chipon))!important;border-color:var(--rim)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 0 var(--rim),0 0 0 2px var(--saber),0 0 14px 2px color-mix(in srgb,var(--saber) 60%,transparent)!important}
 .chip.on:not(.tog):not(.clr)::before{background:var(--core);box-shadow:0 0 0 1.5px var(--saber),0 0 8px 2px var(--saber)}
-.seg.small{border:2px solid var(--rim)!important;background:var(--rim)!important;gap:2px;padding:2px}
+.seg.small{border:2px solid var(--rim)!important;background:color-mix(in srgb,var(--rim) 45%,var(--slot))!important;gap:2px;padding:2px}
 .seg.small button{border:0!important;box-shadow:inset 0 -3px 0 var(--metal2)!important}
 .seg.small button.on{background:var(--chipon)!important;color:var(--ink)!important;box-shadow:inset 0 0 0 2px var(--saber),0 0 12px 1px var(--saber)!important}
 /* Start / End as coloured console caps */
@@ -1099,8 +1099,8 @@ body{background-color:var(--bg);background-image:
 /* ===== tabs as file folders on the centre panel ===== */
 .main{display:flex;flex-direction:column}
 .main>.tabs{all:unset;display:flex;gap:2px;padding:0 10px;position:relative;z-index:2;margin-bottom:-2px;flex-wrap:nowrap}
-.main>.tabs .tab{font:700 12.5px/1 var(--display)!important;letter-spacing:.08em!important;text-transform:uppercase;cursor:pointer;
-  padding:10px 16px 9px!important;border:2px solid var(--rim)!important;border-bottom:0!important;border-radius:9px 9px 0 0!important;
+.main>.tabs .tab{font:700 12.5px/1 var(--display)!important;letter-spacing:.08em!important;text-transform:uppercase;cursor:pointer;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
+  padding:10px 14px 9px!important;border:2px solid var(--rim)!important;border-bottom:0!important;border-radius:9px 9px 0 0!important;
   background:linear-gradient(var(--sub2),var(--metal2))!important;color:var(--muted)!important;box-shadow:none!important;
   top:3px;position:relative;white-space:nowrap;transition:top .15s,background .15s}
 .main>.tabs .tab:hover{top:0;color:var(--ink)!important}
@@ -2507,6 +2507,9 @@ if(MODE==="editor"){(async()=>{try{
     main.append(nav,folder);
     nav.addEventListener("click",e=>{if(!e.target.closest(".tab"))return;folder.classList.remove("flip");void folder.offsetWidth;folder.classList.add("flip")});
   }
+  // shorter tab names so the folder tabs fit the centre panel
+  const short={"tab-tl":"Timeline","tab-so":"Sort","tab-mf":"Minifigs","tab-pc":"Prices","tab-pt":"Parts","tab-ls":"Lists"};
+  for(const id in short){const t=document.getElementById(id);if(t){t.title=t.textContent;t.textContent=short[id]}}
   // the status line moves to the bottom of the page
   const sub=document.getElementById("subline"), foot=document.getElementById("note");
   if(sub&&foot){sub.classList.add("note");sub.style.margin="0";foot.before(sub)}
