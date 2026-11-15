@@ -1000,9 +1000,9 @@ i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;ob
 .tgrp.on .tab{border-color:var(--line);color:var(--ink)}
 .tab.on{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:inset 0 2px 0 var(--saber),0 -4px 14px -6px var(--saber);padding-bottom:9px}
 .shell{border-top:1px solid var(--line);padding-top:10px;perspective:1600px}
-.shell.flip>*{animation:hc-flip .42s cubic-bezier(.2,.7,.2,1)}
+.shell.deckflip>*{animation:hc-flip .42s cubic-bezier(.2,.7,.2,1)}
 @keyframes hc-flip{from{transform:rotateX(-9deg) translateY(-6px);transform-origin:50% 0;opacity:.35}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){.holo3d .cube,.shell.flip>*{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.holo3d .cube,.shell.deckflip>*{animation:none!important}}
 
 /* lever scrollbars: a metal lever with grip lines on a dark slot */
 .side,.tlscroll,.soscroll,.levers{scrollbar-width:auto;scrollbar-color:#9aa4ae #0b0d10}
@@ -5379,7 +5379,7 @@ function drawSignin(){drawGate();const el=$("#signin");if(!el)return;
 const PAIR={tl:0,mf:0,so:1,pc:1,pt:2,ls:2};
 function showTab(t){const was=tab;tab=t;["tl","so","mf","pc","pt","ls"].forEach(x=>{$("#pane-"+x).hidden=x!==t;const b=$("#tab-"+x);b.classList.toggle("on",x===t);b.setAttribute("aria-selected",x===t)});
   ROOT.querySelectorAll(".tgrp").forEach((g,i)=>g.classList.toggle("on",i===PAIR[t]));
-  const sh=ROOT.querySelector(".shell");if(sh&&was!==t){sh.classList.remove("flip");void sh.offsetWidth;sh.classList.add("flip")}
+  const sh=ROOT.querySelector(".shell");if(sh&&was!==t){sh.classList.remove("deckflip");void sh.offsetWidth;sh.classList.add("deckflip")}
   const std=t==="tl"||t==="so"||t==="pc",pl=t==="pt"||t==="ls";$("#controls").hidden=!std;$("#mfctl").hidden=t!=="mf";$("#ptctl").hidden=t!=="pt";$("#lsctl").hidden=t!=="ls";$("#drawer").hidden=!std;$("#mfside").hidden=t!=="mf";$("#ptside").hidden=!pl;
   ROOT.querySelectorAll(".tlonly").forEach(e=>{e.hidden=t!=="tl"});ROOT.querySelectorAll(".soonly").forEach(e=>{e.hidden=t!=="so"});ROOT.querySelectorAll(".notl").forEach(e=>{e.hidden=t==="tl"});
   if(t==="mf"){if(!mf.drawn)requestAnimationFrame(()=>mfDraw(true));return}
