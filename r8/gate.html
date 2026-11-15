@@ -1084,7 +1084,7 @@ i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;ob
 .zl button.on{background:linear-gradient(var(--keyblue2),var(--keyblue));color:#fff;border-color:#bfe0ff}
 .scell .ctext{display:flex;flex-direction:column;gap:4px;min-height:0}
 .scell .slab,.scell .stl{background:none;border:0;color:var(--ink);font:700 13px/1.2 var(--body);text-align:left;padding:2px 3px;cursor:pointer;border-radius:3px}
-.scell .slab{font:700 12px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.scell .slab{font:700 12px/1.15 var(--mono);letter-spacing:.06em;text-transform:uppercase;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .scell .saved{margin:0;font-size:12px;color:var(--muted)}
 .scell .syn{-webkit-line-clamp:6}
 ol.eps{list-style:none;margin:0;padding:0;columns:176px auto;column-gap:10px;column-fill:auto;height:calc(var(--lp) * 18px)}
@@ -1199,6 +1199,7 @@ details.rsec>summary span{flex:1}details.rsec>summary em{font-style:normal;font-
 .gate .go{width:100%}
 .admin-status{font:500 var(--t-lab)/1.4 var(--mono);color:var(--muted);margin:8px 0 0;letter-spacing:.04em}
 @media (max-width:760px){.tabs{gap:6px}.tab,.tab.on{padding:8px 10px}.side.right{border-radius:12px}}
+.pcard img{inset:3px;width:calc(100% - 6px);height:calc(100% - 6px)}
 
 </style>
 
@@ -5028,7 +5029,7 @@ const PDESC2={
 const LOCID={};(META.planets||[]).forEach(p=>{LOCID[nrm(p[1])]=p[0]});
 const locOf=l=>LOCID[nrm(l)]||null;
 // short display name for a story
-const srcShort=src=>String(src[2]).replace(/^Star Wars:?\s*/i,"").replace(/^Episode [IVX]+:?\s*/,"");
+const srcShort=src=>{const a=String(src[2]).replace(/^Star Wars:?\s*/i,""),b=a.replace(/^Episode [IVX]+:?\s*/,"");return b||a};
 const yrLab=id=>{const y=YR[id];if(y==null)return"";const a=Math.abs(y);return(Number.isInteger(a)?a:a.toFixed(1))+(y<0?" BBY":y>0?" ABY":" BBY/ABY")};
 const KIND={film:"Film",series:"Series",game:"Game",book:"Books",special:"Special"};
 const kindOf=src=>{const k=String(src[3]||"");return KIND[k.toLowerCase()]||k||"Story"};
@@ -5114,7 +5115,7 @@ const TL8={story:1,figs:2,sets:1,vkeys:""};
 let PSEL=null; // what the right panel shows, lit on the timeline: {k:"slot"|"ep"|"loc"|"fig"|"ch"|"set", v}
 const ZL={story:[["1","Titles"],["2","Episodes"],["3","Synopsis"]],figs:[["1","All characters"],["2","Characters in view"],["3","Compact"],["4","One strip"]],sets:[["0","Numbers"],["1","Tiles"],["2","Large"]]};
 const isSel=(k,v)=>PSEL&&PSEL.k===k&&PSEL.v===v;
-function slotShort(z){if(z.season!=null)return"S"+z.season;if(z.ep!=null)return z.t.replace(/^(\w)\w*\s/,"$1 ");if(z.scene)return"Scene "+(z.i+1);return z.t}
+function slotShort(z){if(z.season!=null)return"S"+z.season;if(z.ep!=null)return z.t.replace(/^Part\s/,"Pt ").replace(/^Chapter\s/,"Ch ").replace(/^Episode\s/,"Ep ").replace(/^Special\s/,"Sp ");if(z.scene)return"Scene "+(z.i+1);return z.t}
 function renderTL(){
   const sc=$("#tlscroll"),inn=$("#tlinner"),VH=sc.clientHeight-14;if(VH<120)return;
   const SL=TL8.story,FL=TL8.figs,KL=TL8.sets,TOP=60,HEADH=44;
@@ -5179,7 +5180,7 @@ function renderTL(){
   let r2="",figsIn=40;
   if(FL===4){const per={};Object.values(occ).forEach(q=>q.at.forEach(a=>{const key=a.o.ci;(per[key]=per[key]||{o:a.o,list:[],seen:new Set()});if(!per[key].seen.has(a.f[0])){per[key].seen.add(a.f[0]);per[key].list.push(a)}}));
     Object.values(per).forEach(({o,list})=>{const n=Math.max(1,Math.floor((o.w-10)/44));list.slice(0,n).forEach((b,i)=>{r2+=figDot(b,o.x+8+i*44,30,40)})});figsIn=54}
-  else{const r=FL===3?13:20,LH=FL===3?44:62,GAP=10,sl=sc.scrollLeft,cw=sc.clientWidth;
+  else{const r=FL===3?13:18,LH=FL===3?42:54,GAP=6,sl=sc.scrollLeft,cw=sc.clientWidth;
     let qs=Object.values(occ);
     if(FL>=2){const inV=new Set(cols.filter(o=>o.x+o.w>sl-40&&o.x<sl+cw+40).map(o=>o.ci));qs=qs.filter(q=>q.at.some(a=>inV.has(a.ci)));TL8.vkeys=qs.map(q=>q.k).sort().join("|")}
     const tyOf=q=>q.c?q.c.types[0]:"locals",groups={};qs.forEach(q=>{q.cis=[...new Set(q.at.map(a=>a.ci))].sort((a,b)=>a-b);q.runs=[];let cur=null;q.cis.forEach(ci=>{if(cur&&cur.b===ci-1)cur.b=ci;else{cur={q,a:ci,b:ci};q.runs.push(cur)}});(groups[tyOf(q)]=groups[tyOf(q)]||[]).push(q)});
