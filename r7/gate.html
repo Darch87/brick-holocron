@@ -681,7 +681,7 @@ details.fold>div{padding:0 0 10px;display:flex;flex-direction:column;gap:6px}
   --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
   --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
   --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
-  --chipon:#d6e9ff;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
+  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
   --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
   --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
   /* type scale: label, small, body, title, heading, figure */
@@ -692,7 +692,7 @@ details.fold>div{padding:0 0 10px;display:flex;flex-direction:column;gap:6px}
   --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
   --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
   --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
-  --chipon:#3a1517;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
   --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
   color-scheme:dark;
 }
@@ -886,6 +886,81 @@ details.fold details.fold{background:var(--sub2)}
 .fcbig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
 .figcard .facts{margin:0}
 
+/* ---- sort collection (round 7) ---- */
+/* one plain frame; owned sets get a contrasting fill, wanted sets stay dashed and dim even on hover */
+.card{border:1px solid var(--line)!important;background:var(--panel)!important}
+.card:not(.want){background:var(--ownfill)!important;border-color:color-mix(in srgb,var(--own) 45%,var(--line))!important}
+.card.want{opacity:.55;border-style:dashed!important;background:var(--slot)!important}
+.card.want:hover,.card.want.hl{opacity:.72}
+.card.hl{outline:3px solid var(--saber)!important;box-shadow:var(--glow)}
+/* minifigs: groups sit side by side and wrap; each tinted box wraps only its own figs */
+.card .figs{display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:4px;align-items:flex-start;background:none;padding:0}
+.card .fgrp{display:inline-flex!important;flex-wrap:wrap;gap:4px 2px;width:auto;max-width:100%;padding:4px 3px 3px!important;border-width:1px!important;border-radius:4px;box-sizing:border-box}
+.card .fgrp .fig{width:calc(var(--fi,50px) + 8px);flex:none}
+.card.t1{--fi:50px}.card.t2{--fi:42px}.card.t3{--fi:35px}.card.t4{--fi:29px}
+.card .fgrp .fig i{width:var(--fi,50px)!important;height:var(--fi,50px)!important}
+
+/* ---- galaxy (round 7) ---- */
+/* icons grow as you zoom out, so sets and minifigs stay readable at the macro view */
+.mfn>.nsc{transform:scale(var(--ns,1));transition:transform .15s}
+/* the shared relation web: visible lines in both sides' colours */
+.mfl line{stroke:var(--muted)!important;stroke-opacity:.38!important;vector-effect:non-scaling-stroke}
+.mfl.gal line{stroke-opacity:.3!important}
+.mfl line.on{stroke:var(--saber)!important;stroke-opacity:.95!important;stroke-width:2.5px}
+/* groups: a dashed ring and spokes to a hub, unlike the solid relation lines */
+.gweb line{stroke:var(--gc);vector-effect:non-scaling-stroke;fill:none}
+.gweb .gspoke{stroke-width:1.6px;stroke-dasharray:2 4;stroke-linecap:round;stroke-opacity:.85}
+.gweb .gring{stroke-width:2px;stroke-dasharray:9 5;stroke-opacity:.6}
+.gweb .ghub{fill:var(--gc);stroke:var(--panel);stroke-width:2;transform-box:fill-box;transform-origin:center;transform:scale(var(--ns,1))}
+.gweb .gcloud-t{font-size:calc(14px*var(--pk,1))}
+/* planets sit back so sets and minifigs read first */
+.mfpl .orb,.mfpl image{opacity:.42}
+.mfpl:hover .orb,.mfpl.on .orb,.mfpl:hover image,.mfpl.on image{opacity:.8}
+.mfpl text{fill:var(--muted)!important;opacity:.75}
+.mfgal circle{stroke:var(--line2)!important}
+.mfgal>text{fill:var(--muted)!important;opacity:.5}
+/* clear selection sits right under each find bar */
+#clearall,#mf-clear{display:block;width:100%;margin:8px 0 0}
+
+/* ---- price charts (round 7): a tapped set stays lit, the rest dim ---- */
+#chart.iso [data-n]:not(.isoon),#chart.iso g[id^="dot-"]:not(.isoon){opacity:.1;transition:opacity .2s}
+#chart.iso .isoon{opacity:1!important}
+#chart.iso .isoon :is(circle,rect,path,line,polyline){stroke:var(--saber);stroke-width:2.5px}
+
+/* ---- right panels (round 7): framed, foldable sections; minifigs as photo circles ---- */
+.psec{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);margin:0 0 8px;padding:0}
+.psec>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;font:700 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.psec>summary::-webkit-details-marker{display:none}
+.psec>summary::before{content:"▸";color:var(--saber);font-size:12px}
+.psec[open]>summary::before{content:"▾"}
+.psec>summary span{flex:1}
+.psec>summary em{font-style:normal;font-weight:600;color:var(--muted);letter-spacing:0}
+.psec[open]>summary{border-bottom:1px solid var(--line2)}
+.psec>ul,.psec>.alist{margin:0;padding:6px 8px 8px;background:var(--panel);border-radius:0 0 var(--r) var(--r)}
+.pdesc{font:400 var(--t-md)/1.45 var(--body);color:var(--ink);margin:4px 0 10px;padding:8px 10px;background:var(--slot);border-left:3px solid var(--saber);border-radius:0 var(--r) var(--r) 0}
+.mfimg{position:relative;height:210px;background:var(--well);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin:6px 0 10px}
+.mfimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;box-sizing:border-box}
+i.fv{flex:none;width:46px!important;height:46px!important;border-radius:50%!important;overflow:hidden;position:relative;background:#fff;display:block;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+i.fv.y{border:3px solid var(--own)}i.fv.n{border:2px dotted var(--muted)}
+i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 12%;max-width:none}
+.figrow{display:flex;align-items:center;gap:10px}
+.figrow>button{display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-align:left}
+
+/* ---- parts (round 7): every step fits the panel; the set list takes what's left and scrolls inside ---- */
+.side.left:has(#ptctl:not([hidden])){overflow:hidden;display:flex;flex-direction:column}
+#ptctl:not([hidden]){flex:1 1 auto;min-height:0;height:100%;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+#ptctl>.step{flex:none}
+#ptctl>.step.grow{flex:1 1 0;min-height:110px;display:flex;flex-direction:column;overflow:hidden}
+#ptctl>.step.grow .setlist{flex:1 1 0;min-height:0;max-height:none!important}
+#ptctl>.step.find .hits{max-height:22vh;overflow:auto}
+/* ---- lists (round 7): pieces as a gallery grid of tiles ---- */
+.lsitems{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px!important}
+.lsi{grid-template-columns:1fr!important;grid-template-rows:auto auto auto;justify-items:center;text-align:center;gap:4px!important;padding:8px 6px!important;border:1px solid var(--line2)!important;border-radius:var(--r);background:var(--slot)}
+.lsi .pti{width:72px!important;height:60px!important}
+.lsi>span:not(.stp){align-items:center;font-size:var(--t-sm)}
+.lsi>span:not(.stp) b{font-family:var(--mono)}
+.lsi .stp{display:flex;align-items:center;gap:6px}
+
 </style>
 
 <div class="gate" id="gate" hidden><div class="gbox hc-panel"><div class="hc-strip">Brick Holocron · access</div><h1>Brick Holocron</h1><p class="hc-small">A Star Wars LEGO collection. Enter your passcode to open it.</p>
@@ -900,7 +975,7 @@ details.fold details.fold{background:var(--sub2)}
   <div class="shell">
   <aside class="side left" aria-label="Filters">
   <section class="controls steps" id="controls">
-    <div class="grp"><label class="lab" for="find">Find a set or minifig</label><input id="find" type="search" placeholder="Name, set number or minifig number"></div>
+    <div class="grp"><label class="lab" for="find">Find a set or minifig</label><input id="find" type="search" placeholder="Name, set number or minifig number"><button type="button" class="chip clr" id="clearall">Clear selection</button></div>
     <div class="grp focusbar" id="focusbar" hidden></div>
     <section class="step tlonly"><h4 class="sth">Which stories</h4><div class="grp" id="g-canon2"></div></section>
     <section class="step tlonly"><h4 class="sth">Pick stories</h4><div class="seg small" id="g-by"></div><div id="g-stories"></div></section>
@@ -917,15 +992,13 @@ details.fold details.fold{background:var(--sub2)}
     <div class="grp" id="g-stk"></div>
     <div class="grp" id="g-pc"></div>
     </section>
-    <button type="button" class="chip clr" id="clearall">Clear selection</button>
     <p class="note">Filtered-out sets fade back but stay in place.</p>
   </section>
   <section class="mfctl steps" id="mfctl" hidden>
-    <div class="grp"><label class="lab" for="mf-q">Find</label><input id="mf-q" type="search" placeholder="Anakin, Razor Crest, 501st, 75021, sw0445"></div>
+    <div class="grp"><label class="lab" for="mf-q">Find</label><input id="mf-q" type="search" placeholder="Anakin, Razor Crest, 501st, 75021, sw0445"><button type="button" class="chip clr" id="mf-clear">Clear selection</button></div>
     <section class="step"><h4 class="sth">Show</h4><span class="grp" id="mf-have"></span><span class="lab cnt" id="mf-count"></span></section>
     <section class="step"><h4 class="sth">Shared relation web</h4><div id="mf-web"></div></section>
     <section class="step"><h4 class="sth">Groups</h4><span class="grp" id="mf-groups"></span></section>
-    <button type="button" class="chip clr" id="mf-clear">Clear selection</button>
     <p class="note">Drag any shape and it wobbles back. Scroll to zoom. Characters sit on the planet or fleet they're most seen at; ships drift between the places they visit. Map positions are approximate.</p>
   </section>
   <section class="ptctl" id="ptctl" hidden></section>
@@ -1113,6 +1186,7 @@ function pxAwait(){if(!PX.lite||!PX.ver)return;let tries=0;
 let PXMSG="";
 function buildPC(){const gp=$("#g-pc");gp.innerHTML=`<div class="grp" id="pc-on"></div>`}
 function visible(){return SETS.filter(s=>{
+  if(focus)return focusHit(s);
   for(const g of GROUPS){const f=filters[g[2]];if(f&&!f.includes(g[4](s)))return false}
   if(focus&&!focusHit(s))return false;
   if(filters.pc&&!pcFilterSets().has(s.n))return false;
@@ -1220,7 +1294,7 @@ let ctab="time";
 const monthKey=s=>{const d=dt(st(s).bought);return d?d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"):""};
 let EARLY="";
 function renderStats(v){if(!CTABS.some(c=>c[0]===ctab&&(!c[2]||privOK())))ctab="time";if(ctab==="time")return statsTime(v);if(ctab==="worth")return statsWorth(v);const f={sets:()=>statsComp(META.setcomp,"sets"),figs:()=>statsComp(META.figcomp,"minifigs"),story:()=>statsStory(v),spend:()=>statsSpend(v)}[ctab];f()}
-function renderChart(v){
+function renderChart(v){setTimeout(chartIso,0);
   $("#ctabs").innerHTML=CTABS.filter(c=>!c[2]||privOK()).map(([k,l])=>`<button type="button" class="ct${k===ctab?" on":""}" data-ct="${k}">${l}</button>`).join("");
   $("#ctabs").querySelectorAll("[data-ct]").forEach(b=>b.onclick=()=>{ctab=b.dataset.ct;render(false)});
   const svg=$("#chart");svg.setAttribute("viewBox","0 0 640 300");
@@ -1354,8 +1428,8 @@ function bar(parts,max){return `<div class="bar">${parts.filter(p=>p[1]).map(([c
 let dtab="ov",dpShow="all",focus=null,dlist=null;
 // a tag tapped in the right panel lights up the sets that share it on the timeline (the rest fade, like a filter)
 function focusHit(s){const f=focus;if(!f)return true;const v=f.v;return f.k==="src"?s.src===v:f.k==="ty"?s.ty===v:f.k==="aff"?affil(s).includes(v):f.k==="ship"?s.ship===v:f.k==="loc"?(s.loc||[]).includes(v):f.k==="ch"?(SETCH[s.n]||[]).includes(v):f.k==="sub"?s.sub===v:true}
-function syncFocus(){const b=$("#focusbar");if(!b)return;b.hidden=!focus;b.innerHTML=focus?`<span class="lab">Lit up on the timeline</span><button type="button" class="chip on" id="focusx">${esc(focus.label)} ×</button>`:"";const x=$("#focusx");if(x)x.onclick=()=>{focus=null;render(false);drawDrawer();syncFocus()}}
-function setFocus(k,v,label){focus=focus&&focus.k===k&&focus.v===v?null:{k,v,label};syncFocus();if(tab!=="tl")showTab("tl");else render(true);drawDrawer()}
+function syncFocus(){const b=$("#focusbar");if(!b)return;b.hidden=!focus;b.innerHTML=focus?`<span class="lab">Showing only this tag · overrides the filters below</span><button type="button" class="chip on" id="focusx">${esc(focus.label)} ×</button>`:"";const x=$("#focusx");if(x)x.onclick=()=>{focus=null;render(false);drawDrawer();syncFocus()}}
+function setFocus(k,v,label){focus=focus&&focus.k===k&&focus.v===v?null:{k,v,label};syncFocus();render(true);if(tab==="mf"&&mf.drawn)mfDraw(false);drawDrawer()}
 function clearSel(){openN=null;hl=null;focus=null;dlist=null;syncFocus();drawDrawer();if(tab==="mf")mfSelect(null);else render(false)}
 function openDrawer(n){openN=n;drawDrawer()}
 // lists for the right panel: a theme's sets, a minifig category, a story, a month
@@ -1391,7 +1465,12 @@ $("#chart").addEventListener("mousemove",e=>{const s=dotSet(e),tip=$("#tip"),fe=
   const box=$("#chartbox").getBoundingClientRect();tip.textContent=txt;tip.classList.add("show");
   tip.style.left=Math.min(e.clientX-box.left+12,box.width-250)+"px";tip.style.top=(e.clientY-box.top+12)+"px"});
 $("#chart").addEventListener("mouseleave",()=>$("#tip").classList.remove("show"));
-$("#chart").addEventListener("click",e=>{const s=dotSet(e);$("#tip").classList.remove("show");if(s){openN=s.n;drawDrawer();return}
+// tap a set on a chart: it stays lit and everything else dims; tap it again or the background to bring all back
+let ISO=null;
+function chartIso(){const svg=$("#chart");if(!svg)return;svg.querySelectorAll(".isoon").forEach(e=>e.classList.remove("isoon"));const on=ISO&&svg.querySelector(`[data-n="${CSS.escape(ISO)}"],#dot-${sid(ISO)}`);svg.classList.toggle("iso",!!on);
+  if(on)svg.querySelectorAll(`[data-n="${CSS.escape(ISO)}"],#dot-${sid(ISO)}`).forEach(e=>{e.classList.add("isoon");e.parentNode.appendChild(e)})}
+$("#chart").addEventListener("click",e=>{const s=dotSet(e);$("#tip").classList.remove("show");if(s){ISO=ISO===s.n?null:s.n;chartIso();openN=s.n;drawDrawer();return}
+  if(ISO&&!(e.target.closest&&e.target.closest("[data-f],[data-list]"))){ISO=null;chartIso();return}
   const fe=e.target.closest&&e.target.closest("[data-f]");if(fe){dlist=listOf("onefig",fe.dataset.f);openN=null;drawDrawer();return}
   const g=e.target.closest&&e.target.closest("[data-list]");if(g){const v=g.dataset.list,i=v.indexOf(":");showList(v.slice(0,i),v.slice(i+1))}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(openN||focus||dlist)clearSel()}});
@@ -1428,6 +1507,7 @@ CHARS.forEach(c=>{if(c.planet)pas(c.planet).home.add(c.name)});
 SETS.forEach(s=>(s.loc||[]).forEach(p=>{if(!PLAN[p])return;const a=pas(p);a.sets.add(s.n);(SETCH[s.n]||[]).forEach(n=>{if(!a.home.has(n))a.seen.add(n)})}));
 Object.values(SHIPS).forEach(h=>h.pl.forEach(p=>pas(p).ships.add(h.name)));
 const PIMG=META.pimg||{},PCOL=META.pcol||{};
+const PDESC={"coruscant":"City-covered capital of the Republic and later the Empire; home of the Senate and the Jedi Temple.","chandrila":"Peaceful farming world, home of Mon Mothma and briefly capital of the New Republic.","alderaan":"Leia's home world, a peaceful planet destroyed by the first Death Star.","corellia":"Shipbuilding world where Han Solo grew up; makes the YT freighters and much of the galaxy's fleet.","tython":"Ancient world strong in the Force, where Grogu reached out from the seeing stone.","kashyyyk":"Forest world of giant wroshyr trees, home of the Wookiees and Chewbacca.","mandalore":"Home world of the Mandalorians, left a glassed ruin by the Empire's Great Purge.","naboo":"Lush world of Padmé and Palpatine; the Gungans live in its lakes and Theed is its capital.","tatooine":"Desert world of two suns in the Outer Rim, run by Hutts; where Anakin and Luke grew up.","geonosis":"Rocky desert world of insect-like droid builders, where the Clone Wars began.","ryloth":"Home of the Twi'leks, freed from Separatist occupation by Mace Windu.","hoth":"Ice world of the Rebels' Echo Base, overrun by Imperial walkers.","bespin":"Gas giant with the floating Cloud City, run by Lando; where Han was frozen in carbonite.","dagobah":"Swamp world where Yoda lived in exile and trained Luke.","mustafar":"Volcanic world where Anakin fell to Obi-Wan and later built Vader's castle.","utapau":"Sinkhole world where Obi-Wan hunted General Grievous.","endor":"Forest moon of the Ewoks, below the second Death Star.","kamino":"Ocean world of tall cloners who grew the Republic's clone army.","yavin":"Jungle moon with old temples, base of the Rebels when they destroyed the first Death Star.","felucia":"Fungus jungle world where Aayla Secura fell during Order 66.","dathomir":"Red world of the Nightsisters, birthplace of Maul and Asajj Ventress.","lothal":"Grassland world of Ezra Bridger and the Ghost crew in Rebels.","scarif":"Tropical world of the Imperial data vault, where Rogue One stole the Death Star plans.","jakku":"Desert world of starship wrecks where Rey scavenged.","exegol":"Hidden Sith world in the Unknown Regions where Palpatine returned.","ahch":"Remote ocean world of the first Jedi temple, where Luke went into exile.","starkiller":"First Order superweapon carved into a planet, destroyed by the Resistance.","dqar":"Jungle world that hid the Resistance base.","crait":"Salt world of an old Rebel base, where the Resistance made its last stand.","takodana":"Forest world of Maz Kanata's castle.","batuu":"Outer Rim trading post with Black Spire Outpost, the Galaxy's Edge park.","nevarro":"Volcanic world of the bounty hunters' guild, Greef Karga's town.","ferrix":"Salvage and shipyard world, Cassian Andor's adopted home.","jedha":"Desert moon of the holy city and its kyber crystals, hit by the Death Star.","kessel":"Spice-mining world of the Kessel Run.","moncala":"Ocean world of the Mon Calamari, who built the Rebel cruisers.","umbara":"Dark world where the 501st fought under the traitor General Krell.","teth":"Jungle world of the monastery where Anakin and Ahsoka rescued Jabba's son.","korriban":"Ancient Sith world of tombs, also called Moraband.","sorgan":"Quiet forest world where Mando and Cara Dune defended a village.","christophsis":"Crystal world where Ahsoka first joined Anakin.","mygeeto":"Frozen banking world where Ki-Adi-Mundi fell in Order 66.","serenno":"Count Dooku's home world.","pabu":"Island world of the Bad Batch's last refuge.","kijimi":"Snowy criminal city world where Zorii and Babu Frik live.","vandor":"Mountain world of the conveyex train heist in Solo.","mimban":"Mud world where Han met Chewbacca as an Imperial soldier.","abregado":"A busy spaceport world on the galaxy's trade routes.","saleucami":"Desert-swamp world where Grievous was hunted and Order 66 hit Stass Allie.","florrum":"Sulphur world of Hondo Ohnaka's pirate base.","tenoo":"High Republic world of the Jedi temple in Young Jedi Adventures.","atattin":"Hidden Old Republic mint world, home of the Skeleton Crew kids.","castilon":"Ocean world of the Colossus fuel platform in Resistance.","peridea":"Distant world in another galaxy, where Thrawn and Ezra were stranded.","elsewhere":"Sets that don't happen in one place or one story.","deathstar":"The Empire's first moon-sized battle station, destroyed at Yavin.","deathstar2":"The second, larger Death Star over Endor, destroyed as the Emperor fell.","stardestroyer":"The Empire's wedge-shaped warships, crewed by stormtroopers and officers.","executor":"Darth Vader's huge flagship.","venator":"Republic attack cruisers that carried the clones and Jedi in the Clone Wars.","malevolence":"Grievous's flagship and the Separatist droid fleet.","supremacy":"Snoke's giant flagship and the First Order fleet.","rebelfleet":"Admiral Ackbar's Home One and the Rebel Alliance fleet.","chimaera":"Grand Admiral Thrawn's Star Destroyer.","steadfast":"Palpatine's Sith Eternal fleet of planet-killing Star Destroyers from Exegol."};
 const LEADS={};UNITS.forEach(u=>{u[2].forEach(n=>(LEADS[n]=LEADS[n]||[]).push(u[0]));u[3].forEach(n=>(LEADS[n]=LEADS[n]||[]).push(u[0]))});
 const STYPE=Object.fromEntries(META.types);
 const SHIPC="#3a4a5c",UNITC="#3d7ea6";
@@ -1492,12 +1572,12 @@ function mfRender(d3,refit){
         cg.append("text").attr("x",cx*(R0+8)).attr("y",cy*(R0+8)+3).attr("text-anchor",cx>.2?"start":cx<-.2?"end":"middle").text(c)})})}
   mf.fpl=gAll.append("g").attr("class","mffp");
   const link=gAll.append("g").attr("class","mfl"+(mf.lay==="galaxy"?" gal":"")).selectAll("line").data(links).join("line").attr("stroke-width",d=>Math.min(5,1+Math.log2(d.w)));
-  const node=gAll.append("g").selectAll("g").data(nodes).join("g").attr("class",d=>"mfn t"+d.type).html(d=>shape(d)+`<title>${esc(tipOf(d))}</title>`);
+  const ZO={t:0,u:1,h:2,s:3,c:4},node=gAll.append("g").selectAll("g").data(nodes.slice().sort((a,b)=>(ZO[a.type]??3)-(ZO[b.type]??3))).join("g").attr("class",d=>"mfn t"+d.type).html(d=>`<g class="nsc">${shape(d)}</g><title>${esc(tipOf(d))}</title>`);
   const label=gAll.append("g").attr("class","mflab").selectAll("text").data(nodes).join("text").attr("fill",d=>d.col).text(d=>shortNm(d));
   mf.gcl=gAll.insert("g",".mfl").attr("class","mfclouds");
   const r=mfR;let k=mf.k;mf.shipAt=null;
-  const lod=()=>{const f=Math.min(1.5,Math.pow(k,-.55));svgEl.style.setProperty("--pk",Math.min(5,Math.max(1,1/k)).toFixed(2));label.attr("display",d=>mf.names||nodes.length<60||d.type==="t"||d.type==="u"||(d.type==="h"&&k>.8)||(d.type==="c"&&d.deg>=5&&k>.6)||k>1.25?null:"none").style("font-size",d=>(mfFS(d)*f).toFixed(1)+"px").attr("dy",d=>-(r(d)+3));
-    svg.classed("cities",k>.85);svg.classed("pics",IMG&&k>1.3);svg.classed("shipics",IMG&&k>.7);if(IMG&&k>1.3&&!mf.pics){mf.pics=true;node.filter(d=>d.type==="c"&&figOf(d.c)).append("image").attr("class","pic").attr("href",d=>`https://img.bricklink.com/ItemImage/MN/0/${figOf(d.c)}.png`).attr("x",d=>-r(d)+1).attr("y",d=>-r(d)+1).attr("width",d=>2*r(d)-2).attr("height",d=>2*r(d)-2).attr("clip-path","url(#holo-cc)").attr("preserveAspectRatio","xMidYMid slice")}};
+  const lod=()=>{const f=Math.min(1.5,Math.pow(k,-.55));svgEl.style.setProperty("--pk",Math.min(5,Math.max(1,1/k)).toFixed(2));svgEl.style.setProperty("--ns",Math.min(6,Math.max(1,Math.pow(k,-.75))).toFixed(2));label.attr("dy",null);label.attr("display",d=>mf.names||nodes.length<60||d.type==="t"||d.type==="u"||(d.type==="h"&&k>.8)||(d.type==="c"&&d.deg>=5&&k>.6)||k>1.25?null:"none").style("font-size",d=>(mfFS(d)*f).toFixed(1)+"px").attr("dy",d=>-(r(d)*Math.min(6,Math.max(1,Math.pow(k,-.75)))+3));
+    svg.classed("cities",k>.85);svg.classed("pics",IMG&&k>1.3);svg.classed("shipics",IMG&&k>.7);if(IMG&&k>1.3&&!mf.pics){mf.pics=true;node.filter(d=>d.type==="c"&&figOf(d.c)).select(".nsc").append("image").attr("class","pic").attr("href",d=>`https://img.bricklink.com/ItemImage/MN/0/${figOf(d.c)}.png`).attr("x",d=>-r(d)+1).attr("y",d=>-r(d)+1).attr("width",d=>2*r(d)-2).attr("height",d=>2*r(d)-2).attr("clip-path","url(#holo-cc)").attr("preserveAspectRatio","xMidYMid slice")}};
   let raf=0;
   Z=d3.zoom().scaleExtent([.05,8]).filter(e=>(e.type!=="wheel"||mfAct||e.ctrlKey||e.metaKey)&&(!e.ctrlKey||e.type==="wheel")&&!e.button)
     .on("zoom",e=>{gAll.attr("transform",e.transform);k=mf.k=e.transform.k;mf.t=e.transform;if(!raf)raf=requestAnimationFrame(()=>{raf=0;lod()})});
@@ -1508,13 +1588,15 @@ function mfRender(d3,refit){
   if(gal){const acc={};links.forEach(l=>{const a=l.source.id?l.source:g0.by[l.source],b=l.target.id?l.target:g0.by[l.target];[[a,b],[b,a]].forEach(([m,o])=>{if(m.type!=="c"&&o.type==="c"&&o.planet){const q=acc[m.id]||(acc[m.id]=[0,0,0]);q[0]+=px(o.planet);q[1]+=py(o.planet);q[2]++}})});
     nodes.forEach(n=>{if(n.type==="h"&&n.h.pl.length){n.tx=px(n.h.pl[0]);n.ty=py(n.h.pl[0])}else if(n.type==="c"||n.type==="u"){n.tx=px(n.planet);n.ty=py(n.planet)}else{const q=acc[n.id];if(q){n.tx=q[0]/q[2];n.ty=q[1]/q[2]}}});
     nodes.forEach(n=>{if(n.tx!=null||n.type==="h"&&n.h.pl.length)return;let x=0,y=0,c=0;links.forEach(l=>{const a=l.source.id?l.source:g0.by[l.source],b=l.target.id?l.target:g0.by[l.target];const o=a===n?b:b===n?a:null;if(o&&o.tx!=null){x+=o.tx;y+=o.ty;c++}});n.tx=c?x/c:0;n.ty=c?y/c:0});
+    {const byP={};nodes.filter(n=>n.type==="c"&&n.planet&&!(RIDE[n.name])).forEach(n=>(byP[n.planet]=byP[n.planet]||[]).push(n));
+      Object.entries(byP).forEach(([p,ns])=>{ns.sort((a,b)=>b.deg-a.deg);const R0=(mf.pr&&mf.pr[p])||40,cx=px(p),cy=py(p);ns.forEach((n,i)=>{const a=i*2.39996+.6,rr=R0+30+19*Math.sqrt(i+.5);n.tx=cx+Math.cos(a)*rr;n.ty=cy+Math.sin(a)*rr})})}
     nodes.forEach(n=>{if(!mf.pos[n.id]){n.x=n.tx+(Math.random()-.5)*40;n.y=n.ty+(Math.random()-.5)*40}})}
   sim=d3.forceSimulation(nodes)
     .force("link",d3.forceLink(links).id(d=>d.id).distance(l=>many?46:mf.mode==="army"?60:mf.mode==="story"?70:l.source.type==="h"||l.target.type==="h"?34:30).strength(gal?.015:many?.08:.45))
     .force("charge",d3.forceManyBody().strength(d=>d.type==="t"||d.type==="u"?-260:d.type==="h"?-90:d.type==="c"?-45-d.deg*5:-28).distanceMax(gal?90:600))
-    .force("x",d3.forceX(d=>gal?d.tx:0).strength(d=>gal?(d.type==="c"||d.type==="u"?.5:.25):.035))
-    .force("y",d3.forceY(d=>gal?d.ty:0).strength(d=>gal?(d.type==="c"||d.type==="u"?.5:.25):.045))
-    .force("collide",d3.forceCollide(d=>r(d)*(d.type==="h"?1.75:1)+(mf.names?10:3)).iterations(2))
+    .force("x",d3.forceX(d=>gal?d.tx:0).strength(d=>gal?(d.type==="c"?.35:d.type==="u"?.5:.25):.035))
+    .force("y",d3.forceY(d=>gal?d.ty:0).strength(d=>gal?(d.type==="c"?.35:d.type==="u"?.5:.25):.045))
+    .force("collide",d3.forceCollide(d=>r(d)*(d.type==="h"?1.75:1)+(mf.names?10:gal?7:3)).iterations(2))
     .alpha(known>nodes.length*.7?.35:1)
     .on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);node.attr("transform",d=>`translate(${d.x},${d.y})`);label.attr("x",d=>d.x).attr("y",d=>d.y)})
     .on("end",()=>{nodes.forEach(n=>mf.pos[n.id]=[n.x,n.y]);mfClouds()});
@@ -1554,7 +1636,7 @@ const sw=(col,kind)=>`<i style="${kind==="c"?`border:2px solid ${col};border-rad
 const btn=(id,label,col,kind,extra)=>`<li><button type="button" data-id="${esc(id)}">${sw(col,kind)}<span style="color:${col}">${esc(label)}</span>${extra?` <span class="lab">${esc(extra)}</span>`:""}</button></li>`;
 const cBtn=n=>{const c=CHMAP[n];const col=c?TYPEC[c.types[0]]:"#666";return btn("c:"+n,n,col,"c",c&&!c.has?"no minifig":"")};
 const sBtn=s=>btn("s:"+s.n,s.name,setCol(s),"s",`${s.y}${s.want?" · want"+(s.pri?" #"+s.pri:""):""}`);
-const sec=(t,items)=>items.length?`<span class="lab">${t}</span><ul>${items.join("")}</ul>`:"";
+const sec=(t,items,shut)=>items.length?`<details class="psec"${shut||items.length>14?"":" open"}><summary><span>${t}</span><em>${items.length}</em></summary><ul>${items.join("")}</ul></details>`:"";
 const d3sel=(q,f)=>ROOT.querySelectorAll(q).forEach(f);
 // planets tied to anything you tap: where it lives, where its sets happen, where its ship flies
 function placesOf(kind,key){const out=new Set(),add=q=>{if(q&&PLAN[q]&&q!=="elsewhere")out.add(q)};
@@ -1588,7 +1670,7 @@ function mfSelect(id){mf.sel=id;const g=mf.g;if(!g)return;let nb=id&&g.by[id]?ne
     h=`<span class="lab">Character · ${c.types.map(t=>`<b style="color:${TYPEC[t]}">${esc((TYPES.find(x=>x[0]===t)||[0,t])[1])}</b>`).join(" · ")}</span><h2 style="color:${col}">${esc(c.name)}</h2>
     <p>${c.ghost?"Not in your sets yet.":owned?`You have ${owned} of ${c.figs.length} minifig version${c.figs.length>1?"s":""}.`:"No minifig of this character yet."}</p>
     ${RIDE[c.name]?sec("Travels with",[btn("h:"+RIDE[c.name],RIDE[c.name],SHIPC,"h")]):""}%%PL%%
-    ${c.figs.length?`<span class="lab">Every minifig version · ${owned} of ${c.figs.length} owned</span><div class="alist figv">${c.figs.map(f=>`<div class="figrow"><i class="fv">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span>${ocHTML(f[2])}<b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${f[2]?"Have":"Want"}</span></span><a href="https://www.bricklink.com/v2/catalog/catalogitem.page?M=${encodeURIComponent(f[0])}" target="_blank" rel="noopener">BrickLink</a></div>`).join("")}</div>`:""}
+    ${c.figs.length?`<details class="psec" open><summary><span>Minifigs · ${owned} of ${c.figs.length} owned</span><em>${c.figs.length}</em></summary><div class="alist figv">${c.figs.map(f=>`<div class="figrow"><i class="fv${f[2]?" y":" n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span>${ocHTML(f[2])}<b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${f[2]?"Have":"Want"}</span></span><a href="https://www.bricklink.com/v2/catalog/catalogitem.page?M=${encodeURIComponent(f[0])}" target="_blank" rel="noopener">BrickLink</a></div>`).join("")}</div></details>`:""}
     ${sec("Clone units",c.units.map(u=>btn("u:"+u,UNIT[u][1],UNITC,"u",UNIT[u][2].includes(c.name)?"general":UNIT[u][3].includes(c.name)?"commander":"")))}
     ${sec("Ships",(CHSHIP[c.name]||[]).map(n=>btn("h:"+n,n,SHIPC,"h",SHIPS[n].sets.length+" set"+(SHIPS[n].sets.length>1?"s":""))))}
     ${sec("Stories",[...new Set(c.srcs)].map(s=>btn("t:"+s,SRCMAP[s]?SRCMAP[s][2]:s,ERAC[SRCMAP[s]?SRCMAP[s][1]:"alt"],"t")))}
@@ -1609,9 +1691,9 @@ function mfSelect(id){mf.sel=id;const g=mf.g;if(!g)return;let nb=id&&g.by[id]?ne
     ${sec("Jedi in command",u[2].map(cBtn))}${sec("Clone commanders",u[3].map(cBtn))}${sec("Troopers",tr.map(cBtn))}`}
   if(kind==="p"){const p=PLAN[key];if(!p)return;const a=PAS[key]||pas(key),fl=p[4]==="f",byS=(x,y)=>((CHMAP[y]||{sets:[]}).sets.length-(CHMAP[x]||{sets:[]}).sets.length);
     const ss=[...a.sets].map(n=>BYN[n]).filter(Boolean).sort((x,y)=>x.y-y.y),n=a.home.size+a.seen.size;
-    h=`<span class="lab">${fl?"Fleet or station":"Planet"} · ${n} character${n===1?"":"s"} · ${a.ships.size} ship${a.ships.size===1?"":"s"}</span><h2>${esc(p[1])}</h2>
+    h=`<span class="lab">${fl?"Fleet or station":"Planet"} · ${n} character${n===1?"":"s"} · ${a.ships.size} ship${a.ships.size===1?"":"s"}</span><h2>${esc(p[1])}</h2>${PDESC[key]?`<p class="pdesc">${esc(PDESC[key])}</p>`:""}
     ${IMG&&PIMG[key]?`<div class="img mfimg"><img src="${esc(PIMG[key])}" alt="" onerror="this.remove()"></div>`:""}
-    ${(CITIES[key]||[]).length?`<span class="lab">Places on ${esc(p[1])}</span><ul class="cities">${CITIES[key].map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+    ${(CITIES[key]||[]).length?`<details class="psec"><summary><span>Places on ${esc(p[1])}</span><em>${CITIES[key].length}</em></summary><ul class="cities">${CITIES[key].map(c=>`<li>${esc(c)}</li>`).join("")}</ul></details>`:""}
     ${sec(fl?"Serves aboard":"Lives or is stationed here",[...a.home].sort(byS).map(cBtn))}${sec("Also seen here, in your sets",[...a.seen].sort(byS).map(cBtn))}
     ${sec("Ships that come here",[...a.ships].sort().map(nm=>btn("h:"+nm,nm,SHIPC,"h",SHIPS[nm].sets.length+" set"+(SHIPS[nm].sets.length>1?"s":""))))}${sec("Sets that take place here",ss.map(sBtn))}`}
   const plB=pls.length?sec(kind==="h"?(SHIPS[key]&&SHIPS[key].ground?"Stays on":"Flies between"):kind==="c"?"Places":"Takes place on",pls.map(q=>btn("p:"+q,PLAN[q][1],"#8a7a55","p",kind==="c"&&CHMAP[key]&&CHMAP[key].planet===q?"home":""))):"";
@@ -1876,6 +1958,11 @@ function drawSignin(){drawGate();const el=$("#signin");if(!el)return;
   el.innerHTML=SCRIPT?`<form id="so-form"><input id="so-pass" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit">Go</button></form>${signMsg?`<span class="err">${esc(signMsg)}</span>`:""}`:`<span class="err">Sign-in starts once the Google Sheet is set up.</span><button type="button" id="so-x">OK</button>`;
   if($("#so-x"))$("#so-x").onclick=()=>{signOpen=false;drawSignin()};
   if($("#so-form"))$("#so-form").onsubmit=e=>{e.preventDefault();signIn($("#so-pass").value.trim())}}
+// live BrickLink prices that your sheet keeps up to date; the page's own figures stay where the sheet has none yet
+let LIVE=null;
+async function livePrices(){try{const pr=await api({action:"prices"});if(!pr||!pr.ok)return;LIVE=pr;let k=0;
+  Object.entries(pr.sets||{}).forEach(([n,o])=>{const s=BYN[sheetKey(n)];if(!s)return;if(o.new!=null){s.bln=o.new;k++}if(o.used!=null)s.blu=o.used;s.liveAt=o.at});
+  if(k){render(false);if(openN)drawDrawer()}}catch(e){}}
 async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…";if(!quiet)drawSignin();
   try{const r=await api({action:"load"});if(!r.ok){PASS="";signMsg=r.error||"That passcode didn't work.";try{sessionStorage.removeItem("holo-pass")}catch(e){}drawSignin();return}
     role=r.role;signMsg="";signOpen=false;try{sessionStorage.setItem("holo-pass",p)}catch(e){}
@@ -1885,7 +1972,9 @@ async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…
       if(Array.isArray(r.lists)){if(r.lists.length){LISTS=r.lists.filter(l=>l&&l.id&&!l.gone);lsEnsure()}else LISTS.forEach(l=>lsPersist(l))}}
     {const ks=Object.keys(r.status||{}),nS=ks.length,nM=ks.filter(k=>BYN[k]).length,nP=ks.filter(k=>BYN[k]&&numv(r.status[k].paid)!=null).length,bad=ks.find(k=>!BYN[k]);
     $("#subline").textContent=role==="admin"?(nS?`Signed in. Your sheet sent ${nS} rows; ${nM} matched sets here and ${nP} of those have a price paid.${bad?` Not matched: ${nS-nM}, for example \u201c${String(bad).slice(0,40)}\u201d.`:""}`:"Signed in, but your sheet sent no sets: its Status tab is empty or named differently."):"Your guest view of the collection. Tap any set for its details.";}
-    drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false)}
+    drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false);
+    if(role==="admin")api({action:"pricesets",sets:SETS.filter(s=>!s.gone&&(!s.want||tierOf(s)<=4)).map(s=>({n:s.n,want:s.want?(s.pri||4):0}))}).catch(()=>{});
+    livePrices()}
   catch(e){PASS="";signMsg="The sheet answered with an error ("+String(e&&e.message||e).slice(0,80)+"). Check the script is attached to the sheet.";drawSignin()}}
 // a change saves to the sheet (admin) or, on the old Claude page, to its own store
 async function save(s,patch,quiet){
@@ -2032,7 +2121,7 @@ function appearsIn(s){const out=[];const add=(id,z,also)=>{const src=SRCMAP[id];
 function figPlanet(f){const c=CHMAP[f[1]];return c&&c.planet&&PLAN[c.planet]?PLAN[c.planet][1]:""}
 function figsHTML(s,edit){if(!s.figs.length)return`<p class="saved">No minifigs in this set.</p>`;
   return `<div class="alist">${s.figs.map(f=>{const have=figHave(s,f[0]),c=CHMAP[f[1]],other=SETS.filter(x=>x.n!==s.n&&x.figs.some(g=>g[0]===f[0])),pl=figPlanet(f);
-    return `<div class="figrow"><button type="button" data-fig="${esc(f[0])}" title="${esc(f[1])} (${esc(f[0])})">${ocHTML(have)}<span><b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])}${pl?" · "+esc(pl):""}${other.length?" · in "+other.length+" other set"+(other.length>1?"s":""):""}</span></span><em>${fmt2(st(s).now==="Used"?f[3]:f[2])}</em></button>${edit?`<label class="ck mini"><input type="checkbox" data-fx="${esc(f[0])}"${have?" checked":""}>Have it</label>`:""}</div>`}).join("")}</div>`}
+    return `<div class="figrow"><button type="button" data-fig="${esc(f[0])}" title="${esc(f[1])} (${esc(f[0])})"><i class="fv ${have?"y":"n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${encodeURIComponent(f[0])}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span><b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${have?"have":"missing"}${other.length?" · in "+other.length+" other set"+(other.length>1?"s":""):""}</span></span><em>${fmt2(st(s).now==="Used"?f[3]:f[2])}</em></button>${edit?`<label class="ck mini"><input type="checkbox" data-fx="${esc(f[0])}"${have?" checked":""}>Have it</label>`:""}</div>`}).join("")}</div>`}
 function drawDrawer(){
   const d=$("#drawer");
   if(!openN&&dlist){d.innerHTML=`<div class="dhead"><div><span class="lab">${esc(dlist.kind)}</span><h2>${esc(dlist.title)}</h2></div></div>${dlist.html}`;d.scrollTop=0;wireList(d);return}
@@ -2058,8 +2147,7 @@ function drawDrawer(){
   ${ROUGH[s.n]?`<p class="rough">${esc(ROUGH[s.n])}</p>`:""}<p class="saved" style="margin:0">${PO[s.n]?`Set alone, box and instructions from BrickLink's part-out value, 6-month average sold (${PO[s.n].c.toLowerCase()}, ${PO[s.n].d}). Minifigs from your Brickset export.`:`Minifig values from your Brickset export.${unk.length?" The "+unk.join(", ")+" aren't priced yet.":""}`}</p></div>`;
   const life=`<dt>Released</dt><dd>${s.ld?niceDate(s.ld):s.ly||s.y}${s.rp!=null?` · <span class="lab">launch price</span> ${fmt2(s.rp)}`:""}</dd><dt>Retired</dt><dd>${s.ed?(dt(s.ed)>new Date()?"Still on sale (due to leave "+niceDate(s.ed)+")":niceDate(s.ed)):s.ey?s.ey:"Not known"}</dd>`;
   const facts=`<dl class="facts"><dt>Status</dt><dd>${esc(stat)}</dd>${P&&!s.want&&!s.gone?`<dt>Paid</dt><dd><b>${s.paid!=null?fmt2(s.paid):"Not noted"}</b>${s.paid!=null?` <span class="lab">${fmt2(s.price)} + ${fmt2(tx)} tax and shipping</span>`:""}</dd><dt>Bought</dt><dd>${t.bought?niceDate(t.bought):"Date not noted"}${t.store&&t.store!=="Not noted"?" · "+esc(t.store):""}</dd>`:""}<dt>Worth now</dt><dd><b class="${r!=null&&s.paid!=null&&!s.want&&P?(r>=s.paid?"pos":"neg"):""}">${fmt2(r)}</b> <span class="lab">${t.now==="Used"?"used":"NIB"} · BrickLink average sold</span></dd>${life}
-    <dt>Type</dt><dd>${esc(STYPE[s.ty]||"Set")} · ${s.pcs} pieces</dd><dt>Stickers</dt><dd>${HASL.has(s.n)?(STK.has(s.n)?"Yes, has stickers":"None, all printed"):"Not known yet"}</dd>
-    <dt>Box era</dt><dd>${esc((BOXERAS.find(b=>b[2]===boxEra(s))||[0,0,0,""])[3])}</dd>${s.want||s.gone?"":`<dt>Box</dt><dd>${({have:"Have it",no:"Don't have it",none:"Not marked"})[has3(t.cbox)]}</dd><dt>Instructions</dt><dd>${({have:"Have them",no:"Don't have them",none:"Not marked"})[has3(t.cinst)]}</dd><dt>Condition</dt><dd>${esc(NOWL[t.now]||t.now||"Not marked")}</dd>`}
+    <dt>Set</dt><dd>${esc(STYPE[s.ty]||"Set")} · ${s.pcs} pieces${HASL.has(s.n)?(STK.has(s.n)?" · stickers":" · all printed"):""}</dd>${s.want||s.gone||P||ED?"":`<dt>Box</dt><dd>${({have:"Have it",no:"Don't have it",none:"Not marked"})[has3(t.cbox)]}</dd><dt>Instructions</dt><dd>${({have:"Have them",no:"Don't have them",none:"Not marked"})[has3(t.cinst)]}</dd><dt>Condition</dt><dd>${esc(NOWL[t.now]||t.now||"Not marked")}</dd>`}
     </dl>`;
   // admin: what's in the collection, and its parts
   const ownSel=ED?`<div class="edit"><span class="lab">Change it · saves as you go</span><div class="row"><label class="lab" for="e-own">In your collection</label><select id="e-own"><option value="1">Owned</option>${[1,2,3,4].map(i=>`<option value="w${i}">Want · priority ${i}</option>`).join("")}<option value="0">Not in my collection</option></select></div><span class="saved" id="savemsg"></span></div>`:"";
@@ -2173,9 +2261,11 @@ function groupSets(){const out=[],has=n=>!!CHMAP[n];
 function mfClouds(){if(!mf.g||!mf.gcl||!zb)return;const L=mf.gcl,d3=zb.d3;L.selectAll("*").remove();if(!mf.groups.size)return;
   groupSets().forEach(([label,names,col])=>{const ns=names.map(n=>mf.g.by["c:"+n]).filter(n=>n&&n.x!=null);if(!ns.length)return;const pts=[];
     ns.forEach(n=>{const r=mfR(n)+16;for(let a=0;a<8;a++)pts.push([n.x+Math.cos(a*Math.PI/4)*r,n.y+Math.sin(a*Math.PI/4)*r])});
-    const hull=d3.polygonHull(pts);if(!hull)return;const cx=d3.mean(hull,p=>p[0]),top=d3.min(hull,p=>p[1]);
-    L.append("path").attr("class","gcloud").attr("style","--gc:"+col).attr("d",d3.line().curve(d3.curveCatmullRomClosed.alpha(.6))(hull));
-    L.append("text").attr("class","gcloud-t").attr("style","--gc:"+col).attr("x",cx).attr("y",top-6).text(label)})}
+    const cx=d3.mean(ns,n=>n.x),cy=d3.mean(ns,n=>n.y),gl=L.append("g").attr("class","gweb").attr("style","--gc:"+col);
+    if(ns.length>1)ns.forEach((n,i)=>{const m=ns[(i+1)%ns.length];gl.append("line").attr("class","gring").attr("x1",n.x).attr("y1",n.y).attr("x2",m.x).attr("y2",m.y)});
+    ns.forEach(n=>gl.append("line").attr("class","gspoke").attr("x1",cx).attr("y1",cy).attr("x2",n.x).attr("y2",n.y));
+    gl.append("circle").attr("class","ghub").attr("cx",cx).attr("cy",cy).attr("r",6);
+    gl.append("text").attr("class","gcloud-t").attr("x",cx).attr("y",cy-12).text(label)})}
 function mfControls(){
   const tg=$("#mf-have");const drawHave=()=>{tg.innerHTML=[["own","Owned"],["want","Wanted, priority 1 to 3"],["allw","Add priority 4 wants"],["lack","Only characters I don't have yet"]].map(([k,l])=>`<button type="button" class="chip${mf[k]?" on":""}" data-k="${k}" aria-pressed="${mf[k]}">${l}</button>`).join("");
     tg.querySelectorAll("button").forEach(b=>b.onclick=()=>{mf[b.dataset.k]=!mf[b.dataset.k];drawHave();mfDraw(false)})};drawHave();
@@ -2202,6 +2292,9 @@ function mfControls(){
   $("#mf-in").onclick=()=>zby(1.4);$("#mf-out").onclick=()=>zby(.7);$("#mf-fit").onclick=mfFit}
 
 $("#note").textContent=IMG?"Photos from Brickset and BrickLink. Worth now is the BrickLink average sold price, new or used to match each set. This page shows the owner's record and can't be edited here.":"Set photos are placeholders on this page; the Cargo page shows them. Worth now is the BrickLink average sold price, new or used to match each set. Your record saves for everyone who opens this page, and only you can change it.";
+// the tool has its own zooms, so pinch and ctrl+scroll never zoom the whole page
+document.addEventListener("wheel",e=>{if(e.ctrlKey||e.metaKey)e.preventDefault()},{passive:false});
+["gesturestart","gesturechange"].forEach(k=>document.addEventListener(k,e=>e.preventDefault(),{passive:false}));
 const STEPSHUT=new Set();
 document.addEventListener("click",e=>{const h=e.target.closest(".steps>.step>.sth");if(!h||e.target.closest("button,input,select"))return;const st=h.parentElement,k=h.textContent.trim();st.classList.toggle("shut");st.classList.contains("shut")?STEPSHUT.add(k):STEPSHUT.delete(k);h.setAttribute("aria-expanded",!st.classList.contains("shut"))});
 buildThemes();drawSignin();buildControls();mfControls();tlWire();wheelSide($("#soscroll"));pxAwait();["tl","so","mf","pc","pt","ls"].forEach(x=>$("#tab-"+x).addEventListener("click",()=>showTab(x)));drawDrawer();render(true);
