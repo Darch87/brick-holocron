@@ -824,8 +824,8 @@ details.fold details.fold{background:var(--sub2)}
 .pcgrid.r6 .stat b{font:700 var(--t-head)/1.1 var(--display)}
 .pcgrid.r6 .stat small{font:400 12px/1.3 var(--body);color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ctabs{gap:6px;border-bottom:0;padding-bottom:4px}
-.ct{font:600 var(--t-sm)/1 var(--body);letter-spacing:0;text-transform:none;padding:8px 11px;border-radius:var(--r);border:1px solid var(--line);background:var(--slot);color:var(--muted)}
-.ct.on{background:var(--chipon);color:var(--ink);border-color:var(--saber);box-shadow:var(--glow)}
+button.ct{font:600 var(--t-sm)/1 var(--body);letter-spacing:0;text-transform:none;padding:8px 11px;border-radius:var(--r);border:1px solid var(--line);background:var(--slot);color:var(--muted)}
+button.ct.on{background:var(--chipon);color:var(--ink);border-color:var(--saber);box-shadow:var(--glow)}
 #clab{min-height:2.8em;font:400 var(--t-sm)/1.4 var(--body);text-transform:none;letter-spacing:0;color:var(--muted)}
 .chartbox text{fill:var(--muted)}
 
@@ -904,8 +904,8 @@ details.fold details.fold{background:var(--sub2)}
 /* icons grow as you zoom out, so sets and minifigs stay readable at the macro view */
 .mfn>.nsc{transform:scale(var(--ns,1));transition:transform .15s}
 /* the shared relation web: visible lines in both sides' colours */
-.mfl line{stroke:var(--muted)!important;stroke-opacity:.38!important;vector-effect:non-scaling-stroke}
-.mfl.gal line{stroke-opacity:.3!important}
+.mfl line{stroke:var(--muted)!important;stroke-opacity:.2!important;vector-effect:non-scaling-stroke}
+.mfl.gal line{stroke-opacity:.14!important}
 .mfl line.on{stroke:var(--saber)!important;stroke-opacity:.95!important;stroke-width:2.5px}
 /* groups: a dashed ring and spokes to a hub, unlike the solid relation lines */
 .gweb line{stroke:var(--gc);vector-effect:non-scaling-stroke;fill:none}
@@ -960,6 +960,18 @@ i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;ob
 .lsi>span:not(.stp){align-items:center;font-size:var(--t-sm)}
 .lsi>span:not(.stp) b{font-family:var(--mono)}
 .lsi .stp{display:flex;align-items:center;gap:6px}
+/* r7 check: story header fits its 36px strip; set tile number hidden behind photo */
+.srchead{padding:1px 8px}
+.srchead b{font-size:14px;line-height:18px}
+.srchead small{display:block;line-height:14px;overflow:hidden;text-overflow:ellipsis}
+.pcard img{background:#fff;z-index:1}
+/* r7 check: every chart tab's stats sit on one row, whatever their count */
+.pcgrid.r6 .stats{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
+.pcgrid.r6 .stat{padding:8px 9px;min-width:0}
+.pcgrid.r6 .stat b{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcgrid.r6 .stat button{all:unset;cursor:pointer;display:block;min-width:0}
+.pcgrid.r6 .stat button b{font-size:14px;line-height:1.2;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pcgrid.r6 .stat button small{-webkit-line-clamp:1}
 
 </style>
 
@@ -2214,12 +2226,12 @@ function drawDrawer(){
     d.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>save(s,{miss:miss.filter((_,i)=>i!==+b.dataset.del)}))}
 }
 // ---------- price charts: worth over time (A3/A4) — launch price on the day it came out, to today's value, with a mark where it retired
-function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set from its launch price on release day to what it's worth today. The diamond marks when LEGO retired it. Hover a line for the set.";
+function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set from its launch price on release day to what it's worth today (price scale grows by steps, so cheap and costly sets both show). The diamond marks when LEGO retired it. Tap a line to pick out that set.";
   const W=640,H=300,L=48,R=14,T=12,B=28,now=new Date(),rows=v.filter(s=>s.rp!=null&&resale(s)!=null);
   if(!rows.length){svg.innerHTML=`<text x="320" y="150" text-anchor="middle" class="lab">No sets here have a launch date and price yet.</text>`;$("#legend").innerHTML="";return}
   const t0=Math.min(...rows.map(s=>relT(s))),t1=now.getTime(),vmax=Math.max(...rows.map(s=>Math.max(s.rp,resale(s))));
-  const X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>H-B-Math.sqrt(v/vmax)*(H-B-T);let g="";
-  [0,25,50,100,200,400,800,1600].filter(x=>x<=vmax*1.05).forEach(x=>{g+=`<line x1="${L}" x2="${W-R}" y1="${Y(x)}" y2="${Y(x)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(x)+4}" text-anchor="end" fill="var(--muted)">$${x}</text>`});
+  const lo=Math.log10(5),hi=Math.log10(vmax*1.15),X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>H-B-(Math.log10(Math.max(5,v))-lo)/(hi-lo)*(H-B-T);let g="";
+  [10,25,50,100,250,500,1000,2500,5000,10000,25000].filter(x=>x<=vmax*1.15).forEach(x=>{g+=`<line x1="${L}" x2="${W-R}" y1="${Y(x)}" y2="${Y(x)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(x)+4}" text-anchor="end" fill="var(--muted)">$${x}</text>`});
   for(let y=new Date(t0).getFullYear()+1;y<=now.getFullYear();y++){const x=X(new Date(y,0,1).getTime());if((y-1999)%Math.max(1,Math.ceil((now.getFullYear()-new Date(t0).getFullYear())/10))===0)g+=`<text x="${x}" y="${H-8}" text-anchor="middle" fill="var(--muted)">${y}</text><line x1="${x}" x2="${x}" y1="${T}" y2="${H-B}" stroke="var(--line)" stroke-dasharray="2 4"/>`}
   rows.forEach(s=>{const a=relT(s),r=resale(s),up=r>=s.rp,c=up?"var(--gain)":"var(--loss)",e=s.ed?dt(s.ed):null;
     g+=`<g data-n="${esc(s.n)}" class="tl-l"><line x1="${X(a)}" y1="${Y(s.rp)}" x2="${X(t1)}" y2="${Y(r)}" stroke="${c}" stroke-width="${s.want?1:1.6}" stroke-opacity=".55"${s.want?' stroke-dasharray="3 3"':""}/><circle cx="${X(a)}" cy="${Y(s.rp)}" r="2.5" fill="var(--muted)"/><circle cx="${X(t1)}" cy="${Y(r)}" r="3.5" fill="${c}"/>`;
