@@ -1,45 +1,44 @@
-/* Brick Holocron shared theme (round 7): Light side and Dark side.
+/* Brick Holocron shared theme (round 8): always dark, cockpit panels, saber-colour skins.
    Used by the main page (inlined at build) and the phone page (link theme.css from the repo root).
-   Set the side with <html data-side="light"> or <html data-side="dark">. Light is the default.
-   Layers: --bg (console base) > --panel (panel) > --slot (sub-frame) > --sub2 (inner sub-frame).
-   One glow colour per side: blue saber for light, red saber for dark. */
+   Pick the skin with <html data-saber="blue|green|red|purple|yellow|white|darksaber">. Blue is the default.
+   Layers: --bg (console base) > --panel (panel grey) > --slot (lighter grey sub-frame) > --sub2 (inner sub-frame).
+   Panels carry thin white line borders; keys light up blue or white like cockpit buttons. */
 :root{
-  --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
-  --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
-  --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
-  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
-  --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
+  --bg:#08090b;--panel:#1a1e24;--slot:#242a31;--sub2:#2e353e;--well:#e9edf1;
+  --ink:#f3f6f9;--muted:#c3ccd6;--line:rgba(236,242,248,.62);--line2:rgba(236,242,248,.24);--hi:rgba(255,255,255,.07);
+  --saber:#2a9bff;--core:#eef8ff;--accent:#6cb8ff;--glow:0 0 0 1px var(--saber),0 0 12px color-mix(in srgb,var(--saber) 70%,transparent),0 0 26px color-mix(in srgb,var(--saber) 35%,transparent);
+  --chipon:color-mix(in srgb,var(--saber) 24%,#161a20);
+  --keyblue:#1f6fd1;--keyblue2:#4aa3ff;--keywhite:#eef2f6;
+  --ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
+  --red:#ff3426;--yellow:#f2c230;--crt:#0c2a14;--crtline:#5cff8a;
   --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
   /* type scale: label, small, body, title, heading, figure */
   --t-lab:11.5px;--t-sm:13px;--t-md:14.5px;--t-title:17px;--t-head:22px;--t-fig:28px;
-  --r:4px;color-scheme:light;
+  --r:4px;color-scheme:dark;
 }
-:root[data-side="dark"]{
-  --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
-  --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
-  --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
-  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
-  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
-  color-scheme:dark;
-}
+:root[data-saber="green"]{--saber:#22e04a;--core:#effff1;--accent:#4be36a}
+:root[data-saber="red"]{--saber:#ff2424;--core:#fff0f0;--accent:#ff5c5c}
+:root[data-saber="purple"]{--saber:#b44dff;--core:#f8efff;--accent:#c98bff}
+:root[data-saber="yellow"]{--saber:#ffd21a;--core:#fffbe6;--accent:#ffd84a}
+:root[data-saber="white"]{--saber:#d8eeff;--core:#ffffff;--accent:#e8f4ff}
+:root[data-saber="darksaber"]{--saber:#f2f2f2;--core:#050505;--accent:#f2f2f2}
 body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body);margin:0}
 
-/* console panel: frame line, light top bevel, small corner brackets in the saber colour */
+/* console panel: grey plate, white line border, a bevel and small corner brackets in the saber colour */
 .hc-panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.08);
+  box-shadow:inset 0 1px 0 var(--hi),0 2px 0 rgba(0,0,0,.5);
   background-image:
     linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),
     linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber));
   background-size:14px 2px,2px 14px,14px 2px,2px 14px;
   background-position:left -1px top -1px,left -1px top -1px,right -1px bottom -1px,right -1px bottom -1px;
   background-repeat:no-repeat}
-/* sub-frames step one shade off the panel, and again inside */
 .hc-frame{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
 .hc-frame .hc-frame{background:var(--sub2)}
-/* readout strip at the top of a panel or frame */
 .hc-strip{display:flex;align-items:center;gap:8px;font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
   border-bottom:1px solid var(--line2);padding:0 0 6px;margin:0 0 8px}
-.hc-strip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--saber);box-shadow:0 0 6px var(--saber);flex:none}
+.hc-strip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--saber);box-shadow:0 0 8px var(--saber);flex:none}
 
 /* type scale */
 .hc-lab{font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -48,18 +47,20 @@ body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body)
 .hc-fig{font:700 var(--t-fig)/1.05 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
 .hc-text{font:400 var(--t-md)/1.45 var(--body);color:var(--ink)}
 .hc-small{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted)}
+.hc-digits{font:700 var(--t-title)/1 var(--mono);letter-spacing:.14em;color:var(--red);text-shadow:0 0 6px rgba(255,52,38,.8),0 0 14px rgba(255,52,38,.45)}
 
-/* keys: every button looks like a console key; the active one glows like a saber */
-.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:var(--slot);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;cursor:pointer;
-  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.15)}
-.hc-key:hover{border-color:var(--saber)}
-.hc-key.on,.hc-key[aria-pressed="true"]{background:var(--chipon);border-color:var(--saber);color:var(--ink);box-shadow:var(--glow)}
+/* keys: dark keys that light up like cockpit buttons; the active one is a lit blue key, a pressed white key on hover */
+.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:linear-gradient(#2c333c,#20252c);border:1px solid var(--line2);border-radius:var(--r);padding:7px 11px;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.6)}
+.hc-key:hover{border-color:var(--line)}
+.hc-key.on,.hc-key[aria-pressed="true"]{background:linear-gradient(var(--keyblue2),var(--keyblue));border-color:#bfe0ff;color:#fff;box-shadow:0 0 0 1px rgba(74,163,255,.6),0 0 14px rgba(74,163,255,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.hc-key.white{background:linear-gradient(#fff,var(--keywhite));color:#0b0f14;border-color:#fff}
 .hc-key:disabled{opacity:.45;cursor:default}
 
-/* the side switch: two keys, the active side's saber lit */
-.hc-side{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--slot)}
-.hc-side button{font:700 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;border:0;background:none;color:var(--muted);padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
-.hc-side button i{width:22px;height:4px;border-radius:2px;background:var(--line);flex:none}
-.hc-side button[data-side="light"].on i{background:#e9f5ff;box-shadow:0 0 0 1px #2a9bff,0 0 8px 2px #2a9bff}
-.hc-side button[data-side="dark"].on i{background:#ffe9e9;box-shadow:0 0 0 1px #ff2a2a,0 0 8px 2px #ff2a2a}
-.hc-side button.on{color:var(--ink);background:var(--panel)}
+/* saber picker: a row of round indicator lights, the chosen one lit bright */
+.hc-lights{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;background:#0c0e11;border:1px solid var(--line2);border-radius:20px}
+.hc-lights button{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:var(--c);opacity:.32;cursor:pointer;padding:0;box-shadow:inset 0 -3px 4px rgba(0,0,0,.45)}
+.hc-lights button:hover{opacity:.6}
+.hc-lights button.on{opacity:1;box-shadow:0 0 0 2px #fff,0 0 10px 3px var(--c),0 0 22px 6px color-mix(in srgb,var(--c) 55%,transparent)}
+.hc-lights button[data-saber="darksaber"]{background:radial-gradient(circle,#000 45%,#f2f2f2 50%)}
+.hc-side{display:none!important}
