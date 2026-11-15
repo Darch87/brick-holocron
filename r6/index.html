@@ -1430,6 +1430,7 @@ function lsEnsure(){if(!LISTS.length)LISTS.push(newList("My list","buy"));if(!LI
 lsEnsure();
 const curL=()=>LISTS.find(l=>l.id===curList);
 function lsPersist(l,del){try{localStorage.setItem("holo-lists",JSON.stringify(LISTS))}catch(e){}
+  if(role==="admin"&&SCRIPT){clearTimeout(lsPersist.t);lsPersist.t=setTimeout(()=>api({action:"lists",lists:LISTS}).then(r=>{if(!r.ok)throw 0}).catch(()=>{lsMsg="A list change didn't save. Try again in a moment.";render(false)}),800);return}
   if(canWrite&&db&&lsFromDb&&l){try{const r=db.doc("lists/"+l.id);const p=del?(r.delete?r.delete():r.set({id:l.id,gone:1})):r.set({...l});if(p&&p.catch)p.catch(()=>{lsMsg="A list change didn't save. Reload the page and try again.";render(false)})}catch(e){}}}
 function lsSync(){if(!(canWrite&&db))return;try{db.collection("lists").onSnapshot(snap=>{const a=snap.docs.map(d=>d.data()).filter(o=>o&&o.id&&!o.gone&&Array.isArray(o.items));
   if(!lsFromDb){lsFromDb=true;if(!a.length){LISTS.forEach(l=>lsPersist(l));return}}
