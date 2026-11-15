@@ -149,6 +149,7 @@ h3{font:var(--f-label);letter-spacing:var(--label-track);text-transform:uppercas
 .scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #list{padding:6px}
 .row{display:flex;gap:10px;align-items:center;width:100%;border:1px solid var(--line2);border-radius:var(--r-sm);background:var(--sub);padding:6px;margin-bottom:6px;text-align:left}
+a.row{color:var(--ink);text-decoration:none}
 .row .th{width:56px;height:56px;flex:none;border-radius:var(--r-sm);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .row .th img{max-width:100%;max-height:100%;object-fit:contain}
 .row .tx{flex:1;min-width:0}
@@ -304,7 +305,7 @@ details.grp>:not(summary){margin:10px 12px 12px}
     </div>
     <div class="r2">
       <div class="search"><input id="q" type="search" placeholder="Search name or number" autocomplete="off" enterkeyhint="search"><button class="x" id="qx" aria-label="Clear search" hidden>×</button></div>
-      <button class="ibtn" id="b-scan" aria-label="Scan a box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 9v6M10 9v6M13 9v6M16 9v6"/></svg>Scan</button>
+      <button class="ibtn" id="b-scan" aria-label="Look up a set or minifig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 9v6M10 9v6M13 9v6M16 9v6"/></svg>Scan</button>
     </div>
     <div class="r3">
       <div class="seg" id="scope"><button data-v="own" class="on">Owned</button><button data-v="want">Wanted</button><button data-v="all">All</button></div>
@@ -615,14 +616,33 @@ function found(code){const c=String(code).replace(/\D/g,"").replace(/^0+/,"");co
   if(n){goPage("sets");S.scope.sets="all";setQ(num(BYN[n]));setPage("sets");openItem("s:"+n);toast("Found "+BYN[n].name)}
   else drawScan(`<div class="note" style="font-size:15px;color:var(--ink)">Barcode ${esc(code)} isn't on a set in your owned or wanted lists.</div>${linksHTML([["eBay","https://www.ebay.com/sch/i.html?_nkw="+encodeURIComponent(code),"search this barcode"],["Brickset","https://brickset.com/search?query="+encodeURIComponent(code),"search this barcode"]])}`)}
 async function stopScan(){if(scanner){try{await scanner.stop()}catch(e){}try{scanner.clear()}catch(e){}scanner=null}}
+// photo lookup: shrink the photo on the phone, send it to Brickognize, list the matches against DW's lists
+function shrink(file,max){return new Promise(ok=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>ok(b||file),"image/jpeg",.85)};im.onerror=()=>{URL.revokeObjectURL(u);ok(file)};im.src=u})}
+function bgMatch(it,kind){const id=String(it.id||"");if(kind==="sets"){const n=BYN[id]?id:BYN[id+"-1"]?id+"-1":null;return n?{o:"s:"+n,own:BYN[n].own,lab:num(BYN[n])}:null}return FIGS[id]?{o:"f:"+id,own:!!FIGS[id].qo,lab:id}:null}
+async function photoLookup(inp,kind,out){const f=inp.files&&inp.files[0];inp.value="";if(!f)return;
+  out.innerHTML=`<p class="note">Identifying the ${kind==="sets"?"set":"minifig"}…</p>`;
+  try{const fd=new FormData();fd.append("query_image",await shrink(f,1024),"photo.jpg");
+    const r=await fetch("https://api.brickognize.com/predict/"+kind+"/?top_k_items=6",{method:"POST",body:fd});if(!r.ok)throw new Error("http "+r.status);
+    const j=await r.json(),its=(j.items||[]).filter(x=>x&&x.id);
+    if(!its.length){out.innerHTML=`<p class="note">No match in that photo. Fill the frame with the ${kind==="sets"?"set":"minifig"} on a plain background and try again.</p>`;return}
+    const hit=its.map(x=>[x,bgMatch(x,kind)]);
+    out.innerHTML=`<p class="note">Best matches first. Tap one of yours to open it.</p><div class="alist">${hit.map(([x,m])=>{const pct=Math.round((x.score||0)*100)+"% match",ext=kind==="sets"?"https://brickset.com/sets/"+encodeURIComponent(String(x.id).includes("-")?x.id:x.id+"-1"):"https://www.bricklink.com/v2/catalog/catalogitem.page?M="+encodeURIComponent(x.id);
+      return m?`<button class="row" data-o="${esc(m.o)}"><span class="th">${img(x.img_url)}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(m.lab)} · ${pct}</small></span><span class="pr"><span class="pill ${m.own?"own":"want"}">${m.own?"Own":"Want"}</span></span></button>`
+       :`<a class="row" href="${esc(ext)}" target="_blank" rel="noopener"><span class="th">${img(x.img_url)}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(x.id)} · ${pct} · not in your lists</small></span></a>`}).join("")}</div>`;
+    out.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{const o=b.dataset.o;stopScan();hidePanel("scan");if(o[0]==="s"){goPage("sets");S.scope.sets="all";setPage("sets")}else setPage("figs");openItem(o)})}
+  catch(e){out.innerHTML=`<p class="note">Brickognize didn't answer. Check your connection and try again, or scan the barcode instead.</p>`}}
 function drawScan(msg){const el=$("#scan");el.hidden=false;
-  el.innerHTML=`<div class="phead"><h2>Look up a box</h2><button class="btn" id="sc-close">Done</button></div><div class="scroll"><div class="pbody">
-  ${msg||""}<h3>Scan the barcode</h3><p class="note">Point the camera at the barcode on the box (the UPC or EAN on the side or back). ${Object.keys(CODES).length} of your sets have a barcode on file.</p>
+  el.innerHTML=`<div class="phead"><h2>Look up a set or minifig</h2><button class="btn" id="sc-close">Done</button></div><div class="scroll"><div class="pbody">
+  ${msg||""}<h3>Identify it from a photo</h3><p class="note">Works on a built set, a loose minifig or a box front. The photo goes to Brickognize, a free LEGO recognition service, and nothing else is sent.</p>
+  <div class="btnrow"><label class="btn pri" for="ph-set">Photo of a set</label><input id="ph-set" type="file" accept="image/*" capture="environment" hidden><label class="btn pri" for="ph-fig">Photo of a minifig</label><input id="ph-fig" type="file" accept="image/*" capture="environment" hidden></div>
+  <div id="ph-out"></div>
+  <h3>Scan the barcode</h3><p class="note">Point the camera at the barcode on the box (the UPC or EAN on the side or back). ${Object.keys(CODES).length} of your sets have a barcode on file.</p>
   <div class="btnrow"><button class="btn pri" id="sc-live">Use the camera</button><label class="btn" for="sc-file">Take a photo of it</label><input id="sc-file" type="file" accept="image/*" capture="environment" hidden></div>
   <div id="reader" style="margin-top:10px"></div><p class="note" id="sc-msg"></p>
   <h3>Or type the set number</h3><p class="note">It's printed on the front of every box, near the age mark.</p>
   <div class="deal"><input id="sc-num" inputmode="numeric" placeholder="75192" style="width:160px"><button class="btn pri" id="sc-go">Find</button></div></div></div>`;
   el.querySelector("#sc-close").onclick=()=>hidePanel("scan");
+  el.querySelector("#ph-set").onchange=ev=>photoLookup(ev.target,"sets",el.querySelector("#ph-out"));el.querySelector("#ph-fig").onchange=ev=>photoLookup(ev.target,"figs",el.querySelector("#ph-out"));
   const msgEl=el.querySelector("#sc-msg");
   el.querySelector("#sc-go").onclick=()=>{const v=el.querySelector("#sc-num").value.trim();if(!v)return;hidePanel("scan");goPage("sets");S.scope.sets="all";setQ(v.replace(/\s/g,""));setPage("sets");const m=cur.filter(s=>num(s)===v||s.n===v);if(m.length===1)openItem("s:"+m[0].n)};
   el.querySelector("#sc-num").onkeydown=e=>{if(e.key==="Enter")el.querySelector("#sc-go").click()};
