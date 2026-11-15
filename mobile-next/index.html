@@ -326,7 +326,7 @@ details.grp>:not(summary){margin:10px 12px 12px}
 .brand{font-family:var(--display);color:var(--ink);text-shadow:none}
 
 /* shopping build (Nov 15): two prices per row, big deal check, sources table, photos, FIND ME */
-.row .pr{max-width:38%}.pr2{display:block;font-family:var(--mono);line-height:1.25}.pr2 small{font-family:var(--f-body);font-weight:400;color:var(--ink2);font-size:12px;margin-left:3px}
+.row .pr{max-width:38%}.pr2{display:block;font-family:var(--mono);line-height:1.25}.pr2 small{display:inline;font-family:var(--f-body);font-weight:400;color:var(--ink2);font-size:12px;margin-left:3px}
 .pr2.u{font-size:14px;color:var(--ink2)}
 .pill.rk{background:var(--chipon);border-color:var(--saber);color:var(--ink)}
 .dealbig{display:flex;flex-direction:column;gap:8px}
@@ -563,7 +563,7 @@ drawShow();
 document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{S.view=b.dataset.v;store.set("view",S.view);setSeg("#view",S.view);render()});
 setSeg("#view",S.view);
 let qt;$("#q").addEventListener("input",()=>{clearTimeout(qt);$("#qx").hidden=!$("#q").value;qt=setTimeout(()=>{S.q=$("#q").value;resetScroll();render()},120)});
-$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#q").blur();if(cur.length===1)openItem((S.page==="sets"?"s:":"f:")+cur[0].n)}});
+$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#q").blur();clearTimeout(qt);if(S.q!==$("#q").value){S.q=$("#q").value;resetScroll();render()}if(cur.length===1)openItem((S.page==="sets"?"s:":"f:")+cur[0].n)}});
 $("#qx").onclick=()=>{$("#q").value="";S.q="";$("#qx").hidden=true;resetScroll();render()};
 function setQ(v){$("#q").value=v;S.q=v;$("#qx").hidden=!v;resetScroll()}
 // ---------- browse (filters + sort)
@@ -706,7 +706,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
   if(t==="sold"){const extra=`<dl class="kv"><dt>LEGO retail</dt><dd>${money(s.rp)}</dd>${s.rp&&nv!=null?`<dt>NIB vs retail</dt><dd class="${nv>=s.rp?"bad":"ok"}">${nv>=s.rp?"+":""}${Math.round((nv/s.rp-1)*100)}%</dd>`:""}${role==="admin"&&r.paid!=null?`<dt>You paid</dt><dd>${money(+r.paid)}</dd>`:""}</dl>`;
     b+=soldHTML(nv,uv,setRows(s),extra);const[eb,ot]=setLinks(s,true);b+=`<h3>Sold listings, newest first</h3>${linksHTML(eb,"cond")}<h3>Other price data</h3>${linksHTML(ot)}<p class="note">Each opens in a new tab. eBay has no filter for "complete", so those use keywords.</p>`}
   if(t==="sale"){const[eb,ot]=setLinks(s,false);b+=dealHTML()+`<h3>For sale now, lowest price first</h3>${linksHTML(eb,"cond")}<h3>Stores</h3>${linksHTML(ot)}<p class="note">eBay links sort by price plus shipping, lowest first. Live For Sale prices can show here once eBay is connected.</p>`}
-  if(t==="pho"){b+=`<div class="photos"><figure>${img("https://images.brickset.com/sets/large/"+s.n+".jpg",s.name)}<figcaption>The set</figcaption></figure><figure>${img("https://img.bricklink.com/ItemImage/BN/0/"+enc(s.n)+".png",s.name+" box")}<figcaption>The box</figcaption></figure></div>`;
+  if(t==="pho"){b+=`<div class="photos"><figure>${img("https://images.brickset.com/sets/large/"+s.n+".jpg",s.name)}<figcaption>The set</figcaption></figure><figure>${img("https://img.bricklink.com/ItemImage/ON/0/"+enc(s.n)+".png",s.name+" box")}<figcaption>The box</figcaption></figure></div>`;
     if((s.figs||[]).length)b+=`<h3>Minifigs · ${s.figs.length}</h3><div class="figs big">${s.figs.map(f=>`<button class="fig${FIGS[f[0]]&&FIGS[f[0]].qo?" own":""}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]),f[1])}<b>${esc(f[1])}</b><span class="dg">${esc(f[0])}</span></button>`).join("")}</div>`;
     b+=`<h3>Sticker sheet</h3><div id="stkbox">${stickerHTML(s)}</div><h3>Instructions</h3>${linksHTML([["LEGO instructions","https://www.lego.com/en-us/service/building-instructions/"+enc(num(s)),"PDFs from LEGO"],["Brickset","https://brickset.com/sets/"+enc(s.n),"photos and details"]])}`}
   if(t==="parts")b+=partsHTML(s);
