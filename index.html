@@ -840,7 +840,15 @@ const status=JSON.parse(JSON.stringify(BASE)); // n -> saved fields
 let db=null,canWrite=false,hl=null,openN=null,VIS=new Set();
 const NOWL={New:"NIB",Used:"USED"};
 // owner edits to price paid and price before tax override the spreadsheet
-function applyEdits(){SETS.forEach(s=>{const o=status[s.n]||{};if(!("_p" in s)){s._p=s.paid;s._pr=s.price;s._w=!!s.want;s._pri=s.pri}s.gone=o.own==="0";if(o.own==="1"){s.want=false}else if(o.own==="w"){s.want=true;s.pri=+o.pri||s._pri||4}else{s.want=s._w;s.pri=s._w&&o.pri?+o.pri:s._pri}const n=v=>v===""||v==null||isNaN(+v)?null:+v;s.paid=n(o.paid)??s._p;s.price=n(o.price)??s._pr})}
+const MON="JanFebMarAprMayJunJulAugSepOctNovDec";
+function sheetKey(k){k=String(k||"").trim();if(BYN[k])return k;
+  let m=/^\w{3},? (\w{3}) (\d{1,2}),? (\d{3,5})(?: (\d{2}))?/.exec(k);
+  if(m){let y=+m[3],mo=MON.indexOf(m[1])/3+1,dd=+m[2],h=+(m[4]||0);if(dd>=28&&h>=12){mo++;if(mo>12){mo=1;y++}}const c=y+"-"+mo;if(BYN[c])return c}
+  m=/^(\d{3,5})-0?(\d{1,2})-0?(\d{1,2})/.exec(k);if(m){const c=m[1]+"-"+(+m[2]);if(BYN[c])return c}
+  m=/^([0-9A-Za-z]+?)(?:-(\d+))?(?:\.0)?$/.exec(k);if(m){const c=m[1]+"-"+(m[2]||1);if(BYN[c])return c}
+  return k}
+const numv=v=>{if(v===""||v==null)return null;const x=+String(v).replace(/[$,\s]/g,"");return isNaN(x)?null:x};
+function applyEdits(){SETS.forEach(s=>{const o=status[s.n]||{};if(!("_p" in s)){s._p=s.paid;s._pr=s.price;s._w=!!s.want;s._pri=s.pri}s.gone=o.own==="0";if(o.own==="1"){s.want=false}else if(o.own==="w"){s.want=true;s.pri=+o.pri||s._pri||4}else{s.want=s._w;s.pri=s._w&&o.pri?+o.pri:s._pri}const n=numv;s.paid=n(o.paid)??s._p;s.price=n(o.price)??s._pr})}
 const STORES=["Marketplace","eBay","BrickLink","BrickOwl","Target","LEGO Store","BAM","Gift","Not noted"];
 const QUAL=["New","Like new","Good","Fair","Open box","No box","Unknown"];
 const CONDS=[["complete","Complete"],["partial","Partial"],["missing","Missing"],["na","N/A"]];
@@ -1649,11 +1657,12 @@ function drawSignin(){const el=$("#signin");if(!el)return;
 async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…";if(!quiet)drawSignin();
   try{const r=await api({action:"load"});if(!r.ok){PASS="";signMsg=r.error||"That passcode didn't work.";try{sessionStorage.removeItem("holo-pass")}catch(e){}drawSignin();return}
     role=r.role;signMsg="";signOpen=false;try{sessionStorage.setItem("holo-pass",p)}catch(e){}
+    const fx=x=>{const y={};if(x)Object.entries(x).forEach(([k,o])=>{const c=sheetKey(k);y[c]=Object.assign(y[c]||{},o)});return y};if(r.status)r.status=fx(r.status);if(r.priv)r.priv=fx(r.priv);
     if(r.status){Object.keys(status).forEach(k=>{if(!r.status[k])delete status[k]});Object.entries(r.status).forEach(([n,o])=>status[n]=o)}
     if(role==="admin"){canWrite=true;if(r.priv)Object.entries(r.priv).forEach(([n,o])=>{const s=BYN[n];if(s)Object.assign(s,o,{_p:o.paid??s._p,_pr:o.price??s._pr})});
       if(Array.isArray(r.lists)){if(r.lists.length){LISTS=r.lists.filter(l=>l&&l.id&&!l.gone);lsEnsure()}else LISTS.forEach(l=>lsPersist(l))}}
-    {const nS=Object.keys(r.status||{}).length,nP=Object.values(r.status||{}).filter(o=>o.paid!=null).length;
-    $("#subline").textContent=role==="admin"?(nS?`Signed in. Your sheet sent ${nS} sets, ${nP} with a price paid.`:"Signed in, but your sheet sent no sets: its Status tab is empty or named differently."):"Your guest view of the collection. Tap any set for its details.";}
+    {const ks=Object.keys(r.status||{}),nS=ks.length,nM=ks.filter(k=>BYN[k]).length,nP=ks.filter(k=>BYN[k]&&numv(r.status[k].paid)!=null).length,bad=ks.find(k=>!BYN[k]);
+    $("#subline").textContent=role==="admin"?(nS?`Signed in. Your sheet sent ${nS} rows; ${nM} matched sets here and ${nP} of those have a price paid.${bad?` Not matched: ${nS-nM}, for example \u201c${String(bad).slice(0,40)}\u201d.`:""}`:"Signed in, but your sheet sent no sets: its Status tab is empty or named differently."):"Your guest view of the collection. Tap any set for its details.";}
     drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false)}
   catch(e){PASS="";signMsg="The sheet answered with an error ("+String(e&&e.message||e).slice(0,80)+"). Check the script is attached to the sheet.";drawSignin()}}
 // a change saves to the sheet (admin) or, on the old Claude page, to its own store
@@ -1837,10 +1846,10 @@ function drawDrawer(){
   <span></span><b>Sold in parts</b><em><b>${fmt2(po)}</b></em></div>
   ${ROUGH[s.n]?`<p class="rough">${esc(ROUGH[s.n])}</p>`:""}<p class="saved" style="margin:0">${PO[s.n]?`Set alone, box and instructions from BrickLink's part-out value, 6-month average sold (${PO[s.n].c.toLowerCase()}, ${PO[s.n].d}). Minifigs from your Brickset export.`:`Minifig values from your Brickset export.${unk.length?" The "+unk.join(", ")+" aren't priced yet.":""}`}</p></div>`;
   const life=`<dt>Released</dt><dd>${s.ld?niceDate(s.ld):s.ly||s.y}${s.rp!=null?` · <span class="lab">launch price</span> ${fmt2(s.rp)}`:""}</dd><dt>Retired</dt><dd>${s.ed?(dt(s.ed)>new Date()?"Still on sale (due to leave "+niceDate(s.ed)+")":niceDate(s.ed)):s.ey?s.ey:"Not known"}</dd>`;
-  const facts=`<dl class="facts"><dt>Status</dt><dd>${esc(stat)}</dd><dt>Worth now</dt><dd><b class="${r!=null&&s.paid!=null&&!s.want&&P?(r>=s.paid?"pos":"neg"):""}">${fmt2(r)}</b> <span class="lab">${t.now==="Used"?"used":"NIB"} · BrickLink average sold</span></dd>${life}
+  const facts=`<dl class="facts"><dt>Status</dt><dd>${esc(stat)}</dd>${P&&!s.want&&!s.gone?`<dt>Paid</dt><dd><b>${s.paid!=null?fmt2(s.paid):"Not noted"}</b>${s.paid!=null?` <span class="lab">${fmt2(s.price)} + ${fmt2(tx)} tax and shipping</span>`:""}</dd><dt>Bought</dt><dd>${t.bought?niceDate(t.bought):"Date not noted"}${t.store&&t.store!=="Not noted"?" · "+esc(t.store):""}</dd>`:""}<dt>Worth now</dt><dd><b class="${r!=null&&s.paid!=null&&!s.want&&P?(r>=s.paid?"pos":"neg"):""}">${fmt2(r)}</b> <span class="lab">${t.now==="Used"?"used":"NIB"} · BrickLink average sold</span></dd>${life}
     <dt>Type</dt><dd>${esc(STYPE[s.ty]||"Set")} · ${s.pcs} pieces</dd><dt>Stickers</dt><dd>${HASL.has(s.n)?(STK.has(s.n)?"Yes, has stickers":"None, all printed"):"Not known yet"}</dd>
     <dt>Box era</dt><dd>${esc((BOXERAS.find(b=>b[2]===boxEra(s))||[0,0,0,""])[3])}</dd>${s.want||s.gone?"":`<dt>Box</dt><dd>${({have:"Have it",no:"Don't have it",none:"Not marked"})[has3(t.cbox)]}</dd><dt>Instructions</dt><dd>${({have:"Have them",no:"Don't have them",none:"Not marked"})[has3(t.cinst)]}</dd><dt>Condition</dt><dd>${esc(NOWL[t.now]||t.now||"Not marked")}</dd>`}
-    ${P&&!s.want&&!s.gone?`<dt>Paid</dt><dd><b>${fmt2(s.paid)}</b> <span class="lab">${fmt2(s.price)} + ${fmt2(tx)} tax and shipping${t.bought?" · "+niceDate(t.bought):""}</span></dd>`:""}</dl>`;
+    </dl>`;
   // admin: what's in the collection, and its parts
   const ownSel=ED?`<div class="edit"><span class="lab">Change it · saves as you go</span><div class="row"><label class="lab" for="e-own">In your collection</label><select id="e-own"><option value="1">Owned</option>${[1,2,3,4].map(i=>`<option value="w${i}">Want · priority ${i}</option>`).join("")}<option value="0">Not in my collection</option></select></div><span class="saved" id="savemsg"></span></div>`:"";
   const qsel=(id,label)=>`<div><label class="lab" for="${id}">${label}</label><select id="${id}"><option value="">–</option>${QUAL.map(x=>`<option>${x}</option>`).join("")}</select></div>`;
