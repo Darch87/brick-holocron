@@ -855,6 +855,37 @@ details.fold details.fold{background:var(--sub2)}
 .gate .err{color:var(--loss);font:500 var(--t-sm)/1.3 var(--body);min-height:1.3em}
 .gate .gfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 
+/* ---- timeline rows (round 7): three distinct bands, each folds from a bar across its whole width ---- */
+.trow{overflow:clip!important;border-top:2px solid var(--line)!important}
+.trow[data-row="story"]{background:var(--panel)}
+.trow[data-row="figs"]{background:var(--slot)}
+.trow[data-row="sets"]{background:var(--sub2)}
+.trow>.rbar{position:absolute;left:0;top:0;width:100%;height:26px;z-index:5;cursor:pointer;
+  background:linear-gradient(var(--bg),var(--bg)) 0 0/100% 100%;border-bottom:1px solid var(--line);box-shadow:inset 0 2px 0 var(--saber)}
+.trow>.rbar:hover{box-shadow:inset 0 2px 0 var(--saber),0 0 10px -2px var(--saber)}
+.trow>.rbar:focus-visible{outline:2px solid var(--saber);outline-offset:-2px}
+.rbar>.rbl{position:sticky;left:8px;display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 10px;font:700 var(--t-lab)/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.rbar>.rbl::before{content:"▾";font-size:12px;color:var(--saber)}
+.trow.shut>.rbar>.rbl::before{content:"▸"}
+.trow.shut>.rbar>.rbl::after{content:"tap to open";font-weight:500;letter-spacing:.06em;text-transform:none;color:var(--muted)}
+.trow.shut>.rbar{height:100%}
+.trow>.rh{display:none}
+/* minifig arcs: name on its own line, a saber-thin track, circles sit on the track */
+.abar{height:52px!important;border:0!important;background:none!important;padding:0!important;overflow:visible!important;line-height:14px!important}
+.abar>span{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;font:600 12px/14px var(--body);color:var(--ink);background:var(--slot);padding:0 6px 0 2px;border-left:3px solid var(--tc)}
+.abar::before{content:"";position:absolute;left:0;right:0;top:32px;height:4px;border-radius:2px;background:color-mix(in srgb,var(--tc) 55%,transparent)}
+.fcirc{box-shadow:0 1px 3px rgba(0,0,0,.25);z-index:2}
+.fcirc:hover{box-shadow:var(--glow)}
+.mood2 .mt.nost{background:var(--sub2);border:1px dashed var(--line)}
+.mood2 .mt.nost span{position:static;background:none;color:var(--muted);white-space:normal;text-align:center;font:600 11px/1.3 var(--body);padding:4px}
+.trow.shut[data-row="figs"]>.rbar{height:26px}
+/* minifig card in the right panel: one photo circle, then the facts */
+.figcard{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px;margin:0 0 10px}
+.fcbig{width:96px;height:96px;border-radius:50%;overflow:hidden;background:#fff;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.fcbig.y{border:3px solid var(--own)}.fcbig.n{border:2px dotted var(--muted)}
+.fcbig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.figcard .facts{margin:0}
+
 </style>
 
 <div class="gate" id="gate" hidden><div class="gbox hc-panel"><div class="hc-strip">Brick Holocron · access</div><h1>Brick Holocron</h1><p class="hc-small">A Star Wars LEGO collection. Enter your passcode to open it.</p>
@@ -1338,7 +1369,10 @@ function listOf(kind,key){
   if(kind==="fig"){const fs=Object.entries(META.figcat||{}).filter(([n,o])=>o[0]===key).sort((a,b)=>a[0].localeCompare(b[0]));const r=(META.figcomp||[]).find(r=>r[0]===key);
     return{kind:`Minifig category · ${fs.filter(f=>f[1][2]).length}${r&&r[3]?" of "+r[3]:""}`,title:key.replace(/^Legends \/ |^Other \/ /,""),html:two(fs.filter(f=>f[1][2]),fs.filter(f=>!f[1][2]),([n,o])=>figRow(n,o),nowant)}}
   if(kind==="onefig"){const o=(META.figcat||{})[key]||[ "", FIGN[key]||key, 0],ss=SETS.filter(s=>s.figs.some(f=>f[0]===key));const c=CHARS.find(c=>c.figs.some(f=>f[0]===key));
-    return{kind:`Minifig · ${key}`,title:o[1],html:`<dl class="facts"><dt>Category</dt><dd>${esc(o[0]||"–")}</dd><dt>Character</dt><dd>${c?esc(c.name):"–"}</dd><dt>Status</dt><dd>${o[2]?"You have it":"Not owned"}</dd></dl>${ss.length?`<span class="lab">In your sets</span><div class="llist">${ss.map(setRow).join("")}</div>`:""}${c?`<button type="button" class="chip" data-fig="${esc(key)}">Show on the minifig galaxy</button>`:""}`}}
+    {const ff=ss.map(s=>s.figs.find(f=>f[0]===key)).find(Boolean),nib=ff&&ff[2],used=ff&&ff[3],have=ss.some(s=>!s.want&&!s.gone&&figHave(s,key))||!!o[2],own=ss.filter(s=>!s.want&&!s.gone),wnt=ss.filter(s=>s.want);
+    return{kind:`Minifig · ${key}`,title:o[1],html:`<div class="figcard"><div class="fcbig ${have?"y":"n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${encodeURIComponent(key)}.png" alt="${esc(o[1])}" onerror="this.remove()">`:""}</div>
+      <dl class="facts"><dt>Status</dt><dd>${have?"You have it":"Not owned"}</dd>${c?`<dt>Character</dt><dd>${esc(c.name)}</dd>`:""}${o[0]?`<dt>Category</dt><dd>${esc(o[0].replace(/^Legends \/ |^Other \/ /,""))}</dd>`:""}${nib!=null||used!=null?`<dt>Worth</dt><dd><b>${fmt2(nib??used)}</b>${used!=null&&nib!=null?` <span class="lab">new · ${fmt2(used)} used</span>`:""}</dd>`:""}</dl></div>
+      ${own.length?`<span class="lab">In your sets · ${own.length}</span><div class="llist">${own.map(setRow).join("")}</div>`:""}${wnt.length?`<span class="lab">In sets you want · ${wnt.length}</span><div class="llist">${wnt.map(setRow).join("")}</div>`:""}${c?`<button type="button" class="chip" data-fig="${esc(key)}">Show on the minifig galaxy</button>`:""}`}}}
   if(kind==="src"){const ss=SETS.filter(s=>s.src===key).sort((a,b)=>a.y-b.y);return{kind:`Story · ${ss.length} sets`,title:SRCMAP[key][2],html:two(ss.filter(s=>!s.want),ss.filter(s=>s.want),setRow,"None on your want list.")}}
   if(kind==="mon"){const ss=SETS.filter(s=>!s.want&&s.paid!=null&&dt(st(s).bought)&&monthKey(s)===key||key==="Earlier"&&!s.want&&s.paid!=null&&dt(st(s).bought)&&monthKey(s)<EARLY);
     return{kind:`Bought · ${ss.length} sets · ${fmt(ss.reduce((a,s)=>a+(s.paid||0),0))}`,title:key==="Earlier"?"Earlier months":new Date(+key.slice(0,4),+key.slice(5)-1,1).toLocaleDateString("en-US",{month:"long",year:"numeric"}),html:`<div class="llist">${ss.map(setRow).join("")}</div>`}}
@@ -1878,7 +1912,7 @@ const figHave=(s,num)=>s&&!s.want&&!s.gone?!((status[s.n]||{}).fx||[]).includes(
 // ---------- Star Wars Timeline: three rows that scroll together (T4–T11)
 const TL={open:{story:true,figs:true,sets:true},focus:"sets",pos:{}};
 const TSZ=[1,.82,.7,.6,.52,.52];
-function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:62,sets:32},W={story:1.35,figs:.7,sets:1.4};let rest=H,ws=0;
+function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:70,sets:34},W={story:1.3,figs:.95,sets:1.3};TL.focus=null;let rest=H,ws=0;
   ks.forEach(k=>{if(!TL.open[k])rest-=FOLD[k];else ws+=W[k]*(TL.focus===k?1.8:1)});const o={};ks.forEach(k=>o[k]=TL.open[k]?Math.max(90,rest*W[k]*(TL.focus===k?1.8:1)/ws):FOLD[k]);
   if(TL.open.story&&TL.focus!=="figs"){const need=Math.min(270,H*.42)-o.story;if(need>0){const from=TL.open.sets?"sets":TL.open.figs?"figs":null;if(from&&o[from]-need>=150){o[from]-=need;o.story+=need}}}return o}
 const STILLS={"Battle of Christophsis":[["Christophsis","https://lumiere-a.akamaihd.net/v1/images/databank_christophsis_01_169_2daae94e.jpeg?region=0%2C0%2C1560%2C878"]],
@@ -1926,7 +1960,7 @@ function renderTL(){
   if(TL.open.story)r1+=cols.map(o=>{const z=o.z,scn=z.scene,th=Math.max(0,Math.min(130,cellH-56-lc*17-(scn?18:0)));let mood="";
     if(th>=34){const st=STILLS[o.src[0]+"|"+z.k]||(scn&&o.src[0]===FILM.src?STILLS[scn.t]:null);
       if(st)mood=st.map(([l,u])=>`<div class="mt" style="width:${Math.round(th*1.6)}px;height:${th}px"><img src="${u}" alt="${esc(l)}" loading="lazy" onerror="this.remove()"><span>${esc(l)}</span></div>`).join("");
-      {const ss=(scn?scn.sets.map(([n])=>BYN[n]).filter(Boolean):o.sets).slice(0,8);mood+=(scn&&scn.where&&!st?`<div class="mt" style="width:${th}px;height:${th}px">${esc(scn.where)}</div>`:"")+ss.map(s=>`<div class="mt set" style="width:${th}px;height:${th}px" data-n="${esc(s.n)}">${IMG?`<img src="https://images.brickset.com/sets/images/${s.n}.jpg" alt="" loading="lazy" onerror="this.remove()">`:esc(s.n)}</div>`).join("")}}
+      if(!st&&scn&&scn.where)mood=`<div class="mt nost" style="width:${Math.round(th*1.6)}px;height:${th}px"><span>${esc(scn.where)}</span></div>`}
     return `<div class="scell" data-slot="${o.src[0]}|${esc(z.k)}" style="left:${o.x}px;top:66px;width:${o.w}px;height:${cellH}px;--lc:${lc}"><small>${esc(z.kick||"")}</small><h4>${esc(z.t)}</h4>${scn&&scn.where?`<small>${esc(scn.where)}${scn.ships?" · "+esc(scn.ships):""}</small>`:""}${scn&&scn.log?`<p>${esc(scn.log)}</p>`:""}${mood?`<div class="mood2">${mood}</div>`:""}</div>`}).join("");
   // row 3: sets, photo cards sized by owned, then want priority (T9–T11)
   let r3="";const cardAt={};
@@ -1937,23 +1971,23 @@ function renderTL(){
   cols.forEach((o,ci)=>{const subs=o.pk.cols.length?o.pk.cols:[{x:0,w:o.w-14,items:o.sets.map(s=>({s}))}];
     subs.forEach(c=>c.items.forEach(({s})=>s.figs.forEach(f=>{const k=ckey(f[1]),q=occ[k]||(occ[k]={nm:f[1],at:[]});q.at.push({ci,x:o.x+7+c.x+(c.w||60)/2,f,s,c,o})})))});
   if(!TL.open.figs){const per={};Object.values(occ).forEach(q=>q.at.forEach(a=>{const key=a.o.x+":"+a.c.x;(per[key]=per[key]||{a,list:[]}).list.push(a)}));
-    Object.values(per).forEach(({a,list})=>{const x0=a.o.x+7+a.c.x,w=Math.max(26,a.c.w||60),n=Math.max(1,Math.floor(w/22));list.slice(0,n).forEach((b,i)=>{const have=figHave(b.s,b.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(b.f[0])}" title="${esc(b.f[1])} (${esc(b.f[0])})" style="left:${x0+i*22}px;top:31px;width:21px;height:21px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${b.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</div>`})})}
-  else{const L=Math.max(1,Math.floor((rh.figs-34)/31)),runs=[];
+    Object.values(per).forEach(({a,list})=>{const x0=a.o.x+7+a.c.x,w=Math.max(26,a.c.w||60),n=Math.max(1,Math.floor(w/32));list.slice(0,n).forEach((b,i)=>{const have=figHave(b.s,b.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(b.f[0])}" title="${esc(b.f[1])} (${esc(b.f[0])})" style="left:${x0+i*32}px;top:32px;width:30px;height:30px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${b.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</div>`})})}
+  else{const LH=54,L=Math.max(1,Math.floor((rh.figs-32)/LH)),runs=[];
     Object.values(occ).forEach(q=>{const cis=[...new Set(q.at.map(a=>a.ci))].sort((a,b)=>a-b);let cur=null;cis.forEach(ci=>{if(cur&&cur.b===ci-1)cur.b=ci;else{cur={q,a:ci,b:ci};runs.push(cur)}})});
     runs.sort((x,y)=>(y.b-y.a)-(x.b-x.a)||y.q.at.length-x.q.at.length);const lanesU=Array.from({length:L},()=>[]),lanes=[];
     runs.forEach(rn=>{const li=lanesU.findIndex(u=>!u.some(([a,b])=>rn.a<=b&&rn.b>=a));if(li<0)return;lanesU[li].push([rn.a,rn.b]);rn.li=li;lanes.push(rn)});
-    lanes.forEach(rn=>{const q=rn.q,y=31+rn.li*31,tc=typeColor(q.nm),c=CHMAP[q.nm]||CHMAP[q.nm.replace(/\s*\(.*\)$/,"")],xa=cols[rn.a].x+4,xb=cols[rn.b].x+cols[rn.b].w-4;
-      r2+=`<div class="abar" data-ch="${esc(c?c.name:q.nm)}" style="left:${xa}px;top:${y+3}px;width:${xb-xa}px;--tc:${tc}" title="${esc(q.nm)}">${esc(q.nm)}</div>`;
-      const seen=new Set();q.at.filter(a=>a.ci>=rn.a&&a.ci<=rn.b).forEach(a=>{const k=Math.round(a.x)+a.f[0];if(seen.has(k))return;seen.add(k);const have=figHave(a.s,a.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(a.f[0])}" title="${esc(a.f[1])} (${esc(a.f[0])}) in ${esc(a.s.name)}" style="left:${a.x-13}px;top:${y}px;width:26px;height:26px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${a.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:esc(a.f[1].slice(0,2))}</div>`})});
+    lanes.forEach(rn=>{const q=rn.q,y=32+rn.li*LH,tc=typeColor(q.nm),c=CHMAP[q.nm]||CHMAP[q.nm.replace(/\s*\(.*\)$/,"")],xa=cols[rn.a].x+4,xb=cols[rn.b].x+cols[rn.b].w-4;
+      r2+=`<div class="abar" data-ch="${esc(c?c.name:q.nm)}" style="left:${xa}px;top:${y}px;width:${xb-xa}px;--tc:${tc}" title="${esc(q.nm)}"><span>${esc(q.nm)}</span></div>`;
+      const seen=new Set();q.at.filter(a=>a.ci>=rn.a&&a.ci<=rn.b).forEach(a=>{const k=Math.round(a.x)+a.f[0];if(seen.has(k))return;seen.add(k);const have=figHave(a.s,a.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(a.f[0])}" title="${esc(a.f[1])} (${esc(a.f[0])}) in ${esc(a.s.name)}" style="left:${a.x-18}px;top:${y+16}px;width:36px;height:36px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${a.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:esc(a.f[1].slice(0,2))}</div>`})});
     if(!lanes.length)r2+=`<span class="lab" style="position:absolute;left:12px;top:34px">No minifigs in the sets shown.</span>`}
-  const row=(k,label,inner)=>`<div class="trow${TL.open[k]?"":" shut"}" data-row="${k}" style="top:${RY[k]}px;height:${rh[k]}px;width:${W}px"><button type="button" class="rh" data-rowt="${k}" aria-expanded="${TL.open[k]}">${label}</button>${inner}</div>`;
+  const row=(k,label,inner)=>`<div class="trow${TL.open[k]?"":" shut"}" data-row="${k}" style="top:${RY[k]}px;height:${rh[k]}px;width:${W}px"><div class="rbar" data-rowt="${k}" role="button" tabindex="0" aria-expanded="${TL.open[k]}" title="${TL.open[k]?"Fold":"Open"} ${label}"><span class="rbl">${label}</span></div>${inner}</div>`;
   h+=row("story","Storyline",r1)+row("figs","Minifig arcs",r2)+row("sets","Sets",r3);
   const keep=sc.scrollLeft;inn.style.width=W+"px";inn.innerHTML=h;sc.scrollLeft=keep;
   const msg=$("#boardmsg");if(!drawn.some(storyOn)){msg.style.display="block";msg.textContent="No sets match. Open more stories on the left, or tap Clear selection."}else msg.style.display="none";
 }
 function tlWire(){const inn=$("#tlinner"),sc=$("#tlscroll");wheelSide(sc);
   inn.addEventListener("click",e=>{if(moved)return;const t=e.target;
-    const rt=t.closest("[data-rowt]");if(rt){const k=rt.dataset.rowt;if(TL.open[k]&&TL.focus!==k&&k!=="figs"){TL.focus=k}else{TL.open[k]=!TL.open[k];if(TL.open[k])TL.focus=k}renderTL();return}
+    const rt=t.closest("[data-rowt]");if(rt){const k=rt.dataset.rowt;TL.open[k]=!TL.open[k];renderTL();return}
     const uf=t.closest("[data-unfold]");if(uf){const k=uf.dataset.unfold;filters.off.delete(k);if(filters.canon2!=="all"&&!canonOK(SRCMAP[k]))filters.canon2="all";if(filters.by==="sub"){filters.by="story"}render(true);setTimeout(()=>tlJump(k),40);return}
     const n=t.closest("[data-n]");if(n){pick(BYN[n.dataset.n],false);return}
     const fg=t.closest("[data-fig]");if(fg){dlist=listOf("onefig",fg.dataset.fig);openN=null;drawDrawer();return}
