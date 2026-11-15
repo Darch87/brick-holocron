@@ -365,6 +365,7 @@ table.src tr.ask td{background:var(--chipon)}
 .psearch{width:100%;height:44px;border:1px solid var(--line2);border-radius:var(--r);padding:0 10px;font-size:16px;background:var(--sub2);color:var(--ink);margin-bottom:8px}
 #b-find .n{font-family:var(--mono);margin-left:4px}
 .qstep{display:flex;align-items:center;gap:4px;flex:none}.qstep .btn{min-width:38px;min-height:38px;padding:0;font-size:20px;line-height:1}.qstep b{min-width:24px;text-align:center;font-family:var(--mono);font-size:18px}
+#sign .hc-lights{display:flex;justify-content:space-between;gap:8px;padding:8px 12px}#sign .hc-lights button{width:40px;height:40px;opacity:.5}#sign .hc-lights button.on{opacity:1}
 </style>
 </head>
 <body>
@@ -552,7 +553,7 @@ $("#list").addEventListener("click",e=>{const b=e.target.closest("[data-o]");if(
 // ---------- controls
 function setSeg(id,v){document.querySelectorAll(id+" button").forEach(b=>b.classList.toggle("on",b.dataset.v===v))}
 function resetScroll(){S.limit=80;$("#scroller").scrollTop=0}
-function goPage(p){if(p===S.page)return;S.qs[S.page]=S.q;S.page=p;S.q=S.qs[p]||"";$("#q").value=S.q;$("#qx").hidden=!S.q}
+function goPage(p){["browse","scan","sign","find"].forEach(hidePanel);if(p===S.page)return;S.qs[S.page]=S.q;S.page=p;S.q=S.qs[p]||"";$("#q").value=S.q;$("#qx").hidden=!S.q}
 function setPage(p){goPage(p);$("#pg-sets").classList.toggle("on",p==="sets");$("#pg-figs").classList.toggle("on",p==="figs");drawShow();
   $("#q").placeholder=p==="sets"?"Search sets":"Search minifigs";hidePanel("browse");resetScroll();drawActive();render()}
 $("#pg-sets").onclick=()=>setPage("sets");$("#pg-figs").onclick=()=>setPage("figs");
