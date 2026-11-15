@@ -311,7 +311,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .ptp em{font:600 9.5px var(--mono);font-style:normal;color:#fff;background:var(--loss);border-radius:3px;padding:1px 4px}
 .ptp.miss{border-color:var(--loss);background:color-mix(in srgb,var(--loss) 7%,#fff)}
 .ptp.fade{opacity:.15}
-.pti{width:58px;height:46px;display:grid;place-items:center;position:relative;font-style:normal}
+.pti{width:58px;height:46px;display:grid;place-items:center;position:relative;font-style:normal;overflow:hidden}
 .pti .studs{display:grid;grid-template-columns:repeat(4,9px);gap:3px;padding:6px;background:var(--pc);border-radius:4px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.18)}
 .pti .studs s{width:9px;height:9px;border-radius:50%;background:var(--pc);box-shadow:inset -1px -1px 0 rgba(0,0,0,.25),inset 1px 1px 0 rgba(255,255,255,.35)}
 .pti.tr .studs{opacity:.7}
@@ -509,7 +509,7 @@ html,body{height:100%}
 .lsitems{display:flex;flex-direction:column;gap:2px}
 .lsi{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:3px 4px;border-bottom:1px solid var(--slot)}
 .lsi .pti{width:46px;height:38px}
-.lsi>span{display:flex;flex-direction:column;min-width:0}.lsi .lab{text-transform:none;letter-spacing:0}
+.lsi>span:not(.stp){display:flex;flex-direction:column;min-width:0}.lsi .lab{text-transform:none;letter-spacing:0}
 .lsi .q{font:700 14px var(--display)}
 /* right panel in Parts and Lists */
 .side.right .ptside{display:flex;flex-direction:column;gap:10px}
@@ -528,6 +528,8 @@ ol.steps{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
 .flash{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;font-size:12.5px;z-index:9;max-width:80%}
 .main{position:relative}
 @media (max-width:760px){.ptmain{overflow:visible}.ptmain.two{grid-template-columns:minmax(0,1fr)}.ptpane,.ptbox{max-height:none;overflow:visible}}
+.chip.act{background:var(--accent);border-color:var(--accent);color:#fff}.chip.act::before{content:none}.chip.act:disabled{opacity:.4}
+.chip.act:not(:disabled):hover{filter:brightness(1.08)}
 </style>
 
 <div class="wrap" id="holo">
@@ -1493,6 +1495,9 @@ function ptTile(x){const hx=BLHEX[x[1]]||"#ccc",tr=/^Trans/.test(x[2]),studs=Mat
   return `<i class="pti${tr?" tr":""}" style="--pc:${hx}"><span class="studs">${"<s></s>".repeat(studs)}</span>${IMG?`<img src="https://img.bricklink.com/ItemImage/PN/${x[1]}/${encodeURIComponent(x[0])}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i>`}
 function xTile(kind,n){const img=kind==="O"?"ON":kind==="I"?"IN":kind==="M"?"MN":"PN";const lab=kind==="O"?"Box":kind==="I"?"Instructions":kind==="M"?"Minifig":"Stickers";
   return `<i class="pti xt"><b>${lab}</b>${IMG?`<img src="https://img.bricklink.com/ItemImage/${img}/0/${encodeURIComponent(n)}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i>`}
+function figTile(nm){const s=ptSet&&ptSet!=="*own"?SETS.find(z=>z.n===ptSet):null,W=w=>w.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(x=>x.length>2);
+  let best=null,bs=0;if(s){const a=new Set(W(nm));s.figs.forEach(f=>{const sc=W(f[1]).filter(x=>a.has(x)).length;if(sc>bs){bs=sc;best=f[0]}})}
+  return best?xTile("M",best):`<i class="pti xt"><b>Minifig</b></i>`}
 const itemTile=it=>it.t==="P"?(/sticker/i.test(it.nm||"")?xTile("S",it.p):ptTile([it.p,it.c,it.cn||"",0,it.nm||""])):xTile(it.t,it.p);
 
 // ---------- lists: pieces gathered to buy or to sell. The owner's lists save with the page; anyone else's stay in their browser.
@@ -1615,12 +1620,12 @@ function renderParts(){
   h+=own?`<div><span class="lab">All ${nOwn} sets you own, added together</span><h2>Everything I own</h2></div><div class="ptsum"><span><b>${tot.toLocaleString("en-US")}</b><small>pieces</small></span><span><b>${inv.length.toLocaleString("en-US")}</b><small>different</small></span></div>`
     :`<div><span class="lab">${esc(s.n.replace(/-1$/,""))} · ${s.y} · ${s.want?"Wanted"+(s.pri?", priority "+s.pri:""):"Yours"}</span><h2 style="color:${col}">${esc(s.name)}</h2><span class="lab">${HASL.has(s.n)?(STK.has(s.n)?"Has stickers":"No stickers, all printed"):""}${sp?` · plus ${sp} spare piece${sp===1?"":"s"}`:""}</span></div>
       <div class="ptsum"><span><b>${tot}</b><small>pieces</small></span><span><b>${inv.length}</b><small>different</small></span>${figs.length?`<span><b>${figs.reduce((a,f)=>a+f[1],0)}</b><small>minifigs</small></span>`:""}${s.want?"":`<span class="${mt?"neg":""}"><b>${mt}</b><small>missing</small></span>`}</div>`;
-  h+=`</div><div class="pttools">${own?"":`<button type="button" class="chip on big" id="pt-partout">${s.want?"List every piece to buy":"Part out this set"}</button>`}
+  h+=`</div><div class="pttools">${own?"":`<button type="button" class="chip act big" id="pt-partout">${s.want?"List every piece to buy":"Part out this set"}</button>`}
     <span class="grp"><span class="lab">Group by</span>${[["colour","Colour"],["cat","Kind of piece"]].map(([v,l])=>`<button type="button" class="chip${ptGroup===v?" on":""}" data-g="${v}">${l}</button>`).join("")}</span>
     ${own||s.want?"":`<span class="grp"><span class="lab">Show</span>${[["all","All"],["miss","Missing"]].map(([v,l])=>`<button type="button" class="chip${ptShow===v?" on":""}" data-sh="${v}">${l}</button>`).join("")}</span>`}</div>`;
   if(lsMsg)h+=`<p class="rough">${esc(lsMsg)}</p>`;
   if(stick.length&&ptShow!=="miss")h+=`<section class="ptgrp"><h3>Stickers</h3><div class="ptgrid">${stick.map(tile).join("")}</div></section>`;
-  if(figs.length&&ptShow!=="miss")h+=`<section class="ptgrp"><h3>Minifigures <span class="lab">${figs.reduce((a,f)=>a+f[1],0)}</span></h3><div class="ptgrid">${figs.map(([f,q])=>{const F=PXF[f]||[f,[]];return`<button type="button" class="ptp fig${ptFind&&ptFind.fig===f?" sel":""}" data-fig="${esc(f)}" title="${esc(F[0])}"><i class="pti xt"><b>Minifig</b></i><b>${q}×</b><span class="lab">${esc(F[0].split(/[,(-]/)[0].trim().slice(0,28))}</span></button>`}).join("")}</div></section>`;
+  if(figs.length&&ptShow!=="miss")h+=`<section class="ptgrp"><h3>Minifigures <span class="lab">${figs.reduce((a,f)=>a+f[1],0)}</span></h3><div class="ptgrid">${figs.map(([f,q])=>{const F=PXF[f]||[f,[]];return`<button type="button" class="ptp fig${ptFind&&ptFind.fig===f?" sel":""}" data-fig="${esc(f)}" title="${esc(F[0])}">${figTile(F[0])}<b>${q}×</b><span class="lab">${esc(F[0].split(/[,(]/)[0].trim().slice(0,28))}</span></button>`}).join("")}</div></section>`;
   h+=gl.map(([k,xs])=>`<section class="ptgrp"><h3>${ptGroup==="colour"?`<s style="--pc:${BLHEX[xs[0][1]]||"#ccc"}"></s>`:""}${esc(k)} <span class="lab">${xs.reduce((a,x)=>a+x[3],0)}</span></h3><div class="ptgrid">${xs.map(tile).join("")}</div></section>`).join("");
   if(!groups.size&&!stick.length)h+=`<p class="note">Nothing marked missing in this set.</p>`;
   if(ptPop){const x=inv.find(z=>z[6]+"|"+z[1]===ptPop.k);if(!x)ptPop=null;else{const it=xItem(x),lq=lsQty(L,it),m=mq(x);
@@ -1640,7 +1645,7 @@ function renderParts(){
     const x=inv.find(z=>z[6]+"|"+z[1]===ptPop.k),it=xItem(x);
     $("#pop-x").onclick=()=>{ptPop=null;renderParts()};
     if($("#pop-all"))$("#pop-all").onclick=()=>{lsAdd(L,it,x[3]-lsQty(L,it));renderParts()};
-    $("#pop-where").onclick=()=>{ptFind={pi:x[6],c:x[1]};renderParts()};
+    $("#pop-where").onclick=()=>{ptFind={pi:x[6],c:x[1]};ptPop=null;renderParts()};
     pop.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{const d=+b.dataset.d;
       if(b.dataset.st==="list"){lsAdd(L,it,d);renderParts();return}
       const m=mq(x),n=Math.max(0,Math.min(x[3],m+d)),rest=miss.filter(mm=>!same(mm,x));save(s,{miss:n?[...rest,{p:x[0],c:x[1],cn:x[2],q:n,nm:x[4]}]:rest},true)})}
@@ -1666,7 +1671,7 @@ function drawPtSide(s){const d=$("#ptside");if(!d)return;const L=curL();let h=""
     <li><b>Check it on Lists.</b> Take out anything you're keeping, or merge several sets into one list.</li>
     <li><b>Export it.</b> Copy it for a BrickLink or Brick Owl store, or a spreadsheet.</li></ol>
     <p class="saved">Selling a complete set as parts? BrickLink's own Part Out tool can add a whole set to your store in one step.</p></section>`;
-  if(L)h+=`<section class="pbox"><span class="lab">Adding to</span><h3>${esc(L.name)}</h3><p class="saved">${lsLots(L)} lots · ${lsPcs(L)} items · ${L.kind==="sell"?"to sell":"to buy"}</p><button type="button" class="chip" id="ps-open">Open in Lists</button></section>`;
+  if(L)h+=`<section class="pbox"><span class="lab">Adding to</span><h3>${esc(L.name)}</h3><p class="saved">${lsLots(L)} ${lsLots(L)===1?"lot":"lots"} · ${lsPcs(L)} ${lsPcs(L)===1?"item":"items"} · ${L.kind==="sell"?"to sell":"to buy"}</p><button type="button" class="chip" id="ps-open">Open in Lists</button></section>`;
   d.innerHTML=h;const o=$("#ps-open");if(o)o.onclick=()=>{lsOpen=curList;showTab("ls")}}
 
 // ---------- the Lists tab
@@ -1683,7 +1688,7 @@ function renderLists(){lsEnsure();const ctl=$("#lsctl"),m=$("#lsmain"),side=$("#
   const groups=new Map();L.items.forEach(i=>{const k=i.t==="P"?(i.cn||"Other"):i.t==="M"?"Minifigures":"Box and instructions";if(!groups.has(k))groups.set(k,[]);groups.get(k).push(i)});
   const ir=i=>`<div class="lsi">${itemTile(i)}<span><b>${esc(i.p)}</b> ${esc(i.nm||"")}<span class="lab">${esc(i.t==="P"?i.cn||"":i.t==="M"?"Minifig":i.t==="O"?"Box":"Instructions")}</span></span>${L.ro?`<b class="q">${i.q}×</b>`:`<span class="stp"><button type="button" data-k="${esc(ik(i))}" data-d="-1" aria-label="One fewer">−</button><b>${i.q}</b><button type="button" data-k="${esc(ik(i))}" data-d="1" aria-label="One more">+</button></span>`}</div>`;
   let h=`<div class="ptpane"><div class="pthead" style="--bd:var(--canon)"><div><span class="lab">${L.ro?"Built from the pieces you marked missing":L.kind==="sell"?"List to sell":"List to buy"}</span>${L.ro?`<h2>${esc(L.name)}</h2>`:`<input class="lsname" id="ls-name" value="${esc(L.name)}" aria-label="List name">`}</div>
-    <div class="ptsum"><span><b>${lsLots(L)}</b><small>lots</small></span><span><b>${lsPcs(L)}</b><small>items</small></span></div></div>
+    <div class="ptsum"><span><b>${lsLots(L)}</b><small>${lsLots(L)===1?"lot":"lots"}</small></span><span><b>${lsPcs(L)}</b><small>items</small></span></div></div>
     <div class="pttools">${L.ro?`<button type="button" class="chip on" id="ls-copy"${L.items.length?"":" disabled"}>Copy into a new list</button>`:`<span class="grp"><span class="lab">This list is</span>${[["buy","To buy"],["sell","To sell"]].map(([v,l])=>`<button type="button" class="chip${L.kind===v?" on":""}" data-kind="${v}">${l}</button>`).join("")}</span>
       ${L.kind==="sell"?`<span class="grp"><span class="lab">Condition</span>${[["U","Used"],["N","New"]].map(([v,l])=>`<button type="button" class="chip${(L.cond||"U")===v?" on":""}" data-cond="${v}">${l}</button>`).join("")}</span>`:""}
       <button type="button" class="chip danger" id="ls-del">${lsDel===L.id?"Delete it for good?":"Delete list"}</button>${lsDel===L.id?`<button type="button" class="chip" id="ls-keep">Keep it</button>`:""}`}</div>`;
@@ -1700,7 +1705,7 @@ function renderLists(){lsEnsure();const ctl=$("#lsctl"),m=$("#lsmain"),side=$("#
   // right: the three ways out for this list
   const ds=DEST[L.kind==="sell"?"sell":"buy"],nf=L.items.filter(i=>i.t!=="P").length;
   side.innerHTML=`<section class="pbox"><span class="lab">Export “${esc(L.name)}”</span><h3>${L.kind==="sell"?"Three ways to sell it":"Three ways to buy it"}</h3>
-    ${ds.map(([k,nm,badge,,how],i)=>`<div class="dest"><div class="dh"><i>${i+1}</i><b>${nm}</b>${badge?`<span class="best">${badge}</span>`:""}</div><span>${how}</span>${(k==="rb"||k==="pab")&&nf?`<span class="saved">Rebrickable takes pieces only, so the ${nf} minifig, box and instruction lines are left off.</span>`:""}<button type="button" class="chip on" data-cp="${k}"${L.items.length?"":" disabled"}>Copy for ${nm}</button></div>`).join("")}
+    ${ds.map(([k,nm,badge,,how],i)=>`<div class="dest"><div class="dh"><i>${i+1}</i><b>${nm}</b>${badge?`<span class="best">${badge}</span>`:""}</div><span>${how}</span>${(k==="rb"||k==="pab")&&nf?`<span class="saved">Rebrickable takes pieces only, so the ${nf} minifig, box and instruction lines are left off.</span>`:""}<button type="button" class="chip act" data-cp="${k}"${L.items.length?"":" disabled"}>Copy for ${nm}</button></div>`).join("")}
     <textarea id="ls-out" readonly rows="4" aria-label="Copied list" hidden></textarea></section>
     ${L.kind==="sell"?`<p class="saved">Selling a complete set as parts? BrickLink's own Part Out tool can add a whole set to your store in one step.</p>`:""}
     <p class="saved">Lists ${canWrite?"save with this page for you on any device":"stay in this browser"}.</p>`;
