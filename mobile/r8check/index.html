@@ -153,14 +153,6 @@ h3{font:var(--f-label);letter-spacing:var(--label-track);text-transform:uppercas
 /* red targeting digits for set and minifig numbers */
 .dg{font:700 14px/1.2 var(--mono);letter-spacing:.08em;color:var(--red);text-shadow:0 0 6px rgba(255,52,38,.7)}
 .ph{position:relative}
-/* cockpit keys (same look as the main page): dark keys, the active one lit blue, the main action a white key */
-.btn,.ibtn,.key,.chip,.tag,.sortl button,.links a{background:linear-gradient(#2c333c,#20252c);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.6)}
-.seg button.on,.ptabs button.on,.sortl button.on,.key[aria-pressed="true"],.chip.on,.ibtn.lit{background:linear-gradient(var(--keyblue2),var(--keyblue));border-color:#bfe0ff;color:#fff;box-shadow:0 0 0 1px rgba(74,163,255,.6),0 0 14px rgba(74,163,255,.55),inset 0 1px 0 rgba(255,255,255,.4)}
-.chip.on i{color:#e6f2ff}
-.btn.pri{background:linear-gradient(#fff,var(--keywhite));color:#0b0f14;border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
-.wgrp.open{border-color:var(--keyblue2)}
-/* the open item sits in a yellow targeting frame, like the main page's right panel */
-#detail{border:2px solid var(--yellow);border-radius:12px;box-shadow:0 0 12px rgba(242,194,48,.25)}
 .dg.tg{position:absolute;left:4px;top:4px;padding:3px 6px;background:rgba(8,9,11,.82);border:1px solid rgba(255,52,38,.6);border-radius:3px;font-size:15px;line-height:1}
 /* Show: Have / Want / Other keys; Want opens a joined 1st-2nd-3rd row under it */
 .show{display:flex;align-items:flex-start;gap:4px}
@@ -286,6 +278,14 @@ details.grp>:not(summary){margin:10px 12px 12px}
 #gate input:focus{outline:none;border-color:var(--acc);box-shadow:var(--glow)}
 #gate .btn{width:100%;height:46px}
 #gate .msg{min-height:20px;margin:8px 0 0;color:var(--bad)}
+/* cockpit keys (same look as the main page): dark keys, the active one lit blue, the main action a white key */
+.btn,.ibtn,.key,.chip,.tag,.sortl button,.links a{background:linear-gradient(#2c333c,#20252c);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.6)}
+.seg button.on,.ptabs button.on,.sortl button.on,.key[aria-pressed="true"],.chip.on,.ibtn.lit{background:linear-gradient(var(--keyblue2),var(--keyblue));border-color:#bfe0ff;color:#fff;box-shadow:0 0 0 1px rgba(74,163,255,.6),0 0 14px rgba(74,163,255,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.chip.on i{color:#e6f2ff}
+.btn.pri{background:linear-gradient(#fff,var(--keywhite));color:#0b0f14;border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
+.wgrp.open{border-color:var(--keyblue2)}
+/* the open item sits in a yellow targeting frame, like the main page's right panel */
+#detail{border:2px solid var(--yellow);border-radius:12px;box-shadow:0 0 12px rgba(242,194,48,.25)}
 /* landscape: list on the left, the open item on the right */
 @media (orientation:landscape) and (min-width:600px){
   .top{padding:6px 8px}
@@ -729,7 +729,7 @@ async function signIn(p,quiet){PASS=p;let r;
   if(role==="admin")api({action:"pricesets",sets:SETS.filter(s=>s.own||s.want).map(s=>({n:s.n,want:s.own?0:(s.pri||4)}))}).catch(()=>{});
   livePrices();return{ok:true}}
 function drawGate(msg){const g=$("#gate");g.hidden=false;
-  g.innerHTML=`<div class="box"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p><h3 class="lt">Choose your lightsaber</h3><div class="hc-lights" role="group" aria-label="Choose your lightsaber colour"></div></div>`;buildLights(g);
+  g.innerHTML=`<div class="box hc-panel"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p><h3 class="lt">Choose your lightsaber</h3><div class="hc-lights" role="group" aria-label="Choose your lightsaber colour"></div></div>`;buildLights(g);
   const i=g.querySelector("#g-p"),go=g.querySelector("#g-go"),m=g.querySelector("#g-msg");
   go.onclick=async()=>{const v=i.value.trim();if(!v){m.textContent="Type your passcode first.";return}go.disabled=true;go.textContent="Signing in…";m.textContent="";const r=await signIn(v,true);if(!r.ok){go.disabled=false;go.textContent="Sign in";m.textContent=r.msg}};
   i.onkeydown=e=>{if(e.key==="Enter")go.click()};g.querySelector("#g-skip").onclick=()=>{g.hidden=true}}
