@@ -633,7 +633,7 @@ async function photoLookup(inp,kind,out){const f=inp.files&&inp.files[0];inp.val
   catch(e){out.innerHTML=`<p class="note">Brickognize didn't answer. Check your connection and try again, or scan the barcode instead.</p>`}}
 function drawScan(msg){const el=$("#scan");el.hidden=false;
   el.innerHTML=`<div class="phead"><h2>Look up a set or minifig</h2><button class="btn" id="sc-close">Done</button></div><div class="scroll"><div class="pbody">
-  ${msg||""}<h3>Identify it from a photo</h3><p class="note">Works on a built set, a loose minifig or a box front. The photo goes to Brickognize, a free LEGO recognition service, and nothing else is sent.</p>
+  ${msg||""}<h3>Identify it from a photo</h3><p class="note">Works on a built set, a loose minifig or a box front; fill the frame with it for the best match. The photo goes to Brickognize, a free LEGO recognition service, and nothing else is sent.</p>
   <div class="btnrow"><label class="btn pri" for="ph-set">Photo of a set</label><input id="ph-set" type="file" accept="image/*" capture="environment" hidden><label class="btn pri" for="ph-fig">Photo of a minifig</label><input id="ph-fig" type="file" accept="image/*" capture="environment" hidden></div>
   <div id="ph-out"></div>
   <h3>Scan the barcode</h3><p class="note">Point the camera at the barcode on the box (the UPC or EAN on the side or back). ${Object.keys(CODES).length} of your sets have a barcode on file.</p>
