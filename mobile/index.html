@@ -24,7 +24,7 @@
   --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
   --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
   --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
-  --chipon:#d6e9ff;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
+  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
   --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
   --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
   /* type scale: label, small, body, title, heading, figure */
@@ -35,7 +35,7 @@
   --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
   --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
   --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
-  --chipon:#3a1517;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
   --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
   color-scheme:dark;
 }
@@ -551,7 +551,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
     if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?" own":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${have?`<span class="ok">${fx.size?"Have it":"You own one"}</span>`:`<span class="dim">${fx.size?"Missing":"Not owned"}</span>`}</button>`}).join("")}</div>`;}
   if(t==="val"){const nv=setPrice(s,"n"),uv=setPrice(s,"u"),mine=oc==="u"?uv:nv,fv=figVal(s,oc);
     b+=`<div class="big"><div class="${oc==="n"?"on":""}"><span>New, sealed</span><b>${money0(nv)}</b></div><div class="${oc==="u"?"on":""}"><span>Used</span><b>${money0(uv)}</b></div></div>
-    <p class="note">BrickLink 6-month sold averages, from your Brickset export (${esc(D.made)}). Highlighted: your copy is ${oc==="u"?"used":"new"}.</p><dl class="kv">
+    <p class="note">${srcNote(s)} Highlighted: your copy is ${oc==="u"?"used":"new"}.</p><dl class="kv">
     ${s.po?`<dt>Part-out value (${esc(s.po[2].toLowerCase())})</dt><dd>${money(s.po[0]+s.po[1])}</dd><dt>  Parts and minifigs</dt><dd>${money(s.po[0])}</dd><dt>  Box and instructions</dt><dd>${money(s.po[1])}</dd>`:""}
     ${(s.figs||[]).length?`<dt>Minifigs alone (${oc==="u"?"used":"new"})</dt><dd>${money(fv)}</dd>`:""}
     <dt>US retail</dt><dd>${money(s.rp)}</dd>${s.rp&&mine!=null?`<dt>Now vs retail</dt><dd class="${mine>=s.rp?"ok":"bad"}">${mine>=s.rp?"+":""}${Math.round((mine/s.rp-1)*100)}%</dd>`:""}
@@ -559,7 +559,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
     ${s.po&&s.po[3]?`<p class="note">Part-out from BrickLink's price guide, read ${esc(s.po[3])}.</p>`:""}<h3>Check today's prices</h3>${linksHTML(buyLinks(s))}`}
   if(t==="pri"){const nv=setPrice(s,"n"),uv=setPrice(s,"u");
     b+=`<div class="big"><div class="${S.cond==="n"?"on":""}"><span>New, sealed</span><b>${money0(nv)}</b></div><div class="${S.cond==="u"?"on":""}"><span>Used</span><b>${money0(uv)}</b></div></div>
-    <p class="note">BrickLink 6-month sold averages, from your Brickset export (${esc(D.made)}).</p>
+    <p class="note">${srcNote(s)}</p>
     <dl class="kv"><dt>Want priority</dt><dd>#${s.pri||4}</dd><dt>US retail</dt><dd>${money(s.rp)}</dd>${(s.figs||[]).length?`<dt>Minifigs alone (${S.cond==="u"?"used":"new"})</dt><dd>${money(figVal(s))}</dd>`:""}</dl>
     ${dealHTML()}<h3>Going prices on each site</h3>${linksHTML(buyLinks(s))}`}
   if(t==="det"){const src=SRCMAP[s.src],aff=affil(s),chars=setChars(s),units=[...new Set(chars.flatMap(c=>(CH[c]||{units:[]}).units))],places=[...new Set([...(s.loc||[]),...chars.map(c=>(CH[c]||{}).planet).filter(Boolean)])].filter(p=>PLAN[p]&&p!=="elsewhere");
@@ -588,7 +588,7 @@ function drawFig(d){const n=detail.id,o=FIGS[n]||{nm:n},c=o.c?CH[o.c]:null,sets=
   const tabs=[["info","Minifig"],["type","All "+(c?"versions":"of this type")],["sets","Sets & story"]];if(!detail.tab)detail.tab="info";const t=detail.tab;let b="";
   if(t==="info"){const ty=figType(n);
     b+=`<div class="big"><div class="${S.cond==="n"?"on":""}"><span>New</span><b>${money(o.pn)}</b></div><div class="${S.cond==="u"?"on":""}"><span>Used</span><b>${money(o.pu)}</b></div></div>
-    <p class="note">BrickLink 6-month sold averages, from your Brickset export (${esc(D.made)}).</p>
+    <p class="note">${srcNote(o)}</p>
     <dl class="kv">${o.y?`<dt>First year</dt><dd>${o.y}</dd>`:""}${o.sc?`<dt>Comes in</dt><dd>${o.sc} set${o.sc>1?"s":""} in all</dd>`:""}</dl>
     <h3>Tags</h3><div class="tags">${c?`<button class="tag" data-tab="type"><span>Character: ${esc(c.name)}</span></button>`:""}<button class="tag" data-filter="figs|aff|${ty}"><span>${esc(TYPEN[ty])}</span></button>${o.cat?`<button class="tag" data-filter="figs|cat|${esc(o.cat)}"><span>${esc(o.cat)}</span></button>`:""}
     ${c?c.units.map(u=>`<span class="tag"><span>${esc(UNITN[u]||u)}</span></span>`).join(""):""}${c&&c.planet&&PLAN[c.planet]&&c.planet!=="elsewhere"?`<span class="tag"><span>Home: ${esc(PLAN[c.planet])}</span></span>`:""}
@@ -646,11 +646,21 @@ function sheetKey(k){k=String(k||"").trim();if(BYN[k])return k;
 const numv=v=>{if(v===""||v==null)return null;const x=+String(v).replace(/[$,\s]/g,"");return isNaN(x)?null:x};
 function fixSheet(x){const y={};if(x)Object.entries(x).forEach(([k,o])=>{const c=sheetKey(k),z=Object.assign({},o);["paid","price","tax"].forEach(f=>{if(f in z){const v=numv(z[f]);if(v==null)delete z[f];else z[f]=v}});["bought","store","q"].forEach(f=>{if(z[f]===""||z[f]==null)delete z[f]});y[c]=Object.assign(y[c]||{},z)});return y}
 function niceDate(d){if(!d)return"—";const s=String(d),m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s),t=m?new Date(+m[1],m[2]-1,+m[3]):new Date(s);return isNaN(t)?s:t.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}
+// live BrickLink prices that DW's sheet keeps up to date; the export's figures stay where the sheet has none yet
+const srcNote=x=>x&&x.liveAt?"BrickLink 6-month sold averages, kept current by your sheet (read "+esc(niceDate(x.liveAt))+").":"BrickLink 6-month sold averages, from your Brickset export ("+esc(D.made)+").";
+let LIVE=null;
+async function livePrices(){if(!D.script)return;try{const pr=await api({action:"prices"});if(!pr||!pr.ok||!pr.sets)return;LIVE=pr;let k=0;
+  Object.entries(pr.sets||{}).forEach(([n,o])=>{const s=BYN[sheetKey(n)];if(!s||!o)return;if(o.new!=null){s.bln=+o.new;k++}if(o.used!=null){s.blu=+o.used;k++}if(o.at)s.liveAt=o.at});
+  Object.entries(pr.figs||{}).forEach(([n,o])=>{const f=FIGS[n];if(!o)return;if(f){if(o.new!=null){f.pn=+o.new;k++}if(o.used!=null){f.pu=+o.used;k++}if(o.at)f.liveAt=o.at}
+    (FIGSETS[n]||[]).forEach(sn=>(BYN[sn].figs||[]).forEach(a=>{if(a[0]===n){if(o.new!=null)a[2]=+o.new;if(o.used!=null)a[3]=+o.used}}))});
+  if(k){render();if(detail)drawDetail()}}catch(e){}}
 async function signIn(p,quiet){PASS=p;let r;
   try{r=await api({action:"load"})}catch(e){PASS="";role="";const m="Couldn't reach your sheet. Check your connection, or open without signing in.";if(!quiet){const x=$("#si-msg");if(x)x.textContent=m}return{ok:false,net:true,msg:m}}
   if(!r||!r.ok){PASS="";role="";store.set("pass",null);const m=r&&r.error&&r.error!=="no"?r.error:"That passcode didn't work.";if(!quiet){const x=$("#si-msg");if(x)x.textContent=m}return{ok:false,msg:m}}
   role=r.role;status=Object.assign({},D.base,fixSheet(r.status));priv=fixSheet(r.priv);store.set("pass",p);$("#gate").hidden=true;
-  if(!quiet)toast(role==="admin"?"Signed in. Your prices show now.":"Signed in as a guest.");render();if(detail)drawDetail();drawSign();return{ok:true}}
+  if(!quiet)toast(role==="admin"?"Signed in. Your prices show now.":"Signed in as a guest.");render();if(detail)drawDetail();drawSign();
+  if(role==="admin")api({action:"pricesets",sets:SETS.filter(s=>s.own||s.want).map(s=>({n:s.n,want:s.own?0:(s.pri||4)}))}).catch(()=>{});
+  livePrices();return{ok:true}}
 function drawGate(msg){const g=$("#gate");g.hidden=false;
   g.innerHTML=`<div class="box"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p>${sidesHTML()}</div>`;
   const i=g.querySelector("#g-p"),go=g.querySelector("#g-go"),m=g.querySelector("#g-msg");
@@ -669,7 +679,7 @@ $("#b-sign").onclick=()=>{const el=$("#sign");if(!el.hidden)return hidePanel("si
 matchMedia("(orientation:landscape) and (min-width:600px)").addEventListener("change",()=>{placeDetail();if(detail)drawDetail()});
 window.addEventListener("resize",()=>placeDetail());
 setPage("sets");placeDetail();
-if(D.script){const p=store.get("pass",null);if(p)signIn(p,true).then(r=>{if(!r.ok)drawGate(r.msg)});else drawGate()}
+if(D.script){const p=store.get("pass",null);if(p)signIn(p,true).then(r=>{if(!r.ok)drawGate(r.msg)});else{drawGate();livePrices()}}
 if("serviceWorker"in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 window.__holo={S,render,openItem,setList,figList};
 })();
