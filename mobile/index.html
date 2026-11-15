@@ -4,59 +4,58 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#dfe4ea">
-<script>try{var sd=localStorage.getItem("holo-side");if(!sd){sd=localStorage.getItem("holo-m-side");sd=sd?JSON.parse(sd):"light"}if(sd!=="dark")sd="light";document.documentElement.dataset.side=sd;document.querySelector('meta[name=theme-color]').content=sd==="dark"?"#07090c":"#dfe4ea"}catch(e){document.documentElement.dataset.side="light"}</script>
+<meta name="theme-color" content="#07090c">
+<script>(function(){var r=document.documentElement,k="blue";r.dataset.side="dark";try{k=localStorage.getItem("holo-saber")||"blue"}catch(e){}if(!/^(blue|green|red|purple|yellow|white|darksaber)$/.test(k))k="blue";r.dataset.saber=k})()</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Holocron">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Brick Holocron</title>
 <style>
-/* Brick Holocron shared theme (round 7): Light side and Dark side.
+/* Brick Holocron shared theme (round 8): always dark, cockpit panels, saber-colour skins.
    Used by the main page (inlined at build) and the phone page (link theme.css from the repo root).
-   Set the side with <html data-side="light"> or <html data-side="dark">. Light is the default.
-   Layers: --bg (console base) > --panel (panel) > --slot (sub-frame) > --sub2 (inner sub-frame).
-   One glow colour per side: blue saber for light, red saber for dark. */
+   Pick the skin with <html data-saber="blue|green|red|purple|yellow|white|darksaber">. Blue is the default.
+   Layers: --bg (console base) > --panel (panel grey) > --slot (lighter grey sub-frame) > --sub2 (inner sub-frame).
+   Panels carry thin white line borders; keys light up blue or white like cockpit buttons. */
 :root{
-  --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
-  --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
-  --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
-  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
-  --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
+  --bg:#08090b;--panel:#1a1e24;--slot:#242a31;--sub2:#2e353e;--well:#e9edf1;
+  --ink:#f3f6f9;--muted:#c3ccd6;--line:rgba(236,242,248,.62);--line2:rgba(236,242,248,.24);--hi:rgba(255,255,255,.07);
+  --saber:#2a9bff;--core:#eef8ff;--accent:#6cb8ff;--glow:0 0 0 1px var(--saber),0 0 12px color-mix(in srgb,var(--saber) 70%,transparent),0 0 26px color-mix(in srgb,var(--saber) 35%,transparent);
+  --chipon:color-mix(in srgb,var(--saber) 24%,#161a20);
+  --keyblue:#1f6fd1;--keyblue2:#4aa3ff;--keywhite:#eef2f6;
+  --ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
+  --red:#ff3426;--yellow:#f2c230;--crt:#0c2a14;--crtline:#5cff8a;
   --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
   /* type scale: label, small, body, title, heading, figure */
   --t-lab:11.5px;--t-sm:13px;--t-md:14.5px;--t-title:17px;--t-head:22px;--t-fig:28px;
-  --r:4px;color-scheme:light;
+  --r:4px;color-scheme:dark;
 }
-:root[data-side="dark"]{
-  --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
-  --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
-  --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
-  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
-  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
-  color-scheme:dark;
-}
+:root[data-saber="green"]{--saber:#22e04a;--core:#effff1;--accent:#4be36a}
+:root[data-saber="red"]{--saber:#ff2424;--core:#fff0f0;--accent:#ff5c5c}
+:root[data-saber="purple"]{--saber:#b44dff;--core:#f8efff;--accent:#c98bff}
+:root[data-saber="yellow"]{--saber:#ffd21a;--core:#fffbe6;--accent:#ffd84a}
+:root[data-saber="white"]{--saber:#d8eeff;--core:#ffffff;--accent:#e8f4ff}
+:root[data-saber="darksaber"]{--saber:#f2f2f2;--core:#050505;--accent:#f2f2f2}
 body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body);margin:0}
 
-/* console panel: frame line, light top bevel, small corner brackets in the saber colour */
+/* console panel: grey plate, white line border, a bevel and small corner brackets in the saber colour */
 .hc-panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.08);
+  box-shadow:inset 0 1px 0 var(--hi),0 2px 0 rgba(0,0,0,.5);
   background-image:
     linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),
     linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber));
   background-size:14px 2px,2px 14px,14px 2px,2px 14px;
   background-position:left -1px top -1px,left -1px top -1px,right -1px bottom -1px,right -1px bottom -1px;
   background-repeat:no-repeat}
-/* sub-frames step one shade off the panel, and again inside */
 .hc-frame{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
 .hc-frame .hc-frame{background:var(--sub2)}
-/* readout strip at the top of a panel or frame */
 .hc-strip{display:flex;align-items:center;gap:8px;font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
   border-bottom:1px solid var(--line2);padding:0 0 6px;margin:0 0 8px}
-.hc-strip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--saber);box-shadow:0 0 6px var(--saber);flex:none}
+.hc-strip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--saber);box-shadow:0 0 8px var(--saber);flex:none}
 
 /* type scale */
 .hc-lab{font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -65,36 +64,38 @@ body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body)
 .hc-fig{font:700 var(--t-fig)/1.05 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
 .hc-text{font:400 var(--t-md)/1.45 var(--body);color:var(--ink)}
 .hc-small{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted)}
+.hc-digits{font:700 var(--t-title)/1 var(--mono);letter-spacing:.14em;color:var(--red);text-shadow:0 0 6px rgba(255,52,38,.8),0 0 14px rgba(255,52,38,.45)}
 
-/* keys: every button looks like a console key; the active one glows like a saber */
-.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:var(--slot);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;cursor:pointer;
-  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.15)}
-.hc-key:hover{border-color:var(--saber)}
-.hc-key.on,.hc-key[aria-pressed="true"]{background:var(--chipon);border-color:var(--saber);color:var(--ink);box-shadow:var(--glow)}
+/* keys: dark keys that light up like cockpit buttons; the active one is a lit blue key, a pressed white key on hover */
+.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:linear-gradient(#2c333c,#20252c);border:1px solid var(--line2);border-radius:var(--r);padding:7px 11px;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.6)}
+.hc-key:hover{border-color:var(--line)}
+.hc-key.on,.hc-key[aria-pressed="true"]{background:linear-gradient(var(--keyblue2),var(--keyblue));border-color:#bfe0ff;color:#fff;box-shadow:0 0 0 1px rgba(74,163,255,.6),0 0 14px rgba(74,163,255,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.hc-key.white{background:linear-gradient(#fff,var(--keywhite));color:#0b0f14;border-color:#fff}
 .hc-key:disabled{opacity:.45;cursor:default}
 
-/* the side switch: two keys, the active side's saber lit */
-.hc-side{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--slot)}
-.hc-side button{font:700 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;border:0;background:none;color:var(--muted);padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
-.hc-side button i{width:22px;height:4px;border-radius:2px;background:var(--line);flex:none}
-.hc-side button[data-side="light"].on i{background:#e9f5ff;box-shadow:0 0 0 1px #2a9bff,0 0 8px 2px #2a9bff}
-.hc-side button[data-side="dark"].on i{background:#ffe9e9;box-shadow:0 0 0 1px #ff2a2a,0 0 8px 2px #ff2a2a}
-.hc-side button.on{color:var(--ink);background:var(--panel)}
+/* saber picker: a row of round indicator lights, the chosen one lit bright */
+.hc-lights{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;background:#0c0e11;border:1px solid var(--line2);border-radius:20px}
+.hc-lights button{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:var(--c);opacity:.32;cursor:pointer;padding:0;box-shadow:inset 0 -3px 4px rgba(0,0,0,.45)}
+.hc-lights button:hover{opacity:.6}
+.hc-lights button.on{opacity:1;box-shadow:0 0 0 2px #fff,0 0 10px 3px var(--c),0 0 22px 6px color-mix(in srgb,var(--c) 55%,transparent)}
+.hc-lights button[data-saber="darksaber"]{background:radial-gradient(circle,#000 45%,#f2f2f2 50%)}
+.hc-side{display:none!important}
 
 /* Phone page adapter for the shared Brick Holocron theme.
-   The shared tokens live in lego/build/theme.css (round 7, used by the main page).
-   build_mobile.py inlines that file first, then this one, so the phone page uses the same
-   colours, saber glow, fonts and corner brackets. This file only maps the phone page's own
-   variable names onto the shared tokens and keeps phone-sized text (nothing under 13px). */
+   The shared tokens live in lego/build/theme.css (round 8: always dark, cockpit panels, saber skins),
+   owned by the main page. build_mobile.py inlines that file first, then this one, so the phone page
+   uses the same colours, saber skin, keys and fonts. This file only maps the phone page's own variable
+   names onto the shared tokens and keeps phone-sized text (nothing under 13px). */
 :root{
   --sub:var(--slot);
   --ink2:var(--muted);--ink3:var(--muted);
-  --acc:var(--saber);--acc-ink:var(--ink);--acc-soft:var(--chipon);--acc-text:#0d56a8;
-  --glow-text:0 0 6px var(--saber);
+  --acc:var(--saber);--acc-ink:var(--ink);--acc-soft:var(--chipon);--acc-text:var(--accent);
+  --glow-text:0 0 8px var(--saber);
   --own-bg:var(--chipon);--own-ink:var(--ink);--want-ink:var(--muted);
   --good:var(--gain);--bad:var(--loss);
-  --bevel:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.08);
-  --inset:inset 0 1px 3px rgba(14,22,32,.16);
+  --bevel:inset 0 1px 0 var(--hi),0 2px 0 rgba(0,0,0,.5);
+  --inset:inset 0 1px 4px rgba(0,0,0,.7);
   --r-sm:3px;--label-track:.1em;
   --font:var(--body);
   /* phone text sizes: title, head, body, label */
@@ -103,7 +104,6 @@ body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body)
   --f-body:400 15px/1.45 var(--body);
   --f-label:600 13px/1.2 var(--mono);
 }
-:root[data-side="dark"]{--acc-text:#ff8a8a;--inset:inset 0 1px 4px rgba(0,0,0,.7)}
 
 /* phone page components, built only on the shared theme variables */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -118,8 +118,9 @@ h3{font:var(--f-label);letter-spacing:var(--label-track);text-transform:uppercas
 #app{position:fixed;inset:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);max-width:100vw;overflow:hidden}
 /* console header */
 .top{flex:none;margin:6px 6px 0;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--bevel)}
+.r0{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .r1{display:flex;align-items:center;gap:8px}
-.brand{font:var(--f-label);letter-spacing:.14em;text-transform:uppercase;color:var(--acc-text);text-shadow:var(--glow-text);white-space:nowrap;flex:none}
+.brand{font:var(--f-label);letter-spacing:.12em;text-transform:uppercase;color:var(--acc-text);text-shadow:var(--glow-text);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .seg{display:flex;background:var(--sub2);border:1px solid var(--line2);border-radius:var(--r);padding:3px;gap:3px;min-width:0;box-shadow:var(--inset)}
 .seg button{border:1px solid transparent;background:none;padding:7px 12px;border-radius:var(--r-sm);font:var(--f-head);font-size:15px;color:var(--ink2);white-space:nowrap;min-width:0}
 .seg button.on{background:var(--chipon);border-color:var(--saber);color:var(--ink);box-shadow:var(--glow);font-weight:700}
@@ -136,6 +137,33 @@ h3{font:var(--f-label);letter-spacing:var(--label-track);text-transform:uppercas
 .r3{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
 .r3 .seg button{padding:6px 10px;font-size:14px}
 .r3 .sp{flex:1}
+/* saber lights: bigger on the phone so a thumb can hit them */
+.top .hc-lights,#gate .hc-lights{gap:6px;padding:4px 8px;flex:none}
+.top .hc-lights button,#gate .hc-lights button{width:22px;height:22px;opacity:.38}
+.top .hc-lights button.on,#gate .hc-lights button.on{opacity:1}
+#gate .hc-lights{gap:10px;padding:6px 12px}#gate .hc-lights button{width:28px;height:28px}
+#gate .lt{margin:18px 0 8px}
+/* flip switch for the main New / Used toggle */
+.flip{display:inline-flex;align-items:center;gap:7px;background:none;border:0;padding:4px 2px;font:600 14px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.flip i{position:relative;width:46px;height:24px;border-radius:12px;background:#0c0e11;border:1px solid var(--line);box-shadow:inset 0 2px 4px rgba(0,0,0,.8)}
+.flip i::after{content:"";position:absolute;top:2px;left:2px;width:28px;height:18px;border-radius:9px;background:linear-gradient(#fff,#aab3bd);box-shadow:0 1px 2px rgba(0,0,0,.8);transition:left .15s}
+.flip[aria-checked="true"] i::after{left:14px}
+.flip .fl{color:var(--muted)}
+.flip[aria-checked="false"] .n,.flip[aria-checked="true"] .u{color:var(--ink);text-shadow:0 0 8px var(--keyblue2)}
+/* red targeting digits for set and minifig numbers */
+.dg{font:700 14px/1.2 var(--mono);letter-spacing:.08em;color:var(--red);text-shadow:0 0 6px rgba(255,52,38,.7)}
+.ph{position:relative}
+.dg.tg{position:absolute;left:4px;top:4px;padding:3px 6px;background:rgba(8,9,11,.82);border:1px solid rgba(255,52,38,.6);border-radius:3px;font-size:15px;line-height:1}
+/* Show: Have / Want / Other keys; Want opens a joined 1st-2nd-3rd row under it */
+.show{display:flex;align-items:flex-start;gap:4px}
+.key{border:1px solid var(--line2);background:var(--sub2);color:var(--ink);border-radius:var(--r-sm);padding:6px 10px;min-height:36px;font:600 14px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.key[aria-pressed="true"]{background:var(--chipon);border-color:var(--saber);box-shadow:var(--glow)}
+.wgrp{display:flex;flex-direction:column;border:1px solid transparent;border-radius:var(--r)}
+.wgrp.open{border-color:var(--saber);padding:2px;margin:-3px 0}
+.wgrp.open>.key{border-radius:var(--r-sm) var(--r-sm) 0 0}
+.wp{display:flex;gap:2px;margin-top:2px}
+.wp .key{flex:1;padding:5px 7px;min-height:32px;font-size:13px;border-radius:0}
+.wp .key:first-child{border-bottom-left-radius:var(--r-sm)}.wp .key:last-child{border-bottom-right-radius:var(--r-sm)}
 .count{font:var(--f-label);letter-spacing:var(--label-track);text-transform:uppercase;color:var(--ink2);white-space:nowrap}
 .chipbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{border:1px solid var(--line2);background:var(--sub);border-radius:var(--r-sm);padding:5px 10px;font-size:14px;line-height:1.25;color:var(--ink);text-align:left;max-width:100%;overflow-wrap:anywhere}
@@ -250,12 +278,14 @@ details.grp>:not(summary){margin:10px 12px 12px}
 #gate input:focus{outline:none;border-color:var(--acc);box-shadow:var(--glow)}
 #gate .btn{width:100%;height:46px}
 #gate .msg{min-height:20px;margin:8px 0 0;color:var(--bad)}
-.sides{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:16px}
-.sides button{border:1px solid var(--line2);background:var(--sub);border-radius:var(--r);padding:10px 6px;font:var(--f-head);font-size:15px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.sides button i{display:block;width:70%;height:4px;border-radius:2px}
-.sides .l i{background:#4aa3ff;box-shadow:0 0 6px #4aa3ff}
-.sides .d i{background:#ff3b40;box-shadow:0 0 6px #ff3b40}
-.sides button.on{border-color:var(--acc);box-shadow:var(--glow)}
+/* cockpit keys (same look as the main page): dark keys, the active one lit blue, the main action a white key */
+.btn,.ibtn,.key,.chip,.tag,.sortl button,.links a{background:linear-gradient(#2c333c,#20252c);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.6)}
+.seg button.on,.ptabs button.on,.sortl button.on,.key[aria-pressed="true"],.chip.on,.ibtn.lit{background:linear-gradient(var(--keyblue2),var(--keyblue));border-color:#bfe0ff;color:#fff;box-shadow:0 0 0 1px rgba(74,163,255,.6),0 0 14px rgba(74,163,255,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.chip.on i{color:#e6f2ff}
+.btn.pri{background:linear-gradient(#fff,var(--keywhite));color:#0b0f14;border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
+.wgrp.open{border-color:var(--keyblue2)}
+/* the open item sits in a yellow targeting frame, like the main page's right panel */
+#detail{border:2px solid var(--yellow);border-radius:12px;box-shadow:0 0 12px rgba(242,194,48,.25)}
 /* landscape: list on the left, the open item on the right */
 @media (orientation:landscape) and (min-width:600px){
   .top{padding:6px 8px}
@@ -263,7 +293,8 @@ details.grp>:not(summary){margin:10px 12px 12px}
   .listcol{flex:0 0 46%;max-width:46%}
   .side{display:flex;flex:1;min-width:0;position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--bevel);overflow:hidden}
   .side .panel{position:absolute}
-  #detail{margin:0;border:0;box-shadow:none}
+  #detail{margin:0;border:0;box-shadow:none;border-radius:0}
+  .side{border:2px solid var(--yellow);border-radius:12px;box-shadow:0 0 12px rgba(242,194,48,.25)}
   .side .placeholder{margin:auto;color:var(--ink2);padding:20px;text-align:center}
   .gal{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   #detail .back{display:none}
@@ -297,9 +328,9 @@ details.grp>:not(summary){margin:10px 12px 12px}
 </head>
 <body>
 <div id="app">
-  <header class="top">
+  <header class="top hc-panel">
+    <div class="r0"><div class="brand">Brick Holocron</div><div class="hc-lights" role="group" aria-label="Choose your lightsaber colour"></div></div>
     <div class="r1">
-      <div class="brand">Brick Holocron</div>
       <div class="seg pages" role="tablist"><button id="pg-sets" class="on" role="tab">Sets</button><button id="pg-figs" role="tab">Minifigs</button></div>
       <button class="ibtn" id="b-sign" aria-label="Sign in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg></button>
     </div>
@@ -308,16 +339,16 @@ details.grp>:not(summary){margin:10px 12px 12px}
       <button class="ibtn" id="b-scan" aria-label="Look up a set or minifig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 9v6M10 9v6M13 9v6M16 9v6"/></svg>Scan</button>
     </div>
     <div class="r3">
-      <div class="seg" id="scope"><button data-v="own" class="on">Owned</button><button data-v="want">Wanted</button><button data-v="all">All</button></div>
+      <div class="show" id="show" role="group" aria-label="Show"><button class="key" data-k="h" aria-pressed="true">Have</button><span class="wgrp"><button class="key" data-k="w" aria-pressed="false">Want</button><span class="wp" id="wp" hidden><button class="key" data-p="1" aria-pressed="true">1st</button><button class="key" data-p="2" aria-pressed="true">2nd</button><button class="key" data-p="3" aria-pressed="true">3rd</button></span></span><button class="key" data-k="o" aria-pressed="false">Other</button></div>
       <button class="ibtn" id="b-browse">Browse</button>
       <div class="seg" id="view"><button data-v="list" class="on" aria-label="List">List</button><button data-v="gal" aria-label="Gallery">Photos</button></div>
-      <div class="seg" id="cond"><button data-v="n" class="on">New</button><button data-v="u">Used</button></div>
+      <button class="flip" id="cond" role="switch" aria-checked="false" aria-label="Show used prices"><span class="fl n">New</span><i></i><span class="fl u">Used</span></button>
       <span class="sp"></span><span class="count" id="count"></span>
     </div>
     <div class="chipbar" id="active" hidden></div>
   </header>
   <div class="body">
-    <div class="listcol">
+    <div class="listcol hc-panel">
       <div class="scroll" id="scroller"><div id="list"></div></div>
       <section class="panel" id="browse" hidden></section>
       <section class="panel" id="scan" hidden></section>
@@ -385,8 +416,8 @@ const CONFL={l:"Likely",g:"Best guess"};
 const SETIMG=n=>`https://images.brickset.com/sets/images/${n}.jpg`,FIGIMG=n=>`https://img.bricklink.com/ItemImage/MN/0/${encodeURIComponent(n)}.png`;
 const store={get(k,d){try{const v=localStorage.getItem("holo-m-"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("holo-m-"+k,JSON.stringify(v))}catch(e){}}};
 // ---------- state
-const S={page:"sets",qs:{sets:"",figs:""},scope:{sets:"own",figs:"own"},q:"",view:store.get("view","list"),cond:store.get("cond","n"),
-  f:{sets:{sub:new Set(),src:new Set(),ty:new Set(),pri:new Set(),stk:"",figs:"",y0:"",y1:""},figs:{cat:new Set(),aff:new Set(),inset:""}},
+const S={page:"sets",qs:{sets:"",figs:""},show:{sets:{h:1,w:0,o:0,p:new Set(["1","2","3"])},figs:{h:1,w:0,o:0,p:new Set(["1","2","3"])}},q:"",view:store.get("view","list"),cond:store.get("cond","n"),
+  f:{sets:{sub:new Set(),src:new Set(),ty:new Set(),figs:"",y0:"",y1:""},figs:{cat:new Set(),aff:new Set(),inset:""}},
   sort:{sets:["y",-1],figs:["name",1]},limit:80};
 let status=Object.assign({},D.base),priv={},role="",PASS="";
 const st=n=>status[n]||{};
@@ -402,29 +433,41 @@ const figType=n=>{const c=charOf(n);return c&&c.types[0]||"locals"};
 const setChars=s=>[...new Set((s.figs||[]).map(f=>(charOf(f[0])||{name:f[1]}).name))];
 const affil=s=>{const c={};(s.figs||[]).forEach(f=>{const t=figType(f[0]);c[t]=(c[t]||0)+1});return Object.entries(c).sort((a,b)=>b[1]-a[1]).map(x=>x[0])};
 const srcTitle=k=>SRCMAP[k]?SRCMAP[k][2]:"Other";
+// set types, merged and ranked as DW set them (Nov 15): biggest tiles first
+const TGROUPS=[["ucs","UCS",["ucs"]],["play","Play sets",["play"]],["anniv","Anniversary",["anniv"]],["battle","Battle packs",["battle"]],["special","Special editions",["seasonal","promo","book","extended"]],["micro","Microfighters",["micro"]],["mini","Mini & polybags",["mini"]],["rest","Everything else",[]]];
+const TGOF={};TGROUPS.forEach(g=>g[2].forEach(t=>TGOF[t]=g[0]));const tgOf=s=>TGOF[s.ty]||"rest",TGN=Object.fromEntries(TGROUPS.map(g=>[g[0],g[1]]));
+// Show: Have / Want (priorities 1-3, each its own toggle) / Other (priority 4 or nothing)
+const FIGPRI={};SETS.forEach(s=>{if(s.want&&!s.own)(s.figs||[]).forEach(f=>{const p=s.pri||4;if(!FIGPRI[f[0]]||p<FIGPRI[f[0]])FIGPRI[f[0]]=p})});
+const kindOf=(page,x)=>page==="sets"?(x.own?"h":(x.pri||4)<=3?"w":"o"):(x.qo?"h":(FIGPRI[x.n]||4)<=3?"w":"o");
+const priOf=(page,x)=>page==="sets"?(x.pri||4):(FIGPRI[x.n]||4);
+function inShow(page,x){const v=S.show[page],k=kindOf(page,x);return k==="w"?!!v.w&&v.p.has(String(priOf(page,x))):!!v[k]}
+const mixed=page=>{const v=S.show[page];return(v.h?1:0)+(v.w?1:0)+(v.o?1:0)>1};
+function showAll(page){const v=S.show[page];v.h=v.w=v.o=1;v.p=new Set(["1","2","3"])}
+const KINDN={h:"Have",w:"Want",o:"Other"};
 function frame(root){root.querySelectorAll(".pbody.tb").forEach(pb=>{const f=document.createDocumentFragment();let c=null;[...pb.childNodes].forEach(k=>{if(k.nodeType===3&&!k.textContent.trim()){k.remove();return}if(k.nodeName==="H3"||!c){c=document.createElement("div");c.className="blk";f.appendChild(c)}c.appendChild(k)});pb.appendChild(f)})}
-const curSide=()=>document.documentElement.dataset.side==="dark"?"dark":"light";
-function setSide(v){document.documentElement.dataset.side=v;store.set("side",v);try{localStorage.setItem("holo-side",v)}catch(e){}const m=document.querySelector('meta[name=theme-color]');if(m)m.content=v==="dark"?"#07090c":"#dfe4ea";document.querySelectorAll(".sides button").forEach(b=>b.classList.toggle("on",b.dataset.side===v))}
-const sidesHTML=()=>`<div class="sides" role="group" aria-label="Theme"><button class="l${curSide()==="light"?" on":""}" data-side="light"><i></i>Light side</button><button class="d${curSide()==="dark"?" on":""}" data-side="dark"><i></i>Dark side</button></div>`;
-const wireSides=el=>el.querySelectorAll(".sides button").forEach(b=>b.onclick=()=>setSide(b.dataset.side));
+const SABERS=[["blue","#2a9bff","Blue"],["green","#22e04a","Green"],["red","#ff2424","Red"],["purple","#b44dff","Purple"],["yellow","#ffd21a","Yellow"],["white","#e8f4ff","White (Ahsoka)"],["darksaber","#f2f2f2","Darksaber"]];
+function applySaber(k){if(!SABERS.some(x=>x[0]===k))k="blue";document.documentElement.dataset.saber=k;
+  document.querySelectorAll(".hc-lights button").forEach(b=>{b.classList.toggle("on",b.dataset.saber===k);b.setAttribute("aria-pressed",b.dataset.saber===k)});try{localStorage.setItem("holo-saber",k)}catch(e){}}
+function buildLights(root){const k=document.documentElement.dataset.saber||"blue";(root||document).querySelectorAll(".hc-lights").forEach(g=>{
+  g.innerHTML=SABERS.map(([v,c,l])=>`<button type="button" data-saber="${v}" style="--c:${c}" aria-label="${l} lightsaber" aria-pressed="${v===k}" class="${v===k?"on":""}"></button>`).join("");
+  g.querySelectorAll("button").forEach(b=>b.onclick=()=>applySaber(b.dataset.saber))})}
+buildLights();
 function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;$("#app").appendChild(d);setTimeout(()=>d.remove(),2600)}
 const img=(u,alt)=>`<img src="${esc(u)}" alt="${esc(alt||"")}" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph0',textContent:'No photo'}))">`;
 // ---------- lists
-function setList(){const sc=S.scope.sets,f=S.f.sets,q=S.q.trim().toLowerCase(),qn=q.replace(/[^0-9a-z-]/g,"");
+function setList(){const f=S.f.sets,q=S.q.trim().toLowerCase(),qn=q.replace(/[^0-9a-z-]/g,"");
   return SETS.filter(s=>{
-    if(sc==="own"&&!s.own)return false;if(sc==="want"&&!s.want)return false;
-    if(f.sub.size&&!f.sub.has(s.sub))return false;if(f.src.size&&!f.src.has(s.src))return false;if(f.ty.size&&!f.ty.has(s.ty))return false;
-    if(f.pri.size&&!(s.want&&f.pri.has(String(s.pri||4))))return false;
-    if(f.stk==="y"&&s.stk!==1)return false;if(f.stk==="n"&&s.stk!==0)return false;
+    if(!inShow("sets",s))return false;
+    if(f.sub.size&&!f.sub.has(s.sub))return false;if(f.src.size&&!f.src.has(s.src))return false;if(f.ty.size&&!f.ty.has(tgOf(s)))return false;
     if(f.figs==="y"&&!(s.figs||[]).length)return false;if(f.figs==="n"&&(s.figs||[]).length)return false;
     if(f.y0&&s.y<+f.y0)return false;if(f.y1&&s.y>+f.y1)return false;
     if(q){if(qn&&(s.n.toLowerCase().startsWith(qn)||num(s)===qn))return true;
       const hay=(s.name+" "+s.n+" "+s.sub+" "+srcTitle(s.src)+" "+(s.ship||"")+" "+setChars(s).join(" ")+" "+(s.figs||[]).map(x=>x[0]).join(" ")).toLowerCase();
       return q.split(/\s+/).every(w=>hay.includes(w))}
     return true})}
-function figList(){const sc=S.scope.figs,f=S.f.figs,q=S.q.trim().toLowerCase();
+function figList(){const f=S.f.figs,q=S.q.trim().toLowerCase();
   return Object.entries(FIGS).filter(([n,o])=>{
-    if(sc==="own"&&!o.qo)return false;if(sc==="want"&&!o.w)return false;if(sc==="all"&&!o.qo&&!o.w&&!FIGSETS[n])return false;
+    if(!o.qo&&!o.w&&!FIGSETS[n])return false;if(!inShow("figs",Object.assign({n},o)))return false;
     if(f.cat.size&&!f.cat.has(o.cat||"Other"))return false;if(f.aff.size&&!f.aff.has(figType(n)))return false;
     if(f.inset==="y"&&!FIGSETS[n])return false;if(f.inset==="n"&&FIGSETS[n])return false;
     if(q){if(n.toLowerCase()===q||n.toLowerCase().startsWith(q.replace(/\s/g,"")))return true;const hay=(n+" "+(o.nm||"")+" "+(o.c||"")+" "+(o.cat||"")).toLowerCase();return q.split(/\s+/).every(w=>hay.includes(w))}
@@ -435,7 +478,7 @@ function sortKey(page,k,x){if(page==="sets"){const s=x;return k==="y"?(s.ld||Str
   const f=x;return k==="name"?(f.nm||f.n).toLowerCase():k==="num"?f.n:k==="price"?figPrice(f):k==="y"?f.y:k==="sets"?(FIGSETS[f.n]||[]).length:k==="char"?(f.c||"~").toLowerCase():0}
 function sorted(page,arr){const[k,dir]=S.sort[page];return arr.map(x=>[sortKey(page,k,x),x]).sort((a,b)=>{const A=a[0],B=b[0];if(A==null&&B==null)return 0;if(A==null)return 1;if(B==null)return -1;return(A<B?-1:A>B?1:0)*dir}).map(x=>x[1])}
 function showVal(page,x){const k=S.sort[page][0];
-  if(page==="sets"){const s=x,c=s.own&&S.scope.sets==="own"?S.cond:S.cond;
+  if(page==="sets"){const s=x,c=S.cond;
     if(k==="po")return s.po?[money0(s.po[0]+s.po[1]),"part-out"]:["—","part-out"];
     if(k==="rp")return[money0(s.rp),"retail"];if(k==="pcs")return[s.pcs||"—","pieces"];if(k==="nfig")return[(s.figs||[]).length,"minifigs"];
     if(k==="fval")return[money0(figVal(s)),"minifigs"];if(k==="gain"){const p=setPrice(s);return[s.rp&&p!=null?Math.round((p/s.rp-1)*100)+"%":"—","vs retail"]}
@@ -445,15 +488,15 @@ function showVal(page,x){const k=S.sort[page][0];
 let cur=[];
 function render(){const page=S.page;cur=sorted(page,page==="sets"?setList():figList());
   $("#count").textContent=cur.length+(page==="sets"?" set":" fig")+(cur.length===1?"":"s");
-  const box=$("#list"),lim=Math.min(cur.length,S.limit),sel=detail&&detail.id;box.classList.toggle("mixed",S.scope[page]==="all");
+  const box=$("#list"),lim=Math.min(cur.length,S.limit),sel=detail&&detail.id;box.classList.toggle("mixed",mixed(page));
   if(!cur.length){box.innerHTML=`<div class="empty">Nothing matches.${S.q||activeCount()?` <br><br><button class="btn" id="clr-all">Clear search and filters</button>`:""}</div>`;const c=$("#clr-all");if(c)c.onclick=clearAll;return}
   let h="";
   if(S.view==="gal"){h='<div class="gal">';for(let i=0;i<lim;i++){const x=cur[i],v=showVal(page,x);
-      h+=page==="sets"?`<button class="card${x.own?" own":""}${sel===x.n?" sel":""}" data-o="s:${esc(x.n)}"><div class="ph">${img(SETIMG(x.n))}</div><b>${esc(x.name)}</b><small>${esc(num(x))} · ${x.y}</small><span class="pr">${esc(v[0])} <small>${esc(v[1])}</small></span></button>`
-      :`<button class="card${x.qo?" own":""}${sel===x.n?" sel":""}" data-o="f:${esc(x.n)}"><div class="ph">${img(FIGIMG(x.n))}</div><b>${esc(x.nm||x.n)}</b><small>${esc(x.n)}${x.qo>1?" · ×"+x.qo:""}</small><span class="pr">${esc(v[0])}</span></button>`}h+="</div>"}
+      h+=page==="sets"?`<button class="card${x.own?" own":""}${sel===x.n?" sel":""}" data-o="s:${esc(x.n)}"><div class="ph">${img(SETIMG(x.n))}</div><b>${esc(x.name)}</b><small><span class="dg">${esc(num(x))}</span> · ${x.y}</small><span class="pr">${esc(v[0])} <small>${esc(v[1])}</small></span></button>`
+      :`<button class="card${x.qo?" own":""}${sel===x.n?" sel":""}" data-o="f:${esc(x.n)}"><div class="ph">${img(FIGIMG(x.n))}</div><b>${esc(x.nm||x.n)}</b><small><span class="dg">${esc(x.n)}</span>${x.qo>1?" · ×"+x.qo:""}</small><span class="pr">${esc(v[0])}</span></button>`}h+="</div>"}
   else for(let i=0;i<lim;i++){const x=cur[i],v=showVal(page,x);
-    h+=page==="sets"?`<button class="row${x.own?" own":""}${sel===x.n?" sel":""}" data-o="s:${esc(x.n)}"><span class="th">${img(SETIMG(x.n))}</span><span class="tx"><b>${esc(x.name)}</b><small>${S.scope.sets==="all"?`<span class="pill ${x.own?"own":"want"}">${x.own?"Own":"Want"}</span>`:""}${esc(num(x))} · ${x.y} · ${esc(x.sub)}${x.want&&!x.own?" · #"+(x.pri||4):""}</small></span><span class="pr">${esc(v[0])}<small>${esc(v[1])}</small></span></button>`
-    :`<button class="row${x.qo?" own":""}${sel===x.n?" sel":""}" data-o="f:${esc(x.n)}"><span class="th">${img(FIGIMG(x.n))}</span><span class="tx"><b>${esc(x.nm||x.n)}</b><small>${S.scope.figs==="all"?`<span class="pill ${x.qo?"own":"want"}">${x.qo?"Own":x.w?"Want":"In a set"}</span>`:""}${esc(x.n)}${x.qo>1?" · ×"+x.qo:""} · ${esc(x.cat||"")}</small></span><span class="pr">${esc(v[0])}<small>${esc(v[1])}</small></span></button>`}
+    h+=page==="sets"?`<button class="row${x.own?" own":""}${sel===x.n?" sel":""}" data-o="s:${esc(x.n)}"><span class="th">${img(SETIMG(x.n))}</span><span class="tx"><b>${esc(x.name)}</b><small>${mixed("sets")?`<span class="pill ${x.own?"own":"want"}">${x.own?"Have":(x.pri||4)<=3?"Want":"Other"}</span>`:""}<span class="dg">${esc(num(x))}</span> · ${x.y} · ${esc(x.sub)}${x.want&&!x.own&&(x.pri||4)<=3?" · "+["1st","2nd","3rd"][(x.pri||4)-1]:""}</small></span><span class="pr">${esc(v[0])}<small>${esc(v[1])}</small></span></button>`
+    :`<button class="row${x.qo?" own":""}${sel===x.n?" sel":""}" data-o="f:${esc(x.n)}"><span class="th">${img(FIGIMG(x.n))}</span><span class="tx"><b>${esc(x.nm||x.n)}</b><small>${mixed("figs")?`<span class="pill ${x.qo?"own":"want"}">${KINDN[kindOf("figs",x)]}</span>`:""}<span class="dg">${esc(x.n)}</span>${x.qo>1?" · ×"+x.qo:""} · ${esc(x.cat||"")}</small></span><span class="pr">${esc(v[0])}<small>${esc(v[1])}</small></span></button>`}
   if(cur.length>lim)h+=`<button class="btn more" id="more">Show ${Math.min(120,cur.length-lim)} more of ${cur.length-lim}</button>`;
   box.innerHTML=h;const m=$("#more");if(m){m.onclick=()=>{S.limit+=120;render()};if("IntersectionObserver"in window){const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){io.disconnect();S.limit+=120;render()}},{root:$("#scroller"),rootMargin:"400px"});io.observe(m)}}
 }
@@ -462,25 +505,30 @@ $("#list").addEventListener("click",e=>{const b=e.target.closest("[data-o]");if(
 function setSeg(id,v){document.querySelectorAll(id+" button").forEach(b=>b.classList.toggle("on",b.dataset.v===v))}
 function resetScroll(){S.limit=80;$("#scroller").scrollTop=0}
 function goPage(p){if(p===S.page)return;S.qs[S.page]=S.q;S.page=p;S.q=S.qs[p]||"";$("#q").value=S.q;$("#qx").hidden=!S.q}
-function setPage(p){goPage(p);$("#pg-sets").classList.toggle("on",p==="sets");$("#pg-figs").classList.toggle("on",p==="figs");setSeg("#scope",S.scope[p]);
+function setPage(p){goPage(p);$("#pg-sets").classList.toggle("on",p==="sets");$("#pg-figs").classList.toggle("on",p==="figs");drawShow();
   $("#q").placeholder=p==="sets"?"Search sets":"Search minifigs";hidePanel("browse");resetScroll();drawActive();render()}
 $("#pg-sets").onclick=()=>setPage("sets");$("#pg-figs").onclick=()=>setPage("figs");
-document.querySelectorAll("#scope button").forEach(b=>b.onclick=()=>{S.scope[S.page]=b.dataset.v;setSeg("#scope",b.dataset.v);resetScroll();render();if(!$("#browse").hidden)drawBrowse()});
+function drawShow(){const v=S.show[S.page];document.querySelectorAll("#show [data-k]").forEach(b=>b.setAttribute("aria-pressed",v[b.dataset.k]?"true":"false"));
+  document.querySelectorAll("#wp [data-p]").forEach(b=>b.setAttribute("aria-pressed",v.p.has(b.dataset.p)?"true":"false"));$("#wp").hidden=!v.w;$("#show .wgrp").classList.toggle("open",!!v.w)}
+document.querySelectorAll("#show [data-k]").forEach(b=>b.onclick=()=>{const v=S.show[S.page],k=b.dataset.k;v[k]=v[k]?0:1;if(k==="w"&&v.w&&!v.p.size)v.p=new Set(["1","2","3"]);drawShow();resetScroll();render();if(!$("#browse").hidden)drawBrowse()});
+document.querySelectorAll("#wp [data-p]").forEach(b=>b.onclick=()=>{const v=S.show[S.page],p=b.dataset.p;v.p.has(p)?v.p.delete(p):v.p.add(p);drawShow();resetScroll();render();if(!$("#browse").hidden)drawBrowse()});
+drawShow();
 document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{S.view=b.dataset.v;store.set("view",S.view);setSeg("#view",S.view);render()});
-document.querySelectorAll("#cond button").forEach(b=>b.onclick=()=>{S.cond=b.dataset.v;store.set("cond",S.cond);setSeg("#cond",S.cond);render();if(detail)drawDetail()});
-setSeg("#view",S.view);setSeg("#cond",S.cond);
+function drawCond(){const c=$("#cond");c.setAttribute("aria-checked",S.cond==="u"?"true":"false")}
+$("#cond").onclick=()=>{S.cond=S.cond==="u"?"n":"u";store.set("cond",S.cond);drawCond();render();if(detail)drawDetail()};
+setSeg("#view",S.view);drawCond();
 let qt;$("#q").addEventListener("input",()=>{clearTimeout(qt);$("#qx").hidden=!$("#q").value;qt=setTimeout(()=>{S.q=$("#q").value;resetScroll();render()},120)});
 $("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#q").blur();if(cur.length===1)openItem((S.page==="sets"?"s:":"f:")+cur[0].n)}});
 $("#qx").onclick=()=>{$("#q").value="";S.q="";$("#qx").hidden=true;resetScroll();render()};
 function setQ(v){$("#q").value=v;S.q=v;$("#qx").hidden=!v;resetScroll()}
 // ---------- browse (filters + sort)
 let btab="f";
-function activeCount(){const f=S.f[S.page];return S.page==="sets"?f.sub.size+f.src.size+f.ty.size+f.pri.size+(f.stk?1:0)+(f.figs?1:0)+(f.y0||f.y1?1:0):f.cat.size+f.aff.size+(f.inset?1:0)}
+function activeCount(){const f=S.f[S.page];return S.page==="sets"?f.sub.size+f.src.size+f.ty.size+(f.figs?1:0)+(f.y0||f.y1?1:0):f.cat.size+f.aff.size+(f.inset?1:0)}
 function clearAll(){const f=S.f[S.page];Object.keys(f).forEach(k=>f[k] instanceof Set?f[k].clear():f[k]="");setQ("");drawActive();render();if(!$("#browse").hidden)drawBrowse()}
 function drawActive(){const f=S.f[S.page],a=[];
   const add=(k,v,l)=>a.push(`<button class="chip x" data-k="${k}" data-v="${esc(v)}">${esc(l)}</button>`);
-  if(S.page==="sets"){f.sub.forEach(v=>add("sub",v,v));f.src.forEach(v=>add("src",v,srcTitle(v)));f.ty.forEach(v=>add("ty",v,STYPE[v]||v));f.pri.forEach(v=>add("pri",v,"Priority "+v));
-    if(f.stk)add("stk","",f.stk==="y"?"Has stickers":"No stickers");if(f.figs)add("figs","",f.figs==="y"?"Has minifigs":"No minifigs");if(f.y0||f.y1)add("yr","",(f.y0||"…")+"–"+(f.y1||"…"))}
+  if(S.page==="sets"){f.sub.forEach(v=>add("sub",v,v));f.src.forEach(v=>add("src",v,srcTitle(v)));f.ty.forEach(v=>add("ty",v,TGN[v]||v));
+    if(f.figs)add("figs","",f.figs==="y"?"Has minifigs":"No minifigs");if(f.y0||f.y1)add("yr","",(f.y0||"…")+"–"+(f.y1||"…"))}
   else{f.cat.forEach(v=>add("cat",v,v));f.aff.forEach(v=>add("aff",v,TYPEN[v]||v));if(f.inset)add("inset","",f.inset==="y"?"In your sets":"Not in your sets")}
   const el=$("#active");el.hidden=!a.length;el.innerHTML=a.join("")+(a.length>1?`<button class="chip" data-k="all">Clear all</button>`:"");
   const n=activeCount();$("#b-browse").textContent=n?`Browse · ${n}`:"Browse"}
@@ -488,19 +536,18 @@ $("#active").addEventListener("click",e=>{const b=e.target.closest("button");if(
   if(k==="all")return clearAll();if(k==="yr"){f.y0="";f.y1=""}else if(f[k] instanceof Set)f[k].delete(b.dataset.v);else f[k]="";resetScroll();drawActive();render();if(!$("#browse").hidden)drawBrowse()});
 function counts(arr,fn){const c={};arr.forEach(x=>{const k=fn(x);if(k!=null)c[k]=(c[k]||0)+1});return c}
 function drawBrowse(){const el=$("#browse"),page=S.page,f=S.f[page];
-  const base=page==="sets"?SETS.filter(s=>S.scope.sets==="all"||(S.scope.sets==="own"?s.own:s.want)):figList.call(null);
+  const base=page==="sets"?SETS.filter(s=>inShow("sets",s)):figList.call(null);
   const chips=(k,entries)=>`<div class="chipbar">${entries.map(([v,l,c])=>`<button class="chip${f[k].has(v)?" on":""}" data-k="${k}" data-v="${esc(v)}">${esc(l)}<i>${c}</i></button>`).join("")}</div>`;
   let h=`<div class="phead"><h2>Browse ${page==="sets"?"sets":"minifigs"}</h2><button class="btn" id="br-clear">Clear</button><button class="btn pri" id="br-done">Show ${cur.length}</button></div>
   <div class="ptabs"><button data-t="f" class="${btab==="f"?"on":""}">Filter</button><button data-t="s" class="${btab==="s"?"on":""}">Sort</button></div><div class="scroll"><div class="pbody">`;
   if(btab==="s"){const[k,dir]=S.sort[page];h+=`<div class="sortl">${SORTS[page].map(([v,l])=>`<button data-sort="${v}" class="${k===v?"on":""}">${esc(l)}${k===v?(dir<0?"  · high to low":"  · low to high"):""}</button>`).join("")}</div><p class="note">Tap the chosen sort again to flip its order.</p>`}
   else if(page==="sets"){
-    const sub=counts(base,s=>s.sub),src=counts(base,s=>s.src),ty=counts(base,s=>s.ty);
+    const sub=counts(base,s=>s.sub),src=counts(base,s=>s.src),ty=counts(base,tgOf);
     h+=`<details class="grp" open><summary>Subtheme</summary>${chips("sub",Object.keys(sub).sort().map(v=>[v,v,sub[v]]))}</details>
     <details class="grp"><summary>Story</summary>${chips("src",SRC.filter(s=>src[s[0]]).map(s=>[s[0],s[2],src[s[0]]]).concat(src.misc?[["misc","Other",src.misc]]:[]))}</details>
-    <details class="grp"><summary>Set type</summary>${chips("ty",Object.keys(ty).sort((a,b)=>ty[b]-ty[a]).map(v=>[v,STYPE[v]||v,ty[v]]))}</details>
-    ${S.scope.sets!=="own"?`<details class="grp" open><summary>Want priority</summary>${chips("pri",["1","2","3","4"].map(v=>[v,"Priority "+v,base.filter(s=>s.want&&String(s.pri||4)===v).length]))}</details>`:""}
+    <details class="grp" open><summary>Set type</summary>${chips("ty",TGROUPS.filter(g=>ty[g[0]]).map(g=>[g[0],g[1],ty[g[0]]]))}</details>
     <details class="grp"><summary>Year released</summary><div class="yr"><input id="y0" inputmode="numeric" placeholder="From" value="${esc(f.y0)}"><span>to</span><input id="y1" inputmode="numeric" placeholder="To" value="${esc(f.y1)}"></div></details>
-    <details class="grp"><summary>Stickers and minifigs</summary><div class="chipbar">${[["stk","y","Has stickers"],["stk","n","No stickers"],["figs","y","Has minifigs"],["figs","n","No minifigs"]].map(([k,v,l])=>`<button class="chip${f[k]===v?" on":""}" data-one="${k}" data-v="${v}">${l}</button>`).join("")}</div><p class="note">Sticker info comes from the parts lists.</p></details>`}
+    <details class="grp"><summary>Minifigs</summary><div class="chipbar">${[["figs","y","Has minifigs"],["figs","n","No minifigs"]].map(([k,v,l])=>`<button class="chip${f[k]===v?" on":""}" data-one="${k}" data-v="${v}">${l}</button>`).join("")}</div></details>`}
   else{const cat=counts(base,o=>o.cat||"Other"),aff=counts(base,o=>figType(o.n));
     h+=`<details class="grp" open><summary>Category</summary>${chips("cat",Object.keys(cat).sort().map(v=>[v,v,cat[v]]))}</details>
     <details class="grp" open><summary>Affiliation</summary>${chips("aff",TYPES.filter(t=>aff[t[0]]).map(t=>[t[0],t[1],aff[t[0]]]))}</details>
@@ -532,8 +579,8 @@ function tabsHTML(list,on){return`<div class="ptabs">${list.map(([v,l])=>`<butto
 function wireTabs(d){d.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{detail.tab=b.dataset.tab;drawDetail()});const bk=d.querySelector(".back");if(bk)bk.onclick=back;
   d.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>openItem(b.dataset.o));
   d.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{const[pg,k,v]=b.dataset.filter.split("|");const f=S.f[pg];if(f[k] instanceof Set){f[k].clear();f[k].add(v)}else f[k]=v;
-    goPage(pg);S.scope[pg]="all";setQ("");toBase()});
-  d.querySelectorAll("[data-search]").forEach(b=>b.onclick=()=>{const[pg,v]=b.dataset.search.split("|");goPage(pg);S.scope[pg]="all";setQ(v);toBase()})}
+    goPage(pg);showAll(pg);setQ("");toBase()});
+  d.querySelectorAll("[data-search]").forEach(b=>b.onclick=()=>{const[pg,v]=b.dataset.search.split("|");goPage(pg);showAll(pg);setQ(v);toBase()})}
 function toBase(){const n=stack.length+(detail?1:0);stack=[];detail=null;$("#detail").hidden=true;placeDetail();if(n)history.go(-n);setPage(S.page)}
 const buyLinks=s=>{const n=num(s),q=encodeURIComponent;return[["eBay sold","https://www.ebay.com/sch/i.html?_nkw="+q("LEGO "+n+" "+s.name)+"&LH_Sold=1&LH_Complete=1","what sold recently"],["eBay listings","https://www.ebay.com/sch/i.html?_nkw="+q("LEGO "+n+" "+s.name),"for sale now"],["BrickLink","https://www.bricklink.com/v2/catalog/catalogitem.page?S="+q(s.n)+"#T=P","price guide"],["BrickOwl","https://www.brickowl.com/search/catalog?query="+q(n),"stores"],["Marketplace","https://www.facebook.com/marketplace/search/?query="+q("lego "+n),"Facebook, local"],["Brickset","https://brickset.com/sets/"+q(s.n),"set page"]]};
 const figLinks=n=>{const q=encodeURIComponent;return[["eBay sold","https://www.ebay.com/sch/i.html?_nkw="+q("LEGO "+n+" minifigure")+"&LH_Sold=1&LH_Complete=1","what sold recently"],["BrickLink","https://www.bricklink.com/v2/catalog/catalogitem.page?M="+q(n)+"#T=P","price guide"],["BrickOwl","https://www.brickowl.com/search/catalog?query="+q(n),"stores"],["Marketplace","https://www.facebook.com/marketplace/search/?query="+q("lego "+n),"Facebook, local"]]};
@@ -549,7 +596,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
     const has=Object.keys(r).length>0;
     b+=`<div class="rec">${r.now||s.cond?`<span>Condition</span><span>${esc(r.now||s.cond)}</span>`:""}${s.qty>1?`<span>Copies</span><span>${s.qty}</span>`:""}${has?`<span>Set</span>${yesno(r.cset)}<span>Box</span>${yesno(r.cbox)}<span>Instructions</span>${yesno(r.cinst)}<span>Minifigs</span>${figs.length?yesno(r.cfigs):`<span class="dim">None in this set</span>`}`:""}<span>Stickers</span><span>${s.stk===1?"Set has stickers":s.stk===0?"No stickers in this set":`<span class="dim">Unknown</span>`}</span>${r.qn?`<span>Quality now</span><span>${esc(r.qn)}</span>`:""}${(r.miss||[]).length?`<span>Missing pieces</span><span class="bad">${r.miss.reduce((a,m)=>a+(+m.q||1),0)}</span>`:""}</div>${has?"":`<p class="note">No record yet for this set’s box, instructions or minifigs. You add those on the full Brick Holocron.</p>`}`;
     if(role==="admin"&&(r.paid!=null||r.bought||r.store||r.q||pv.tax!=null))b+=`<h3>Purchase</h3><div class="rec"><span>Paid</span><span>${money(r.paid!=null?+r.paid:null)}</span><span>Bought</span><span>${esc(niceDate(r.bought))}</span><span>Store</span><span>${esc(r.store||"—")}</span><span>Quality when bought</span><span>${esc(r.q||"—")}</span>${pv.tax!=null?`<span>Tax and shipping</span><span>${money(+pv.tax)}</span>`:""}</div>${r.notes?`<h3>Notes</h3><p>${esc(r.notes)}</p>`:""}`;
-    if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?" own":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${have?`<span class="ok">${fx.size?"Have it":"You own one"}</span>`:`<span class="dim">${fx.size?"Missing":"Not owned"}</span>`}</button>`}).join("")}</div>`;}
+    if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?" own":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b><span class="dg">${esc(f[0])}</span><br>${have?`<span class="ok">${fx.size?"Have it":"You own one"}</span>`:`<span class="dim">${fx.size?"Missing":"Not owned"}</span>`}</button>`}).join("")}</div>`;}
   if(t==="val"){const nv=setPrice(s,"n"),uv=setPrice(s,"u"),mine=oc==="u"?uv:nv,fv=figVal(s,oc);
     b+=`<div class="big"><div class="${oc==="n"?"on":""}"><span>New, sealed</span><b>${money0(nv)}</b></div><div class="${oc==="u"?"on":""}"><span>Used</span><b>${money0(uv)}</b></div></div>
     <p class="note">${srcNote(s)} Highlighted: your copy is ${oc==="u"?"used":"new"}.</p><dl class="kv">
@@ -571,17 +618,17 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
     <h3>Connections</h3><div class="tags">
       <button class="tag" data-filter="sets|src|${esc(s.src)}"><span>Story: ${esc(srcTitle(s.src))}</span></button>
       <button class="tag" data-filter="sets|sub|${esc(s.sub)}"><span>Subtheme: ${esc(s.sub)}</span></button>
-      <button class="tag" data-filter="sets|ty|${esc(s.ty)}"><span>${esc(STYPE[s.ty]||"Set")}</span></button>
+      <button class="tag" data-filter="sets|ty|${esc(tgOf(s))}"><span>${esc(TGN[tgOf(s)])}</span></button>
       ${s.ship?`<button class="tag" data-search="sets|${esc(s.ship)}"><span>Ship: ${esc(s.ship)} · ${SHIPV[s.ship].length} version${SHIPV[s.ship].length>1?"s":""}</span></button>`:""}
       ${s.pilot?`<span class="tag"><span>Pilot: ${esc(s.pilot)}</span></span>`:""}</div>
     ${aff.length?`<h3>Affiliations</h3><div class="tags">${aff.map(a=>`<button class="tag" data-filter="figs|aff|${a}"><span>${esc(TYPEN[a])}</span></button>`).join("")}</div>`:""}
     ${chars.length?`<h3>Characters</h3><div class="tags">${chars.map(c=>`<button class="tag" data-search="figs|${esc(c)}"><span>${esc(c)}</span></button>`).join("")}</div>`:""}
     ${units.length?`<h3>Clone units</h3><div class="tags">${units.map(u=>`<span class="tag"><span>${esc(UNITN[u]||u)}</span></span>`).join("")}</div>`:""}
     ${places.length?`<h3>Places</h3><div class="tags">${places.map(p=>`<span class="tag"><span>${esc(PLAN[p])}</span></span>`).join("")}</div>`:""}
-    ${(s.figs||[]).length?`<h3>Minifigs · tap for the minifig page</h3><div class="figs">${s.figs.map(f=>`<button class="fig" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${money(figPrice({pn:f[2],pu:f[3]}))}</button>`).join("")}</div>`:""}
+    ${(s.figs||[]).length?`<h3>Minifigs · tap for the minifig page</h3><div class="figs">${s.figs.map(f=>`<button class="fig" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b><span class="dg">${esc(f[0])}</span><br>${money(figPrice({pn:f[2],pu:f[3]}))}</button>`).join("")}</div>`:""}
     ${s.ship&&SHIPV[s.ship].length>1?`<h3>Other versions of this ship</h3><div class="alist">${SHIPV[s.ship].filter(n=>n!==s.n).map(n=>{const x=BYN[n];return`<button class="row" data-o="s:${esc(n)}"><span class="th">${img(SETIMG(n))}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(num(x))} · ${x.y} · ${x.own?"Owned":"Wanted"}</small></span></button>`}).join("")}</div>`:""}`}
   d.innerHTML=`<div class="phead"><button class="btn back">‹ Back</button><h2>${esc(s.name)}</h2></div><div class="scroll"><div class="pbody">
-    <div class="hero"><div class="ph">${img(SETIMG(s.n),s.name)}</div><div class="meta"><b>${esc(s.name)}</b>${esc(num(s))} · ${s.y}<br>${esc(s.sub)}<br><span class="pill ${own?"own":"want"}">${own?"Owned":"Wanted · #"+(s.pri||4)}</span></div></div></div>
+    <div class="hero"><div class="ph">${img(SETIMG(s.n),s.name)}<span class="dg tg">${esc(num(s))}</span></div><div class="meta"><b>${esc(s.name)}</b>${s.y}<br>${esc(s.sub)}<br><span class="pill ${own?"own":"want"}">${own?"Have":(s.pri||4)<=3?"Want · "+["1st","2nd","3rd"][(s.pri||4)-1]:"Other"}</span></div></div></div>
     ${tabsHTML(tabs,t)}<div class="pbody tb">${b}</div></div>`;
   frame(d);
   wireTabs(d);wireDeal(d,setPrice(s))}
@@ -601,7 +648,7 @@ function drawFig(d){const n=detail.id,o=FIGS[n]||{nm:n},c=o.c?CH[o.c]:null,sets=
   if(t==="sets"){b+=sets.length?`<p class="note">Sets in your owned and wanted lists that include this minifig. Tap one to open it.</p><div class="alist">${sets.map(x=>`<button class="row" data-o="s:${esc(x.n)}"><span class="th">${img(SETIMG(x.n))}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(num(x))} · ${x.y} · ${esc(srcTitle(x.src))}${x.ep?" · "+esc(x.ep):""}</small></span><span class="pr"><span class="pill ${x.own?"own":"want"}">${x.own?"Own":"Want"}</span></span></button>`).join("")}</div>`:`<p class="note">None of your owned or wanted sets include this minifig.</p>`;
     b+=`<p><a href="https://www.bricklink.com/catalogItemIn.asp?M=${encodeURIComponent(n)}&in=S" target="_blank" rel="noopener">Every set it comes in, on BrickLink</a></p>`}
   d.innerHTML=`<div class="phead"><button class="btn back">‹ Back</button><h2>${esc(o.nm||n)}</h2></div><div class="scroll"><div class="pbody">
-    <div class="hero"><div class="ph">${img(FIGIMG(n),o.nm)}</div><div class="meta"><b>${esc(o.nm||n)}</b>${esc(n)}${c?"<br>"+esc(c.name):""}<br>${o.qo?`<span class="pill own">Owned${o.qo>1?" ×"+o.qo:""}</span>`:""}${o.w?`<span class="pill want">Wanted</span>`:""}</div></div></div>
+    <div class="hero"><div class="ph">${img(FIGIMG(n),o.nm)}<span class="dg tg">${esc(n)}</span></div><div class="meta"><b>${esc(o.nm||n)}</b>${c?esc(c.name)+"<br>":""}${o.qo?`<span class="pill own">Owned${o.qo>1?" ×"+o.qo:""}</span>`:""}${o.w?`<span class="pill want">Wanted</span>`:""}</div></div></div>
     ${tabsHTML(tabs,t)}<div class="pbody tb">${b}</div></div>`;
   frame(d);
   wireTabs(d);wireDeal(d,figPrice(o))}
@@ -613,7 +660,7 @@ function loadLib(){if(window.Html5Qrcode)return Promise.resolve();if(libP)return
     const tryOne=()=>{if(i>=urls.length){libP=null;return no(new Error("load"))}const sc=document.createElement("script");sc.src=urls[i++];sc.onload=()=>window.Html5Qrcode?ok():tryOne();sc.onerror=tryOne;document.head.appendChild(sc)};tryOne()});return libP}
 function fmts(){const F=window.Html5QrcodeSupportedFormats;return F?[F.EAN_13,F.UPC_A,F.UPC_E,F.EAN_8,F.CODE_128]:undefined}
 function found(code){const c=String(code).replace(/\D/g,"").replace(/^0+/,"");const n=CODES[c];stopScan();hidePanel("scan");
-  if(n){goPage("sets");S.scope.sets="all";setQ(num(BYN[n]));setPage("sets");openItem("s:"+n);toast("Found "+BYN[n].name)}
+  if(n){goPage("sets");showAll("sets");setQ(num(BYN[n]));setPage("sets");openItem("s:"+n);toast("Found "+BYN[n].name)}
   else drawScan(`<div class="note" style="font-size:15px;color:var(--ink)">Barcode ${esc(code)} isn't on a set in your owned or wanted lists.</div>${linksHTML([["eBay","https://www.ebay.com/sch/i.html?_nkw="+encodeURIComponent(code),"search this barcode"],["Brickset","https://brickset.com/search?query="+encodeURIComponent(code),"search this barcode"]])}`)}
 async function stopScan(){if(scanner){try{await scanner.stop()}catch(e){}try{scanner.clear()}catch(e){}scanner=null}}
 // photo lookup: shrink the photo on the phone, send it to Brickognize, list the matches against DW's lists
@@ -629,7 +676,7 @@ async function photoLookup(inp,kind,out){const f=inp.files&&inp.files[0];inp.val
     out.innerHTML=`<p class="note">Best matches first. Tap one of yours to open it.</p><div class="alist">${hit.map(([x,m])=>{const pct=Math.round((x.score||0)*100)+"% match",ext=kind==="sets"?"https://brickset.com/sets/"+encodeURIComponent(String(x.id).includes("-")?x.id:x.id+"-1"):"https://www.bricklink.com/v2/catalog/catalogitem.page?M="+encodeURIComponent(x.id);
       return m?`<button class="row" data-o="${esc(m.o)}"><span class="th">${img(x.img_url)}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(m.lab)} · ${pct}</small></span><span class="pr"><span class="pill ${m.own?"own":"want"}">${m.own?"Own":"Want"}</span></span></button>`
        :`<a class="row" href="${esc(ext)}" target="_blank" rel="noopener"><span class="th">${img(x.img_url)}</span><span class="tx"><b>${esc(x.name)}</b><small>${esc(x.id)} · ${pct} · not in your lists</small></span></a>`}).join("")}</div>`;
-    out.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{const o=b.dataset.o;stopScan();hidePanel("scan");if(o[0]==="s"){goPage("sets");S.scope.sets="all";setPage("sets")}else setPage("figs");openItem(o)})}
+    out.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{const o=b.dataset.o;stopScan();hidePanel("scan");if(o[0]==="s"){goPage("sets");showAll("sets");setPage("sets")}else setPage("figs");openItem(o)})}
   catch(e){out.innerHTML=`<p class="note">Brickognize didn't answer. Check your connection and try again, or scan the barcode instead.</p>`}}
 function drawScan(msg){const el=$("#scan");el.hidden=false;
   el.innerHTML=`<div class="phead"><h2>Look up a set or minifig</h2><button class="btn" id="sc-close">Done</button></div><div class="scroll"><div class="pbody">
@@ -644,7 +691,7 @@ function drawScan(msg){const el=$("#scan");el.hidden=false;
   el.querySelector("#sc-close").onclick=()=>hidePanel("scan");
   el.querySelector("#ph-set").onchange=ev=>photoLookup(ev.target,"sets",el.querySelector("#ph-out"));el.querySelector("#ph-fig").onchange=ev=>photoLookup(ev.target,"figs",el.querySelector("#ph-out"));
   const msgEl=el.querySelector("#sc-msg");
-  el.querySelector("#sc-go").onclick=()=>{const v=el.querySelector("#sc-num").value.trim();if(!v)return;hidePanel("scan");goPage("sets");S.scope.sets="all";setQ(v.replace(/\s/g,""));setPage("sets");const m=cur.filter(s=>num(s)===v||s.n===v);if(m.length===1)openItem("s:"+m[0].n)};
+  el.querySelector("#sc-go").onclick=()=>{const v=el.querySelector("#sc-num").value.trim();if(!v)return;hidePanel("scan");goPage("sets");showAll("sets");setQ(v.replace(/\s/g,""));setPage("sets");const m=cur.filter(s=>num(s)===v||s.n===v);if(m.length===1)openItem("s:"+m[0].n)};
   el.querySelector("#sc-num").onkeydown=e=>{if(e.key==="Enter")el.querySelector("#sc-go").click()};
   el.querySelector("#sc-live").onclick=async()=>{msgEl.textContent="Starting the camera…";try{await loadLib();await stopScan();
       scanner=new Html5Qrcode("reader",{formatsToSupport:fmts(),experimentalFeatures:{useBarCodeDetectorIfSupported:true},verbose:false});
@@ -682,15 +729,15 @@ async function signIn(p,quiet){PASS=p;let r;
   if(role==="admin")api({action:"pricesets",sets:SETS.filter(s=>s.own||s.want).map(s=>({n:s.n,want:s.own?0:(s.pri||4)}))}).catch(()=>{});
   livePrices();return{ok:true}}
 function drawGate(msg){const g=$("#gate");g.hidden=false;
-  g.innerHTML=`<div class="box"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p>${sidesHTML()}</div>`;
+  g.innerHTML=`<div class="box hc-panel"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p><h3 class="lt">Choose your lightsaber</h3><div class="hc-lights" role="group" aria-label="Choose your lightsaber colour"></div></div>`;buildLights(g);
   const i=g.querySelector("#g-p"),go=g.querySelector("#g-go"),m=g.querySelector("#g-msg");
   go.onclick=async()=>{const v=i.value.trim();if(!v){m.textContent="Type your passcode first.";return}go.disabled=true;go.textContent="Signing in…";m.textContent="";const r=await signIn(v,true);if(!r.ok){go.disabled=false;go.textContent="Sign in";m.textContent=r.msg}};
-  i.onkeydown=e=>{if(e.key==="Enter")go.click()};g.querySelector("#g-skip").onclick=()=>{g.hidden=true};wireSides(g)}
+  i.onkeydown=e=>{if(e.key==="Enter")go.click()};g.querySelector("#g-skip").onclick=()=>{g.hidden=true}}
 
 function drawSign(){const el=$("#sign");if(el.hidden)return;
   el.innerHTML=`<div class="phead"><h2>Sign in</h2><button class="btn" id="si-close">Done</button></div><div class="scroll"><div class="pbody tb">${!D.script?`<p>Sign-in turns on once your Google Sheet is connected to Brick Holocron.</p><p class="note">Until then this page shows no paid prices, purchase dates or notes, so it's safe to share.</p>`:role?`<p>${role==="admin"?"Signed in with the admin passcode. Paid prices, purchase dates and notes show on owned sets.":"Signed in as a guest. Paid prices and purchase dates stay hidden."}</p><button class="btn" id="si-out">Sign out</button>`:`<p>Use the same passcode as the full Brick Holocron.</p><div class="deal"><input id="si-p" type="password" autocomplete="current-password" style="width:200px" placeholder="Passcode"><button class="btn pri" id="si-go">Sign in</button></div><p class="note" id="si-msg"></p>`}
-  <h3>Theme</h3>${sidesHTML()}<h3>On this phone</h3><p class="note">Add this page to your home screen (Share, then Add to Home Screen) to open it like an app, full screen, with no browser swipe gestures.</p></div></div>`;
-  frame(el);wireSides(el);
+  <h3>On this phone</h3><p class="note">Add this page to your home screen (Share, then Add to Home Screen) to open it like an app, full screen, with no browser swipe gestures.</p></div></div>`;
+  frame(el);
   el.querySelector("#si-close").onclick=()=>hidePanel("sign");
   const go=el.querySelector("#si-go");if(go){go.onclick=()=>signIn(el.querySelector("#si-p").value.trim());el.querySelector("#si-p").onkeydown=e=>{if(e.key==="Enter")go.click()}}
   const out=el.querySelector("#si-out");if(out)out.onclick=()=>{role="";PASS="";priv={};status=Object.assign({},D.base);store.set("pass",null);render();if(detail)drawDetail();hidePanel("sign");drawGate()}}
