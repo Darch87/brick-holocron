@@ -539,7 +539,7 @@ function drawSet(d){const s=BYN[detail.id],own=s.own,r=st(s.n),pv=priv[s.n]||{};
   if(t==="rec"){const figs=s.figs||[],fx=new Set(r.fx||[]);
     const has=Object.keys(r).length>0;
     b+=`<div class="rec">${r.now||s.cond?`<span>Condition</span><span>${esc(r.now||s.cond)}</span>`:""}${s.qty>1?`<span>Copies</span><span>${s.qty}</span>`:""}${has?`<span>Set</span>${yesno(r.cset)}<span>Box</span>${yesno(r.cbox)}<span>Instructions</span>${yesno(r.cinst)}<span>Minifigs</span>${figs.length?yesno(r.cfigs):`<span class="dim">None in this set</span>`}`:""}<span>Stickers</span><span>${s.stk===1?"Set has stickers":s.stk===0?"No stickers in this set":`<span class="dim">Unknown</span>`}</span>${r.qn?`<span>Quality now</span><span>${esc(r.qn)}</span>`:""}${(r.miss||[]).length?`<span>Missing pieces</span><span class="bad">${r.miss.reduce((a,m)=>a+(+m.q||1),0)}</span>`:""}</div>${has?"":`<p class="note">No record yet for this set’s box, instructions or minifigs. You add those on the full Brick Holocron.</p>`}`;
-    if(role==="admin"&&(r.paid!=null||r.bought||r.store||r.q||pv.tax!=null))b+=`<h3>Purchase</h3><div class="rec"><span>Paid</span><span>${money(r.paid!=null?+r.paid:null)}</span><span>Bought</span><span>${esc(r.bought||"—")}</span><span>Store</span><span>${esc(r.store||"—")}</span><span>Quality when bought</span><span>${esc(r.q||"—")}</span>${pv.tax!=null?`<span>Tax and shipping</span><span>${money(+pv.tax)}</span>`:""}</div>${r.notes?`<h3>Notes</h3><p>${esc(r.notes)}</p>`:""}`;
+    if(role==="admin"&&(r.paid!=null||r.bought||r.store||r.q||pv.tax!=null))b+=`<h3>Purchase</h3><div class="rec"><span>Paid</span><span>${money(r.paid!=null?+r.paid:null)}</span><span>Bought</span><span>${esc(niceDate(r.bought))}</span><span>Store</span><span>${esc(r.store||"—")}</span><span>Quality when bought</span><span>${esc(r.q||"—")}</span>${pv.tax!=null?`<span>Tax and shipping</span><span>${money(+pv.tax)}</span>`:""}</div>${r.notes?`<h3>Notes</h3><p>${esc(r.notes)}</p>`:""}`;
     if(figs.length)b+=`<h3>Minifigs in this set</h3><div class="figs">${figs.map(f=>{const have=fx.size?fx.has(f[0]):!!(FIGS[f[0]]&&FIGS[f[0]].qo);return`<button class="fig${have?" own":" no"}" data-o="f:${esc(f[0])}">${img(FIGIMG(f[0]))}<b>${esc(f[1])}</b>${esc(f[0])}<br>${have?`<span class="ok">${fx.size?"Have it":"You own one"}</span>`:`<span class="dim">${fx.size?"Missing":"Not owned"}</span>`}</button>`}).join("")}</div>`;}
   if(t==="val"){const nv=setPrice(s,"n"),uv=setPrice(s,"u"),mine=oc==="u"?uv:nv,fv=figVal(s,oc);
     b+=`<div class="big"><div class="${oc==="n"?"on":""}"><span>New, sealed</span><b>${money0(nv)}</b></div><div class="${oc==="u"?"on":""}"><span>Used</span><b>${money0(uv)}</b></div></div>
@@ -628,10 +628,20 @@ function drawScan(msg){const el=$("#scan");el.hidden=false;
 $("#b-scan").onclick=()=>{if(!$("#scan").hidden)return hidePanel("scan");hidePanel("browse");hidePanel("sign");drawScan()};
 // ---------- sign-in (Google Sheet, same passcodes as the full Brick Holocron)
 async function api(o){const r=await fetch(D.script,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({},o,{passcode:PASS}))});return r.json()}
+const MON="JanFebMarAprMayJunJulAugSepOctNovDec";
+function sheetKey(k){k=String(k||"").trim();if(BYN[k])return k;
+  let m=/^\w{3},? (\w{3}) (\d{1,2}),? (\d{3,5})(?: (\d{2}))?/.exec(k);
+  if(m){let y=+m[3],mo=MON.indexOf(m[1])/3+1,dd=+m[2],h=+(m[4]||0);if(dd>=28&&h>=12){mo++;if(mo>12){mo=1;y++}}const c=y+"-"+mo;if(BYN[c])return c}
+  m=/^(\d{3,5})-0?(\d{1,2})-0?(\d{1,2})/.exec(k);if(m){const c=m[1]+"-"+(+m[2]);if(BYN[c])return c}
+  m=/^([0-9A-Za-z]+?)(?:-(\d+))?(?:\.0)?$/.exec(k);if(m){const c=m[1]+"-"+(m[2]||1);if(BYN[c])return c}
+  return k}
+const numv=v=>{if(v===""||v==null)return null;const x=+String(v).replace(/[$,\s]/g,"");return isNaN(x)?null:x};
+function fixSheet(x){const y={};if(x)Object.entries(x).forEach(([k,o])=>{const c=sheetKey(k),z=Object.assign({},o);["paid","price","tax"].forEach(f=>{if(f in z){const v=numv(z[f]);if(v==null)delete z[f];else z[f]=v}});["bought","store","q"].forEach(f=>{if(z[f]===""||z[f]==null)delete z[f]});y[c]=Object.assign(y[c]||{},z)});return y}
+function niceDate(d){if(!d)return"—";const s=String(d),m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s),t=m?new Date(+m[1],m[2]-1,+m[3]):new Date(s);return isNaN(t)?s:t.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}
 async function signIn(p,quiet){PASS=p;let r;
   try{r=await api({action:"load"})}catch(e){PASS="";role="";const m="Couldn't reach your sheet. Check your connection, or open without signing in.";if(!quiet){const x=$("#si-msg");if(x)x.textContent=m}return{ok:false,net:true,msg:m}}
   if(!r||!r.ok){PASS="";role="";store.set("pass",null);const m=r&&r.error&&r.error!=="no"?r.error:"That passcode didn't work.";if(!quiet){const x=$("#si-msg");if(x)x.textContent=m}return{ok:false,msg:m}}
-  role=r.role;status=Object.assign({},D.base,r.status||{});priv=r.priv||{};store.set("pass",p);$("#gate").hidden=true;
+  role=r.role;status=Object.assign({},D.base,fixSheet(r.status));priv=fixSheet(r.priv);store.set("pass",p);$("#gate").hidden=true;
   if(!quiet)toast(role==="admin"?"Signed in. Your prices show now.":"Signed in as a guest.");render();if(detail)drawDetail();drawSign();return{ok:true}}
 function drawGate(msg){const g=$("#gate");g.hidden=false;
   g.innerHTML=`<div class="box"><span class="brand">Brick Holocron</span><h2>Sign in</h2><input id="g-p" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button class="btn pri" id="g-go">Sign in</button><p class="msg" id="g-msg" role="alert">${esc(msg||"")}</p><button class="btn" id="g-skip">Open without signing in</button><p class="note">Without a passcode, what you paid and when you bought it stay hidden.</p>${sidesHTML()}</div>`;
