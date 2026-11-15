@@ -417,7 +417,7 @@ const SETIMG=n=>`https://images.brickset.com/sets/images/${n}.jpg`,FIGIMG=n=>`ht
 const store={get(k,d){try{const v=localStorage.getItem("holo-m-"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("holo-m-"+k,JSON.stringify(v))}catch(e){}}};
 // ---------- state
 const S={page:"sets",qs:{sets:"",figs:""},show:{sets:{h:1,w:0,o:0,p:new Set(["1","2","3"])},figs:{h:1,w:0,o:0,p:new Set(["1","2","3"])}},q:"",view:store.get("view","list"),cond:store.get("cond","n"),
-  f:{sets:{sub:new Set(),src:new Set(),ty:new Set(),figs:"",y0:"",y1:""},figs:{cat:new Set(),aff:new Set(),inset:""}},
+  f:{sets:{sub:new Set(),src:new Set(),ty:new Set(),stk:"",figs:"",y0:"",y1:""},figs:{cat:new Set(),aff:new Set(),inset:""}},
   sort:{sets:["y",-1],figs:["name",1]},limit:80};
 let status=Object.assign({},D.base),priv={},role="",PASS="";
 const st=n=>status[n]||{};
@@ -459,6 +459,7 @@ function setList(){const f=S.f.sets,q=S.q.trim().toLowerCase(),qn=q.replace(/[^0
   return SETS.filter(s=>{
     if(!inShow("sets",s))return false;
     if(f.sub.size&&!f.sub.has(s.sub))return false;if(f.src.size&&!f.src.has(s.src))return false;if(f.ty.size&&!f.ty.has(tgOf(s)))return false;
+    if(f.stk==="y"&&s.stk!==1)return false;if(f.stk==="n"&&s.stk!==0)return false;
     if(f.figs==="y"&&!(s.figs||[]).length)return false;if(f.figs==="n"&&(s.figs||[]).length)return false;
     if(f.y0&&s.y<+f.y0)return false;if(f.y1&&s.y>+f.y1)return false;
     if(q){if(qn&&(s.n.toLowerCase().startsWith(qn)||num(s)===qn))return true;
@@ -523,12 +524,12 @@ $("#qx").onclick=()=>{$("#q").value="";S.q="";$("#qx").hidden=true;resetScroll()
 function setQ(v){$("#q").value=v;S.q=v;$("#qx").hidden=!v;resetScroll()}
 // ---------- browse (filters + sort)
 let btab="f";
-function activeCount(){const f=S.f[S.page];return S.page==="sets"?f.sub.size+f.src.size+f.ty.size+(f.figs?1:0)+(f.y0||f.y1?1:0):f.cat.size+f.aff.size+(f.inset?1:0)}
+function activeCount(){const f=S.f[S.page];return S.page==="sets"?f.sub.size+f.src.size+f.ty.size+(f.stk?1:0)+(f.figs?1:0)+(f.y0||f.y1?1:0):f.cat.size+f.aff.size+(f.inset?1:0)}
 function clearAll(){const f=S.f[S.page];Object.keys(f).forEach(k=>f[k] instanceof Set?f[k].clear():f[k]="");setQ("");drawActive();render();if(!$("#browse").hidden)drawBrowse()}
 function drawActive(){const f=S.f[S.page],a=[];
   const add=(k,v,l)=>a.push(`<button class="chip x" data-k="${k}" data-v="${esc(v)}">${esc(l)}</button>`);
   if(S.page==="sets"){f.sub.forEach(v=>add("sub",v,v));f.src.forEach(v=>add("src",v,srcTitle(v)));f.ty.forEach(v=>add("ty",v,TGN[v]||v));
-    if(f.figs)add("figs","",f.figs==="y"?"Has minifigs":"No minifigs");if(f.y0||f.y1)add("yr","",(f.y0||"…")+"–"+(f.y1||"…"))}
+    if(f.stk)add("stk","",f.stk==="y"?"Has stickers":"No stickers");if(f.figs)add("figs","",f.figs==="y"?"Has minifigs":"No minifigs");if(f.y0||f.y1)add("yr","",(f.y0||"…")+"–"+(f.y1||"…"))}
   else{f.cat.forEach(v=>add("cat",v,v));f.aff.forEach(v=>add("aff",v,TYPEN[v]||v));if(f.inset)add("inset","",f.inset==="y"?"In your sets":"Not in your sets")}
   const el=$("#active");el.hidden=!a.length;el.innerHTML=a.join("")+(a.length>1?`<button class="chip" data-k="all">Clear all</button>`:"");
   const n=activeCount();$("#b-browse").textContent=n?`Browse · ${n}`:"Browse"}
@@ -547,7 +548,7 @@ function drawBrowse(){const el=$("#browse"),page=S.page,f=S.f[page];
     <details class="grp"><summary>Story</summary>${chips("src",SRC.filter(s=>src[s[0]]).map(s=>[s[0],s[2],src[s[0]]]).concat(src.misc?[["misc","Other",src.misc]]:[]))}</details>
     <details class="grp" open><summary>Set type</summary>${chips("ty",TGROUPS.filter(g=>ty[g[0]]).map(g=>[g[0],g[1],ty[g[0]]]))}</details>
     <details class="grp"><summary>Year released</summary><div class="yr"><input id="y0" inputmode="numeric" placeholder="From" value="${esc(f.y0)}"><span>to</span><input id="y1" inputmode="numeric" placeholder="To" value="${esc(f.y1)}"></div></details>
-    <details class="grp"><summary>Minifigs</summary><div class="chipbar">${[["figs","y","Has minifigs"],["figs","n","No minifigs"]].map(([k,v,l])=>`<button class="chip${f[k]===v?" on":""}" data-one="${k}" data-v="${v}">${l}</button>`).join("")}</div></details>`}
+    <details class="grp"><summary>Stickers and minifigs</summary><div class="chipbar">${[["stk","y","Has stickers"],["stk","n","No stickers"],["figs","y","Has minifigs"],["figs","n","No minifigs"]].map(([k,v,l])=>`<button class="chip${f[k]===v?" on":""}" data-one="${k}" data-v="${v}">${l}</button>`).join("")}</div><p class="note">Sticker info comes from the parts lists.</p></details>`}
   else{const cat=counts(base,o=>o.cat||"Other"),aff=counts(base,o=>figType(o.n));
     h+=`<details class="grp" open><summary>Category</summary>${chips("cat",Object.keys(cat).sort().map(v=>[v,v,cat[v]]))}</details>
     <details class="grp" open><summary>Affiliation</summary>${chips("aff",TYPES.filter(t=>aff[t[0]]).map(t=>[t[0],t[1],aff[t[0]]]))}</details>
