@@ -1691,7 +1691,7 @@ const figHave=(s,num)=>s&&!s.want&&!s.gone?!((status[s.n]||{}).fx||[]).includes(
 // ---------- Star Wars Timeline: three rows that scroll together (T4–T11)
 const TL={open:{story:true,figs:true,sets:true},focus:"sets",pos:{}};
 const TSZ=[1,.82,.7,.6,.52,.52];
-function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:62,sets:32},W={story:1,figs:.8,sets:1.5};let rest=H,ws=0;
+function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:62,sets:32},W={story:1.35,figs:.7,sets:1.4};let rest=H,ws=0;
   ks.forEach(k=>{if(!TL.open[k])rest-=FOLD[k];else ws+=W[k]*(TL.focus===k?1.8:1)});const o={};ks.forEach(k=>o[k]=TL.open[k]?Math.max(90,rest*W[k]*(TL.focus===k?1.8:1)/ws):FOLD[k]);return o}
 const STILLS={"Battle of Christophsis":[["Christophsis","https://lumiere-a.akamaihd.net/v1/images/databank_christophsis_01_169_2daae94e.jpeg?region=0%2C0%2C1560%2C878"]],
  "Rescue at the Teth monastery":[["Teth monastery","https://lumiere-a.akamaihd.net/v1/images/teth-monastery-main_b1de2d62.jpeg?region=159%2C0%2C962%2C541"],["Teth","https://lumiere-a.akamaihd.net/v1/images/teth-main_aab2cc2e.jpeg?region=159%2C0%2C962%2C541"],["Asajj Ventress","https://lumiere-a.akamaihd.net/v1/images/av-main_4d08b771.jpeg?region=0%2C0%2C1280%2C720"]],
@@ -1727,7 +1727,7 @@ function renderTL(){
   const anchors=[];srcB.forEach(b=>{const y=YR[b.src[0]];if(y==null)return;if(!anchors.length||y>anchors[anchors.length-1][0])anchors.push([y,b.x])});
   const want=new Set();for(let y=-40;y<=40;y+=5)want.add(y);anchors.forEach(([y])=>{if(y<-40)want.add(y)});const marks=[];
   [...want].sort((a,b)=>a-b).forEach(Y=>{for(let i=0;i<anchors.length;i++){const [ya,xa]=anchors[i],nx=anchors[i+1];if(Y===ya){marks.push([Y,xa]);return}if(nx&&Y>ya&&Y<nx[0]){marks.push([Y,xa+(Y-ya)/(nx[0]-ya)*(nx[1]-xa)]);return}}});
-  let last=-1e9,ax="",gd="";marks.forEach(([Y,mx])=>{if(mx-last<80)return;last=mx;ax+=`<span class="yr2" style="left:${mx}px">${Y<0?-Y:Y}<small>${Y<0?"BBY":Y>0?"ABY":"BBY/ABY"}</small></span>`;gd+=`<div class="tlguide" style="left:${mx}px"></div>`});
+  let last=-1e9,ax="",gd="";marks.forEach(([Y,mx])=>{if(mx-last<80)return;last=mx;ax+=`<span class="yr2" style="left:${mx}px${mx<40?";transform:none":""}">${Y<0?-Y:Y}<small>${Y<0?"BBY":Y>0?"ABY":"BBY/ABY"}</small></span>`;gd+=`<div class="tlguide" style="left:${mx}px"></div>`});
   h+=`<div class="ax2" style="width:${W}px">${ax}</div>`+gd;
   // folded stories: a narrow strip down the whole height; tap it to open the story
   h+=srcB.filter(b=>b.fold).map(b=>`<div class="srchead fold" data-unfold="${b.src[0]}" title="Show ${esc(b.src[2])}" style="left:${b.x}px;top:${TOP}px;width:30px;height:${H-TOP}px;--ec:${ERAC[b.src[1]]}"><b>${esc(b.src[2])}</b></div>`).join("");
