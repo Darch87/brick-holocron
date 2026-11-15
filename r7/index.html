@@ -970,8 +970,11 @@ i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;ob
 .pcgrid.r6 .stat{padding:8px 9px;min-width:0}
 .pcgrid.r6 .stat b{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcgrid.r6 .stat button{all:unset;cursor:pointer;display:block;min-width:0}
-.pcgrid.r6 .stat button b{font-size:14px;line-height:1.2;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.pcgrid.r6 .stat button small{-webkit-line-clamp:1}
+.pcgrid.r6 .stat button b{font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;text-transform:none;letter-spacing:0}
+.pcgrid.r6 .stat button small{-webkit-line-clamp:2;margin-top:3px}
+.legend{font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:10px;height:10px;flex:none}
 
 </style>
 
@@ -2241,7 +2244,7 @@ function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set fro
 function statsTime(v){const all=v.filter(s=>s.rp!=null&&resale(s)!=null);if(!all.length){$("#stats").innerHTML="";return}
   const mine=all.filter(s=>!s.want),wnt=all.filter(s=>s.want),rows=mine.length?mine:all,wcost=wnt.reduce((a,s)=>a+resale(s),0);
   const rp=rows.reduce((a,s)=>a+s.rp,0),now=rows.reduce((a,s)=>a+resale(s),0),best=[...rows].sort((a,b)=>resale(b)/b.rp-resale(a)/a.rp)[0],ret=rows.filter(s=>s.ed&&dt(s.ed)<new Date()).length;
-  $("#stats").innerHTML=`<div class="stat"><b>${fmt(rp)}</b><small>launch prices of the ${rows.length} ${mine.length?"sets you own":"sets shown"}</small></div><div class="stat"><b class="${now>=rp?"pos":"neg"}">${fmt(now)}</b><small>what they're worth today</small></div><div class="stat"><b>${Math.round((now/rp-1)*100)}%</b><small>change since launch</small></div><div class="stat"><b>${ret}</b><small>retired by LEGO</small></div><div class="stat"><button type="button" class="lrow" data-n="${esc(best.n)}"><span><b>${esc(best.name)}</b><span class="lab">${fmt(best.rp)} at launch → ${fmt(resale(best))} now</span></span></button><small>biggest climb</small></div>${mine.length&&wnt.length?`<div class="stat"><b>${fmt(wcost)}</b><small>to buy the ${wnt.length} wanted sets shown, at today's prices</small></div>`:""}`;
+  $("#stats").innerHTML=`<div class="stat"><b>${fmt(rp)}</b><small>launch prices of the ${rows.length} ${mine.length?"sets you own":"sets shown"}</small></div><div class="stat"><b class="${now>=rp?"pos":"neg"}">${fmt(now)}</b><small>what they're worth today</small></div><div class="stat"><b>${Math.round((now/rp-1)*100)}%</b><small>change since launch</small></div><div class="stat"><b>${ret}</b><small>retired by LEGO</small></div><div class="stat"><button type="button" class="lrow" data-n="${esc(best.n)}"><b>${esc(best.name)}</b><small>biggest climb: ${fmt(best.rp)} → ${fmt(resale(best))}</small></button></div>${mine.length&&wnt.length?`<div class="stat"><b>${fmt(wcost)}</b><small>to buy the ${wnt.length} wanted sets shown, at today's prices</small></div>`:""}`;
   $("#stats").querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{openN=b.dataset.n;drawDrawer()})}
 // ---------- tabs and drawing
 function showTab(t){tab=t;["tl","so","mf","pc","pt","ls"].forEach(x=>{$("#pane-"+x).hidden=x!==t;const b=$("#tab-"+x);b.classList.toggle("on",x===t);b.setAttribute("aria-selected",x===t)});
