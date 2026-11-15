@@ -364,6 +364,7 @@ table.src tr.ask td{background:var(--chipon)}
 .prow .btn{flex:none;padding:7px 10px}
 .psearch{width:100%;height:44px;border:1px solid var(--line2);border-radius:var(--r);padding:0 10px;font-size:16px;background:var(--sub2);color:var(--ink);margin-bottom:8px}
 #b-find .n{font-family:var(--mono);margin-left:4px}
+.qstep{display:flex;align-items:center;gap:4px;flex:none}.qstep .btn{min-width:38px;min-height:38px;padding:0;font-size:20px;line-height:1}.qstep b{min-width:24px;text-align:center;font-family:var(--mono);font-size:18px}
 </style>
 </head>
 <body>
@@ -673,18 +674,19 @@ const PURL=p=>"https://www.bricklink.com/v2/catalog/catalogitem.page?P="+enc(p);
 function partRows(n){const e=PX&&PX.s[n];if(!e)return[];const out=[];for(let i=0;i<e.r.length;i+=3){const p=PX.p[e.r[i]],c=e.r[i+1],col=PX.c[c]||["?","ccc"];out.push({p:p[0],nm:p[1],cat:p[2],c:c<0?0:c,cn:col[0],hex:String(col[1]).replace("#",""),q:e.r[i+2]})}return out}
 let FIND=store.get("find",[]);const fk=x=>x.s+"|"+x.p+"|"+x.c;
 function inFind(x){return FIND.some(y=>fk(y)===fk(x))}
-function toggleFind(x){if(inFind(x))FIND=FIND.filter(y=>fk(y)!==fk(x));else FIND.push({s:x.s,p:x.p,c:x.c,cn:x.cn,hex:x.hex,nm:x.nm,q:x.q||1});store.set("find",FIND);drawFindN()}
+function toggleFind(x){if(inFind(x))FIND=FIND.filter(y=>fk(y)!==fk(x));else FIND.push({s:x.s,p:x.p,c:x.c,cn:x.cn,hex:x.hex,nm:x.nm,q:1,of:x.q||1});store.set("find",FIND);drawFindN()}
 function drawFindN(){const el=$("#find-n");if(el)el.textContent=FIND.length?String(FIND.length):""}
 function recMiss(){const a=[];SETS.forEach(s=>{if(!s.own)return;(st(s.n).miss||[]).forEach(m=>a.push({s:s.n,p:m.p,c:+m.c||0,cn:m.cn||"",nm:m.nm||m.p,q:+m.q||1,rec:1}))});return a}
-function prowHTML(x,btn){return`<div class="prow${btn==="on"?" on":""}"><a class="th" href="${esc(PURL(x.p))}" target="_blank" rel="noopener">${img(PIMG(x.p,x.c),x.nm)}</a><span class="tx"><b>${esc(x.nm)}</b><small><span class="sw" style="background:#${esc(x.hex||"ccc")}"></span>${esc(x.cn||"")} · <span class="dg">${esc(x.p)}</span></small></span><span class="q">×${x.q}</span>${btn}</div>`}
+function prowHTML(x,btn,qh){return`<div class="prow${btn==="on"?" on":""}"><a class="th" href="${esc(PURL(x.p))}" target="_blank" rel="noopener">${img(PIMG(x.p,x.c),x.nm)}</a><span class="tx"><b>${esc(x.nm)}</b><small><span class="sw" style="background:#${esc(x.hex||"ccc")}"></span>${esc(x.cn||"")} · <span class="dg">${esc(x.p)}</span></small></span>${qh||`<span class="q">×${x.q}</span>`}${btn}</div>`}
 function drawFind(){const el=$("#find");el.hidden=false;const rec=recMiss().filter(x=>!inFind(x)),all=FIND.concat(rec);
   const by={};all.forEach(x=>(by[x.s||"loose"]=by[x.s||"loose"]||[]).push(x));
   let h=`<div class="phead"><h2>Find me · ${all.reduce((a,x)=>a+x.q,0)} pieces</h2><button class="btn" id="fd-close">Done</button></div><div class="scroll"><div class="pbody">`;
   if(!all.length)h+=`<p>Nothing to find yet.</p><p class="note">Open a set, go to its Parts tab and tap Find me on each missing piece. Pieces marked missing in your record on the full Brick Holocron show here too.</p>`;
-  Object.entries(by).forEach(([sn,xs])=>{const s=BYN[sn];h+=`<h3>${s?esc(s.name)+` <span class="dg">${esc(num(s))}</span>`:"Loose pieces"}</h3><div class="plist">${xs.map(x=>prowHTML(x,x.rec?`<button class="btn" data-fadd="${esc(fk(x))}">Track</button>`:`<button class="btn pri" data-fdone="${esc(fk(x))}">Found</button>`)).join("")}</div>`});
+  Object.entries(by).forEach(([sn,xs])=>{const s=BYN[sn];h+=`<h3>${s?esc(s.name)+` <span class="dg">${esc(num(s))}</span>`:"Loose pieces"}</h3><div class="plist">${xs.map(x=>prowHTML(x,x.rec?`<button class="btn" data-fadd="${esc(fk(x))}">Track</button>`:`<button class="btn pri" data-fdone="${esc(fk(x))}">Found</button>`,x.rec?"":`<span class="qstep"><button class="btn" data-qs="${esc(fk(x))}" data-d="-1" aria-label="One fewer">−</button><b>${x.q}</b><button class="btn" data-qs="${esc(fk(x))}" data-d="1" aria-label="One more">+</button></span>`)).join("")}</div>`});
   h+=`<p class="note">Your Find me list is kept on this phone. Tap a picture to open the piece on BrickLink.</p></div></div>`;el.innerHTML=h;
   el.querySelector("#fd-close").onclick=()=>hidePanel("find");
   el.querySelectorAll("[data-fdone]").forEach(b=>b.onclick=()=>{FIND=FIND.filter(y=>fk(y)!==b.dataset.fdone);store.set("find",FIND);drawFindN();drawFind();toast("Found. Taken off the list.")});
+  el.querySelectorAll("[data-qs]").forEach(b=>b.onclick=()=>{const x=FIND.find(y=>fk(y)===b.dataset.qs);if(!x)return;x.q=Math.max(1,Math.min(x.of||999,x.q+(+b.dataset.d)));store.set("find",FIND);drawFind()});
   el.querySelectorAll("[data-fadd]").forEach(b=>b.onclick=()=>{const x=rec.find(y=>fk(y)===b.dataset.fadd);if(x){toggleFind(x);drawFind()}})}
 $("#b-find").onclick=()=>{if(!$("#find").hidden)return hidePanel("find");hidePanel("browse");hidePanel("scan");hidePanel("sign");drawFind()};
 let PQ="";
