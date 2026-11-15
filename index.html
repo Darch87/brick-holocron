@@ -392,7 +392,7 @@ s.sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:va
 #b-xml{width:100%;box-sizing:border-box;font:400 10px var(--mono)}
 
 /* round 8 */
-.grp.shut>:not(.gtog){display:none!important}
+.grp.shut>:not(.gtog):not(.ghead){display:none!important}
 .tags{gap:4px;margin:2px 0 0}
 .tg{all:unset;cursor:pointer;font:600 9.5px var(--mono);letter-spacing:.02em;color:var(--tc);border:1.5px solid var(--tc);border-radius:3px;padding:1px 5px;background:var(--panel)}
 .tg:hover{background:color-mix(in srgb,var(--tc) 12%,var(--panel))}
@@ -672,18 +672,325 @@ details.fold>div{padding:0 0 10px;display:flex;flex-direction:column;gap:6px}
 .gcloud-t{font:700 15px var(--display);letter-spacing:.05em;text-transform:uppercase;fill:var(--gc);paint-order:stroke;stroke:var(--panel);stroke-width:4px;text-anchor:middle;pointer-events:none}
 .mfpl text{font-size:calc(12.5px*var(--pk,1))}
 .shipcard rect{fill:#fff;stroke:#3a4a5c;stroke-width:2}
+/* Brick Holocron shared theme (round 7): Light side and Dark side.
+   Used by the main page (inlined at build) and the phone page (link theme.css from the repo root).
+   Set the side with <html data-side="light"> or <html data-side="dark">. Light is the default.
+   Layers: --bg (console base) > --panel (panel) > --slot (sub-frame) > --sub2 (inner sub-frame).
+   One glow colour per side: blue saber for light, red saber for dark. */
+:root{
+  --bg:#dfe4ea;--panel:#f4f6f9;--slot:#e8ecf1;--sub2:#dde3ea;--well:#ffffff;
+  --ink:#0e1620;--muted:#3e4a5a;--line:#b9c3cf;--line2:#cfd7e0;--hi:rgba(255,255,255,.9);
+  --accent:#1478e6;--saber:#2a9bff;--core:#e9f5ff;--glow:0 0 0 1px #2a9bff,0 0 10px rgba(42,155,255,.55);
+  --chipon:#d6e9ff;--ownfill:#dff1e5;--own:#178a45;--gain:#178a45;--loss:#c02a2a;--canon:#1c6e8c;--legends:#8a5a00;
+  --p1:#1478e6;--p2:#c75a12;--p3:#7a5a00;--p4:#7146b0;
+  --display:"Chakra Petch","Arial Narrow",sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+  /* type scale: label, small, body, title, heading, figure */
+  --t-lab:11.5px;--t-sm:13px;--t-md:14.5px;--t-title:17px;--t-head:22px;--t-fig:28px;
+  --r:4px;color-scheme:light;
+}
+:root[data-side="dark"]{
+  --bg:#07090c;--panel:#12161c;--slot:#1a2028;--sub2:#222a34;--well:#d9dee4;
+  --ink:#f1f4f7;--muted:#b4bdc8;--line:#38424f;--line2:#2b333e;--hi:rgba(255,255,255,.06);
+  --accent:#ff3b3b;--saber:#ff2a2a;--core:#ffe9e9;--glow:0 0 0 1px #ff2a2a,0 0 12px rgba(255,42,42,.6);
+  --chipon:#3a1517;--ownfill:#14281c;--own:#3ccf72;--gain:#3ccf72;--loss:#ff6b6b;--canon:#5bb8d9;--legends:#e0a83a;
+  --p1:#6fb2ff;--p2:#ff8a3d;--p3:#e0b04a;--p4:#b993ff;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font:400 var(--t-md)/1.45 var(--body);margin:0}
+
+/* console panel: frame line, light top bevel, small corner brackets in the saber colour */
+.hc-panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.08);
+  background-image:
+    linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),
+    linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber));
+  background-size:14px 2px,2px 14px,14px 2px,2px 14px;
+  background-position:left -1px top -1px,left -1px top -1px,right -1px bottom -1px,right -1px bottom -1px;
+  background-repeat:no-repeat}
+/* sub-frames step one shade off the panel, and again inside */
+.hc-frame{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
+.hc-frame .hc-frame{background:var(--sub2)}
+/* readout strip at the top of a panel or frame */
+.hc-strip{display:flex;align-items:center;gap:8px;font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line2);padding:0 0 6px;margin:0 0 8px}
+.hc-strip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--saber);box-shadow:0 0 6px var(--saber);flex:none}
+
+/* type scale */
+.hc-lab{font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hc-title{font:700 var(--t-title)/1.2 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin:0}
+.hc-head{font:700 var(--t-head)/1.15 var(--display);letter-spacing:.03em;color:var(--ink);margin:0}
+.hc-fig{font:700 var(--t-fig)/1.05 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.hc-text{font:400 var(--t-md)/1.45 var(--body);color:var(--ink)}
+.hc-small{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted)}
+
+/* keys: every button looks like a console key; the active one glows like a saber */
+.hc-key{font:600 var(--t-sm)/1.2 var(--body);color:var(--ink);background:var(--slot);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;cursor:pointer;
+  box-shadow:inset 0 1px 0 var(--hi),0 1px 0 rgba(0,0,0,.15)}
+.hc-key:hover{border-color:var(--saber)}
+.hc-key.on,.hc-key[aria-pressed="true"]{background:var(--chipon);border-color:var(--saber);color:var(--ink);box-shadow:var(--glow)}
+.hc-key:disabled{opacity:.45;cursor:default}
+
+/* the side switch: two keys, the active side's saber lit */
+.hc-side{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--slot)}
+.hc-side button{font:700 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;border:0;background:none;color:var(--muted);padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.hc-side button i{width:22px;height:4px;border-radius:2px;background:var(--line);flex:none}
+.hc-side button[data-side="light"].on i{background:#e9f5ff;box-shadow:0 0 0 1px #2a9bff,0 0 8px 2px #2a9bff}
+.hc-side button[data-side="dark"].on i{background:#ffe9e9;box-shadow:0 0 0 1px #ff2a2a,0 0 8px 2px #ff2a2a}
+.hc-side button.on{color:var(--ink);background:var(--panel)}
+
+/* ===== round 7: Light side / Dark side control panels. Tokens and hc-* parts come from theme.css. ===== */
+#holo.wrap{background:var(--bg);color:var(--ink);font-size:var(--t-md);gap:10px}
+/* header: title plate, side switch, sign-in, then the console keys for the views */
+.hd{gap:10px 18px}
+.hd h1{font:700 26px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);padding-left:14px;position:relative}
+.hd h1::before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:4px;border-radius:2px;background:var(--core);box-shadow:0 0 0 1px var(--saber),0 0 10px 2px var(--saber)}
+.hd .sub{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted);margin:6px 0 0 14px}
+.hdtools{gap:10px}
+.tabs{gap:6px;border-bottom:0;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.tab,.tab.on{font:700 var(--t-sm)/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--slot);color:var(--muted);top:0;box-shadow:inset 0 1px 0 var(--hi)}
+.tab:hover{color:var(--ink);border-color:var(--saber)}
+.tab.on{background:var(--chipon);color:var(--ink);border-color:var(--saber);box-shadow:var(--glow);padding-bottom:10px}
+
+/* the three columns are console panels */
+.shell{gap:10px}
+.side,.side.right,.tlscroll,.soscroll,.mfstage,.pcgrid.r6>.panel,.ptmain>*{background-color:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:inset 0 1px 0 var(--hi)}
+.side,.side.right,.tlscroll,.soscroll,.mfstage{background-image:linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber)),linear-gradient(var(--saber),var(--saber));
+  background-size:14px 2px,2px 14px,14px 2px,2px 14px;background-position:left -1px top -1px,left -1px top -1px,right -1px bottom -1px,right -1px bottom -1px;background-repeat:no-repeat}
+.mfstage{background-color:var(--bg)}
+.side{padding:10px}
+.side,.side.right{font:400 var(--t-md)/1.45 var(--body);color:var(--ink)}
+
+/* left panel: every step is a sub-frame with a readout header that folds it */
+.side .steps{gap:8px}
+.step,.steps>.step{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:9px 10px;gap:8px}
+.step.find{background:var(--sub2)}
+.steps>.step>.sth,.step>.sth{display:flex;align-items:center;gap:8px;margin:0;font:700 var(--t-sm)/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);cursor:pointer;user-select:none}
+.steps>.step:not([hidden])>.sth::before{width:20px;height:20px;border:0;border-radius:3px;background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);font:700 var(--t-lab) var(--mono);margin-right:0}
+.step>.sth::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px);flex:none}
+.step.shut>.sth::after{transform:rotate(-45deg)}
+.step.shut>:not(.sth){display:none!important}
+.sth i{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);border-radius:3px}
+/* groups inside a step step one shade deeper */
+.side .grp>.ghead,.stg .ghead{display:flex;align-items:center;gap:6px;flex-basis:100%}
+.side .grp:has(>.ghead){background:var(--sub2);border-radius:var(--r);padding:6px 8px}
+.stg{background:var(--sub2);border:0;border-radius:var(--r);padding:6px 8px}
+.gtog,.side .lab.gtog,.stg .gtog{font:600 var(--t-lab)/1.2 var(--mono)!important;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)!important}
+.gtog::after{content:"";width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px);margin-left:auto;font-size:0}
+.grp.shut .gtog::after,.stg.shut .gtog::after,.side .grp.shut>.gtog::after{content:"";transform:rotate(-45deg)}
+.allnone button{font:600 var(--t-lab)/1 var(--mono);background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:3px;padding:3px 7px}
+.allnone button:hover{color:var(--ink);border-color:var(--saber)}
+.side .lab,.lab{font:600 var(--t-lab)/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.side .note,.side p.note{font:400 var(--t-sm)/1.4 var(--body);color:var(--muted)}
+
+/* keys: chips, story toggles, segmented buttons and small buttons share one look */
+.chip,.side .chip{font:600 var(--t-sm)/1.2 var(--body);letter-spacing:0;text-transform:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 10px;border-radius:var(--r);box-shadow:inset 0 1px 0 var(--hi)}
+.chip:hover{border-color:var(--saber)}
+.chip.on{background:var(--chipon)!important;border-color:var(--saber)!important;box-shadow:var(--glow)!important;font-weight:700}
+.chip.on::before{content:none}
+.chip .ct,.chip.on .ct{color:var(--muted)}
+.side .chip.clr{border:1px solid var(--line);font:700 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:10px;background:var(--slot)}
+.stog{font:500 var(--t-sm)/1.2 var(--body);border:1px solid var(--line2);background:var(--panel);border-radius:var(--r);padding:6px 8px}
+.stog:not(.on){opacity:.55}
+.stog.on{border-color:var(--line)}
+.stog em{font:600 var(--t-lab) var(--mono);color:var(--muted)}
+.seg.small{border:1px solid var(--line);border-radius:var(--r);background:var(--slot)}
+.seg.small button{font:600 var(--t-sm)/1 var(--body);background:none;color:var(--muted);border-right:1px solid var(--line);padding:8px 11px}
+.seg.small button.on{background:var(--chipon);color:var(--ink);box-shadow:inset 0 0 0 1px var(--saber),0 0 8px rgba(0,0,0,0),inset 0 -3px 0 var(--saber)}
+.side input[type=search],.side select,.side input[type=number],.side textarea,select,input[type=date],textarea{font:500 var(--t-md)/1.2 var(--body);background:var(--sub2);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:8px 9px}
+.side input[type=search]:focus,.side select:focus{outline:none;border-color:var(--saber);box-shadow:var(--glow)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--saber);outline-offset:2px}
+.zoom button,.tlbar .zoom button{font:600 var(--t-sm)/1 var(--body);background:var(--slot);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;box-shadow:inset 0 1px 0 var(--hi)}
+.zoom button:hover{border-color:var(--saber)}
+.tlbar .lab{font-size:var(--t-lab)}
+
+/* right panel: a header plate, then folding sub-frames */
+.dsticky{background:var(--panel);border-bottom:1px solid var(--line2)}
+.dsticky .dimg2{background:var(--well);border:1px solid var(--line2);border-radius:var(--r);height:190px}
+.side.right h2,.dhead h2,.mfside h2,.ph2{font:700 var(--t-title)/1.2 var(--display);letter-spacing:.03em;color:var(--ink)}
+details.fold{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:0 10px}
+details.fold>summary{font:700 var(--t-sm)/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);padding:10px 0}
+details.fold>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);margin-left:auto}
+details.fold[open]>summary::after{content:"";transform:rotate(45deg) translate(-2px,-2px)}
+details.fold details.fold{background:var(--sub2)}
+.alist button:hover,.alist a:hover{background:var(--sub2)}
+.mfside{background:transparent;border:0;padding:0}
+.mfside .mfsec{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
+
+/* price charts: the stats strip keeps one height so the chart never moves between tabs */
+.pcgrid.r6{gap:10px;overflow:hidden}
+.pcgrid.r6>.panel{padding:12px}
+.pcgrid.r6 .stats{grid-template-columns:repeat(4,minmax(0,1fr));height:92px;overflow:hidden;align-content:stretch}
+.pcgrid.r6 .stat{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:8px 10px;overflow:hidden}
+.pcgrid.r6 .stat b{font:700 var(--t-head)/1.1 var(--display)}
+.pcgrid.r6 .stat small{font:400 12px/1.3 var(--body);color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ctabs{gap:6px;border-bottom:0;padding-bottom:4px}
+button.ct{font:600 var(--t-sm)/1 var(--body);letter-spacing:0;text-transform:none;padding:8px 11px;border-radius:var(--r);border:1px solid var(--line);background:var(--slot);color:var(--muted)}
+button.ct.on{background:var(--chipon);color:var(--ink);border-color:var(--saber);box-shadow:var(--glow)}
+#clab{min-height:2.8em;font:400 var(--t-sm)/1.4 var(--body);text-transform:none;letter-spacing:0;color:var(--muted)}
+.chartbox text{fill:var(--muted)}
+
+/* parts and lists panes */
+.ptmain{gap:10px}
+.pthead{border-bottom:1px solid var(--line2)}
+.pthead h2{font:700 var(--t-head)/1.15 var(--display)}
+.ptgrp{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px}
+.ptgrp h3{font:700 var(--t-sm)/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.flash{background:var(--panel);color:var(--ink);border:1px solid var(--saber);box-shadow:var(--glow)}
+.tip{background:var(--panel);color:var(--ink);border:1px solid var(--saber);box-shadow:var(--glow)}
+
+/* sign-in in the header (after the gate) */
+.signin button{font:600 var(--t-sm)/1 var(--body);background:var(--slot);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:9px 12px}
+.signin .who{font:600 var(--t-lab)/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--own)}
+
+/* the sign-in gate: a full-screen console before the tool */
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);padding:24px max(16px,env(safe-area-inset-left,0px))}
+.gate[hidden]{display:none}
+.gate .gbox{width:min(440px,100%);display:flex;flex-direction:column;gap:14px;padding:26px 24px}
+.gate h1{font:700 30px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;margin:0}
+.gate .hc-small{margin:0}
+.gate form{display:flex;flex-direction:column;gap:10px}
+.gate input{font:500 17px/1.2 var(--body);background:var(--sub2);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.gate input:focus{outline:none;border-color:var(--saber);box-shadow:var(--glow)}
+.gate .go{font:700 var(--t-sm)/1 var(--display);letter-spacing:.12em;text-transform:uppercase;padding:13px;border-radius:var(--r);border:1px solid var(--saber);background:var(--chipon);color:var(--ink);box-shadow:var(--glow);cursor:pointer}
+.gate .err{color:var(--loss);font:500 var(--t-sm)/1.3 var(--body);min-height:1.3em}
+.gate .gfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ---- timeline rows (round 7): three distinct bands, each folds from a bar across its whole width ---- */
+.trow{overflow:clip!important;border-top:2px solid var(--line)!important}
+.trow[data-row="story"]{background:var(--panel)}
+.trow[data-row="figs"]{background:var(--slot)}
+.trow[data-row="sets"]{background:var(--sub2)}
+.trow>.rbar{position:absolute;left:0;top:0;width:100%;height:26px;z-index:5;cursor:pointer;
+  background:linear-gradient(var(--bg),var(--bg)) 0 0/100% 100%;border-bottom:1px solid var(--line);box-shadow:inset 0 2px 0 var(--saber)}
+.trow>.rbar:hover{box-shadow:inset 0 2px 0 var(--saber),0 0 10px -2px var(--saber)}
+.trow>.rbar:focus-visible{outline:2px solid var(--saber);outline-offset:-2px}
+.rbar>.rbl{position:sticky;left:8px;display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 10px;font:700 var(--t-lab)/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.rbar>.rbl::before{content:"▾";font-size:12px;color:var(--saber)}
+.trow.shut>.rbar>.rbl::before{content:"▸"}
+.trow.shut>.rbar>.rbl::after{content:"tap to open";font-weight:500;letter-spacing:.06em;text-transform:none;color:var(--muted)}
+.trow.shut>.rbar{height:100%}
+.trow>.rh{display:none}
+/* minifig arcs: name on its own line, a saber-thin track, circles sit on the track */
+.abar{height:52px!important;border:0!important;background:none!important;padding:0!important;overflow:visible!important;line-height:14px!important}
+.abar>span{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;font:600 12px/14px var(--body);color:var(--ink);background:var(--slot);padding:0 6px 0 2px;border-left:3px solid var(--tc)}
+.abar::before{content:"";position:absolute;left:0;right:0;top:32px;height:4px;border-radius:2px;background:color-mix(in srgb,var(--tc) 55%,transparent)}
+.fcirc{box-shadow:0 1px 3px rgba(0,0,0,.25);z-index:2}
+.fcirc:hover{box-shadow:var(--glow)}
+.mood2 .mt.nost{background:var(--sub2);border:1px dashed var(--line)}
+.mood2 .mt.nost span{position:static;background:none;color:var(--muted);white-space:normal;text-align:center;font:600 11px/1.3 var(--body);padding:4px}
+.trow.shut[data-row="figs"]>.rbar{height:26px}
+/* minifig card in the right panel: one photo circle, then the facts */
+.figcard{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);padding:10px;margin:0 0 10px}
+.fcbig{width:96px;height:96px;border-radius:50%;overflow:hidden;background:#fff;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.fcbig.y{border:3px solid var(--own)}.fcbig.n{border:2px dotted var(--muted)}
+.fcbig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.figcard .facts{margin:0}
+
+/* ---- sort collection (round 7) ---- */
+/* one plain frame; owned sets get a contrasting fill, wanted sets stay dashed and dim even on hover */
+.card{border:1px solid var(--line)!important;background:var(--panel)!important}
+.card:not(.want){background:var(--ownfill)!important;border-color:color-mix(in srgb,var(--own) 45%,var(--line))!important}
+.card.want{opacity:.55;border-style:dashed!important;background:var(--slot)!important}
+.card.want:hover,.card.want.hl{opacity:.72}
+.card.hl{outline:3px solid var(--saber)!important;box-shadow:var(--glow)}
+/* minifigs: groups sit side by side and wrap; each tinted box wraps only its own figs */
+.card .figs{display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:4px;align-items:flex-start;background:none;padding:0}
+.card .fgrp{display:inline-flex!important;flex-wrap:wrap;gap:4px 2px;width:auto;max-width:100%;padding:4px 3px 3px!important;border-width:1px!important;border-radius:4px;box-sizing:border-box}
+.card .fgrp .fig{width:calc(var(--fi,50px) + 8px);flex:none}
+.card.t1{--fi:50px}.card.t2{--fi:42px}.card.t3{--fi:35px}.card.t4{--fi:29px}
+.card .fgrp .fig i{width:var(--fi,50px)!important;height:var(--fi,50px)!important}
+
+/* ---- galaxy (round 7) ---- */
+/* icons grow as you zoom out, so sets and minifigs stay readable at the macro view */
+.mfn>.nsc{transform:scale(var(--ns,1));transition:transform .15s}
+/* the shared relation web: visible lines in both sides' colours */
+.mfl line{stroke:var(--muted)!important;stroke-opacity:.2!important;vector-effect:non-scaling-stroke}
+.mfl.gal line{stroke-opacity:.14!important}
+.mfl line.on{stroke:var(--saber)!important;stroke-opacity:.95!important;stroke-width:2.5px}
+/* groups: a dashed ring and spokes to a hub, unlike the solid relation lines */
+.gweb line{stroke:var(--gc);vector-effect:non-scaling-stroke;fill:none}
+.gweb .gspoke{stroke-width:1.6px;stroke-dasharray:2 4;stroke-linecap:round;stroke-opacity:.85}
+.gweb .gring{stroke-width:2px;stroke-dasharray:9 5;stroke-opacity:.6}
+.gweb .ghub{fill:var(--gc);stroke:var(--panel);stroke-width:2;transform-box:fill-box;transform-origin:center;transform:scale(var(--ns,1))}
+.gweb .gcloud-t{font-size:calc(14px*var(--pk,1))}
+/* planets sit back so sets and minifigs read first */
+.mfpl .orb,.mfpl image{opacity:.42}
+.mfpl:hover .orb,.mfpl.on .orb,.mfpl:hover image,.mfpl.on image{opacity:.8}
+.mfpl text{fill:var(--muted)!important;opacity:.75}
+.mfgal circle{stroke:var(--line2)!important}
+.mfgal>text{fill:var(--muted)!important;opacity:.5}
+/* clear selection sits right under each find bar */
+#clearall,#mf-clear{display:block;width:100%;margin:8px 0 0}
+
+/* ---- price charts (round 7): a tapped set stays lit, the rest dim ---- */
+#chart.iso [data-n]:not(.isoon),#chart.iso g[id^="dot-"]:not(.isoon){opacity:.1;transition:opacity .2s}
+#chart.iso .isoon{opacity:1!important}
+#chart.iso .isoon :is(circle,rect,path,line,polyline){stroke:var(--saber);stroke-width:2.5px}
+
+/* ---- right panels (round 7): framed, foldable sections; minifigs as photo circles ---- */
+.psec{background:var(--slot);border:1px solid var(--line2);border-radius:var(--r);margin:0 0 8px;padding:0}
+.psec>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;font:700 var(--t-lab)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.psec>summary::-webkit-details-marker{display:none}
+.psec>summary::before{content:"▸";color:var(--saber);font-size:12px}
+.psec[open]>summary::before{content:"▾"}
+.psec>summary span{flex:1}
+.psec>summary em{font-style:normal;font-weight:600;color:var(--muted);letter-spacing:0}
+.psec[open]>summary{border-bottom:1px solid var(--line2)}
+.psec>ul,.psec>.alist{margin:0;padding:6px 8px 8px;background:var(--panel);border-radius:0 0 var(--r) var(--r)}
+.pdesc{font:400 var(--t-md)/1.45 var(--body);color:var(--ink);margin:4px 0 10px;padding:8px 10px;background:var(--slot);border-left:3px solid var(--saber);border-radius:0 var(--r) var(--r) 0}
+.mfimg{position:relative;height:210px;background:var(--well);border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin:6px 0 10px}
+.mfimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;box-sizing:border-box}
+i.fv{flex:none;width:46px!important;height:46px!important;border-radius:50%!important;overflow:hidden;position:relative;background:#fff;display:block;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+i.fv.y{border:3px solid var(--own)}i.fv.n{border:2px dotted var(--muted)}
+i.fv img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 12%;max-width:none}
+.figrow{display:flex;align-items:center;gap:10px}
+.figrow>button{display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-align:left}
+
+/* ---- parts (round 7): every step fits the panel; the set list takes what's left and scrolls inside ---- */
+.side.left:has(#ptctl:not([hidden])){overflow:hidden;display:flex;flex-direction:column}
+#ptctl:not([hidden]){flex:1 1 auto;min-height:0;height:100%;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+#ptctl>.step{flex:none}
+#ptctl>.step.grow{flex:1 1 0;min-height:110px;display:flex;flex-direction:column;overflow:hidden}
+#ptctl>.step.grow .setlist{flex:1 1 0;min-height:0;max-height:none!important}
+#ptctl>.step.find .hits{max-height:22vh;overflow:auto}
+/* ---- lists (round 7): pieces as a gallery grid of tiles ---- */
+.lsitems{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px!important}
+.lsi{grid-template-columns:1fr!important;grid-template-rows:auto auto auto;justify-items:center;text-align:center;gap:4px!important;padding:8px 6px!important;border:1px solid var(--line2)!important;border-radius:var(--r);background:var(--slot)}
+.lsi .pti{width:72px!important;height:60px!important}
+.lsi>span:not(.stp){align-items:center;font-size:var(--t-sm)}
+.lsi>span:not(.stp) b{font-family:var(--mono)}
+.lsi .stp{display:flex;align-items:center;gap:6px}
+/* r7 check: story header fits its 36px strip; set tile number hidden behind photo */
+.srchead{padding:1px 8px}
+.srchead b{font-size:14px;line-height:18px}
+.srchead small{display:block;line-height:14px;overflow:hidden;text-overflow:ellipsis}
+.pcard img{background:#fff;z-index:1}
+/* r7 check: every chart tab's stats sit on one row, whatever their count */
+.pcgrid.r6 .stats{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
+.pcgrid.r6 .stat{padding:8px 9px;min-width:0}
+.pcgrid.r6 .stat b{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcgrid.r6 .stat button{all:unset;cursor:pointer;display:block;min-width:0}
+.pcgrid.r6 .stat button b{font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;text-transform:none;letter-spacing:0}
+.pcgrid.r6 .stat button small{-webkit-line-clamp:2;margin-top:3px}
+.legend{font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:10px;height:10px;flex:none}
+
 </style>
 
+<div class="gate" id="gate" hidden><div class="gbox hc-panel"><div class="hc-strip">Brick Holocron · access</div><h1>Brick Holocron</h1><p class="hc-small">A Star Wars LEGO collection. Enter your passcode to open it.</p>
+<form id="gate-form"><input id="gate-pass" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="go">Open the holocron</button><div class="err" id="gate-err" role="status"></div></form>
+<div class="gfoot"><span class="hc-lab">Admin or guest passcode</span><div class="hc-side" role="group" aria-label="Side"><button type="button" data-side="light"><i></i>Light side</button><button type="button" data-side="dark"><i></i>Dark side</button></div></div></div></div>
 <div class="wrap" id="holo">
   <header class="hd">
     <div class="ttl"><h1>Brick Holocron</h1><p class="sub" id="subline">Your Star Wars collection. Tap any set for its details on the right.</p></div>
-    <div class="hdtools"><label class="lab" for="theme">Colours</label><select id="theme" aria-label="Colour theme"></select><div class="signin" id="signin"></div></div>
+    <div class="hdtools"><div class="hc-side" role="group" aria-label="Side"><button type="button" data-side="light"><i></i>Light side</button><button type="button" data-side="dark"><i></i>Dark side</button></div><div class="signin" id="signin"></div></div>
     <nav class="tabs" role="tablist" aria-label="Views"><button type="button" class="tab on" id="tab-tl" role="tab" aria-selected="true">Star Wars Timeline</button><button type="button" class="tab" id="tab-so" role="tab" aria-selected="false">Sort collection</button><button type="button" class="tab" id="tab-mf" role="tab" aria-selected="false">Minifig galaxy</button><button type="button" class="tab" id="tab-pc" role="tab" aria-selected="false">Price charts</button><button type="button" class="tab" id="tab-pt" role="tab" aria-selected="false">Parts</button><button type="button" class="tab" id="tab-ls" role="tab" aria-selected="false">Lists</button></nav>
   </header>
   <div class="shell">
   <aside class="side left" aria-label="Filters">
   <section class="controls steps" id="controls">
-    <div class="grp"><label class="lab" for="find">Find a set or minifig</label><input id="find" type="search" placeholder="Name, set number or minifig number"></div>
+    <div class="grp"><label class="lab" for="find">Find a set or minifig</label><input id="find" type="search" placeholder="Name, set number or minifig number"><button type="button" class="chip clr" id="clearall">Clear selection</button></div>
     <div class="grp focusbar" id="focusbar" hidden></div>
     <section class="step tlonly"><h4 class="sth">Which stories</h4><div class="grp" id="g-canon2"></div></section>
     <section class="step tlonly"><h4 class="sth">Pick stories</h4><div class="seg small" id="g-by"></div><div id="g-stories"></div></section>
@@ -700,15 +1007,13 @@ details.fold>div{padding:0 0 10px;display:flex;flex-direction:column;gap:6px}
     <div class="grp" id="g-stk"></div>
     <div class="grp" id="g-pc"></div>
     </section>
-    <button type="button" class="chip clr" id="clearall">Clear selection</button>
     <p class="note">Filtered-out sets fade back but stay in place.</p>
   </section>
   <section class="mfctl steps" id="mfctl" hidden>
-    <div class="grp"><label class="lab" for="mf-q">Find</label><input id="mf-q" type="search" placeholder="Anakin, Razor Crest, 501st, 75021, sw0445"></div>
+    <div class="grp"><label class="lab" for="mf-q">Find</label><input id="mf-q" type="search" placeholder="Anakin, Razor Crest, 501st, 75021, sw0445"><button type="button" class="chip clr" id="mf-clear">Clear selection</button></div>
     <section class="step"><h4 class="sth">Show</h4><span class="grp" id="mf-have"></span><span class="lab cnt" id="mf-count"></span></section>
     <section class="step"><h4 class="sth">Shared relation web</h4><div id="mf-web"></div></section>
     <section class="step"><h4 class="sth">Groups</h4><span class="grp" id="mf-groups"></span></section>
-    <button type="button" class="chip clr" id="mf-clear">Clear selection</button>
     <p class="note">Drag any shape and it wobbles back. Scroll to zoom. Characters sit on the planet or fleet they're most seen at; ships drift between the places they visit. Map positions are approximate.</p>
   </section>
   <section class="ptctl" id="ptctl" hidden></section>
@@ -896,6 +1201,7 @@ function pxAwait(){if(!PX.lite||!PX.ver)return;let tries=0;
 let PXMSG="";
 function buildPC(){const gp=$("#g-pc");gp.innerHTML=`<div class="grp" id="pc-on"></div>`}
 function visible(){return SETS.filter(s=>{
+  if(focus)return focusHit(s);
   for(const g of GROUPS){const f=filters[g[2]];if(f&&!f.includes(g[4](s)))return false}
   if(focus&&!focusHit(s))return false;
   if(filters.pc&&!pcFilterSets().has(s.n))return false;
@@ -1003,7 +1309,7 @@ let ctab="time";
 const monthKey=s=>{const d=dt(st(s).bought);return d?d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"):""};
 let EARLY="";
 function renderStats(v){if(!CTABS.some(c=>c[0]===ctab&&(!c[2]||privOK())))ctab="time";if(ctab==="time")return statsTime(v);if(ctab==="worth")return statsWorth(v);const f={sets:()=>statsComp(META.setcomp,"sets"),figs:()=>statsComp(META.figcomp,"minifigs"),story:()=>statsStory(v),spend:()=>statsSpend(v)}[ctab];f()}
-function renderChart(v){
+function renderChart(v){setTimeout(chartIso,0);
   $("#ctabs").innerHTML=CTABS.filter(c=>!c[2]||privOK()).map(([k,l])=>`<button type="button" class="ct${k===ctab?" on":""}" data-ct="${k}">${l}</button>`).join("");
   $("#ctabs").querySelectorAll("[data-ct]").forEach(b=>b.onclick=()=>{ctab=b.dataset.ct;render(false)});
   const svg=$("#chart");svg.setAttribute("viewBox","0 0 640 300");
@@ -1137,8 +1443,8 @@ function bar(parts,max){return `<div class="bar">${parts.filter(p=>p[1]).map(([c
 let dtab="ov",dpShow="all",focus=null,dlist=null;
 // a tag tapped in the right panel lights up the sets that share it on the timeline (the rest fade, like a filter)
 function focusHit(s){const f=focus;if(!f)return true;const v=f.v;return f.k==="src"?s.src===v:f.k==="ty"?s.ty===v:f.k==="aff"?affil(s).includes(v):f.k==="ship"?s.ship===v:f.k==="loc"?(s.loc||[]).includes(v):f.k==="ch"?(SETCH[s.n]||[]).includes(v):f.k==="sub"?s.sub===v:true}
-function syncFocus(){const b=$("#focusbar");if(!b)return;b.hidden=!focus;b.innerHTML=focus?`<span class="lab">Lit up on the timeline</span><button type="button" class="chip on" id="focusx">${esc(focus.label)} ×</button>`:"";const x=$("#focusx");if(x)x.onclick=()=>{focus=null;render(false);drawDrawer();syncFocus()}}
-function setFocus(k,v,label){focus=focus&&focus.k===k&&focus.v===v?null:{k,v,label};syncFocus();if(tab!=="tl")showTab("tl");else render(true);drawDrawer()}
+function syncFocus(){const b=$("#focusbar");if(!b)return;b.hidden=!focus;b.innerHTML=focus?`<span class="lab">Showing only this tag · overrides the filters below</span><button type="button" class="chip on" id="focusx">${esc(focus.label)} ×</button>`:"";const x=$("#focusx");if(x)x.onclick=()=>{focus=null;render(false);drawDrawer();syncFocus()}}
+function setFocus(k,v,label){focus=focus&&focus.k===k&&focus.v===v?null:{k,v,label};syncFocus();render(true);if(tab==="mf"&&mf.drawn)mfDraw(false);drawDrawer()}
 function clearSel(){openN=null;hl=null;focus=null;dlist=null;syncFocus();drawDrawer();if(tab==="mf")mfSelect(null);else render(false)}
 function openDrawer(n){openN=n;drawDrawer()}
 // lists for the right panel: a theme's sets, a minifig category, a story, a month
@@ -1152,7 +1458,10 @@ function listOf(kind,key){
   if(kind==="fig"){const fs=Object.entries(META.figcat||{}).filter(([n,o])=>o[0]===key).sort((a,b)=>a[0].localeCompare(b[0]));const r=(META.figcomp||[]).find(r=>r[0]===key);
     return{kind:`Minifig category · ${fs.filter(f=>f[1][2]).length}${r&&r[3]?" of "+r[3]:""}`,title:key.replace(/^Legends \/ |^Other \/ /,""),html:two(fs.filter(f=>f[1][2]),fs.filter(f=>!f[1][2]),([n,o])=>figRow(n,o),nowant)}}
   if(kind==="onefig"){const o=(META.figcat||{})[key]||[ "", FIGN[key]||key, 0],ss=SETS.filter(s=>s.figs.some(f=>f[0]===key));const c=CHARS.find(c=>c.figs.some(f=>f[0]===key));
-    return{kind:`Minifig · ${key}`,title:o[1],html:`<dl class="facts"><dt>Category</dt><dd>${esc(o[0]||"–")}</dd><dt>Character</dt><dd>${c?esc(c.name):"–"}</dd><dt>Status</dt><dd>${o[2]?"You have it":"Not owned"}</dd></dl>${ss.length?`<span class="lab">In your sets</span><div class="llist">${ss.map(setRow).join("")}</div>`:""}${c?`<button type="button" class="chip" data-fig="${esc(key)}">Show on the minifig galaxy</button>`:""}`}}
+    {const ff=ss.map(s=>s.figs.find(f=>f[0]===key)).find(Boolean),nib=ff&&ff[2],used=ff&&ff[3],have=ss.some(s=>!s.want&&!s.gone&&figHave(s,key))||!!o[2],own=ss.filter(s=>!s.want&&!s.gone),wnt=ss.filter(s=>s.want);
+    return{kind:`Minifig · ${key}`,title:o[1],html:`<div class="figcard"><div class="fcbig ${have?"y":"n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${encodeURIComponent(key)}.png" alt="${esc(o[1])}" onerror="this.remove()">`:""}</div>
+      <dl class="facts"><dt>Status</dt><dd>${have?"You have it":"Not owned"}</dd>${c?`<dt>Character</dt><dd>${esc(c.name)}</dd>`:""}${o[0]?`<dt>Category</dt><dd>${esc(o[0].replace(/^Legends \/ |^Other \/ /,""))}</dd>`:""}${nib!=null||used!=null?`<dt>Worth</dt><dd><b>${fmt2(nib??used)}</b>${used!=null&&nib!=null?` <span class="lab">new · ${fmt2(used)} used</span>`:""}</dd>`:""}</dl></div>
+      ${own.length?`<span class="lab">In your sets · ${own.length}</span><div class="llist">${own.map(setRow).join("")}</div>`:""}${wnt.length?`<span class="lab">In sets you want · ${wnt.length}</span><div class="llist">${wnt.map(setRow).join("")}</div>`:""}${c?`<button type="button" class="chip" data-fig="${esc(key)}">Show on the minifig galaxy</button>`:""}`}}}
   if(kind==="src"){const ss=SETS.filter(s=>s.src===key).sort((a,b)=>a.y-b.y);return{kind:`Story · ${ss.length} sets`,title:SRCMAP[key][2],html:two(ss.filter(s=>!s.want),ss.filter(s=>s.want),setRow,"None on your want list.")}}
   if(kind==="mon"){const ss=SETS.filter(s=>!s.want&&s.paid!=null&&dt(st(s).bought)&&monthKey(s)===key||key==="Earlier"&&!s.want&&s.paid!=null&&dt(st(s).bought)&&monthKey(s)<EARLY);
     return{kind:`Bought · ${ss.length} sets · ${fmt(ss.reduce((a,s)=>a+(s.paid||0),0))}`,title:key==="Earlier"?"Earlier months":new Date(+key.slice(0,4),+key.slice(5)-1,1).toLocaleDateString("en-US",{month:"long",year:"numeric"}),html:`<div class="llist">${ss.map(setRow).join("")}</div>`}}
@@ -1171,7 +1480,12 @@ $("#chart").addEventListener("mousemove",e=>{const s=dotSet(e),tip=$("#tip"),fe=
   const box=$("#chartbox").getBoundingClientRect();tip.textContent=txt;tip.classList.add("show");
   tip.style.left=Math.min(e.clientX-box.left+12,box.width-250)+"px";tip.style.top=(e.clientY-box.top+12)+"px"});
 $("#chart").addEventListener("mouseleave",()=>$("#tip").classList.remove("show"));
-$("#chart").addEventListener("click",e=>{const s=dotSet(e);$("#tip").classList.remove("show");if(s){openN=s.n;drawDrawer();return}
+// tap a set on a chart: it stays lit and everything else dims; tap it again or the background to bring all back
+let ISO=null;
+function chartIso(){const svg=$("#chart");if(!svg)return;svg.querySelectorAll(".isoon").forEach(e=>e.classList.remove("isoon"));const on=ISO&&svg.querySelector(`[data-n="${CSS.escape(ISO)}"],#dot-${sid(ISO)}`);svg.classList.toggle("iso",!!on);
+  if(on)svg.querySelectorAll(`[data-n="${CSS.escape(ISO)}"],#dot-${sid(ISO)}`).forEach(e=>{e.classList.add("isoon");e.parentNode.appendChild(e)})}
+$("#chart").addEventListener("click",e=>{const s=dotSet(e);$("#tip").classList.remove("show");if(s){ISO=ISO===s.n?null:s.n;chartIso();openN=s.n;drawDrawer();return}
+  if(ISO&&!(e.target.closest&&e.target.closest("[data-f],[data-list]"))){ISO=null;chartIso();return}
   const fe=e.target.closest&&e.target.closest("[data-f]");if(fe){dlist=listOf("onefig",fe.dataset.f);openN=null;drawDrawer();return}
   const g=e.target.closest&&e.target.closest("[data-list]");if(g){const v=g.dataset.list,i=v.indexOf(":");showList(v.slice(0,i),v.slice(i+1))}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(openN||focus||dlist)clearSel()}});
@@ -1208,6 +1522,7 @@ CHARS.forEach(c=>{if(c.planet)pas(c.planet).home.add(c.name)});
 SETS.forEach(s=>(s.loc||[]).forEach(p=>{if(!PLAN[p])return;const a=pas(p);a.sets.add(s.n);(SETCH[s.n]||[]).forEach(n=>{if(!a.home.has(n))a.seen.add(n)})}));
 Object.values(SHIPS).forEach(h=>h.pl.forEach(p=>pas(p).ships.add(h.name)));
 const PIMG=META.pimg||{},PCOL=META.pcol||{};
+const PDESC={"coruscant":"City-covered capital of the Republic and later the Empire; home of the Senate and the Jedi Temple.","chandrila":"Peaceful farming world, home of Mon Mothma and briefly capital of the New Republic.","alderaan":"Leia's home world, a peaceful planet destroyed by the first Death Star.","corellia":"Shipbuilding world where Han Solo grew up; makes the YT freighters and much of the galaxy's fleet.","tython":"Ancient world strong in the Force, where Grogu reached out from the seeing stone.","kashyyyk":"Forest world of giant wroshyr trees, home of the Wookiees and Chewbacca.","mandalore":"Home world of the Mandalorians, left a glassed ruin by the Empire's Great Purge.","naboo":"Lush world of Padmé and Palpatine; the Gungans live in its lakes and Theed is its capital.","tatooine":"Desert world of two suns in the Outer Rim, run by Hutts; where Anakin and Luke grew up.","geonosis":"Rocky desert world of insect-like droid builders, where the Clone Wars began.","ryloth":"Home of the Twi'leks, freed from Separatist occupation by Mace Windu.","hoth":"Ice world of the Rebels' Echo Base, overrun by Imperial walkers.","bespin":"Gas giant with the floating Cloud City, run by Lando; where Han was frozen in carbonite.","dagobah":"Swamp world where Yoda lived in exile and trained Luke.","mustafar":"Volcanic world where Anakin fell to Obi-Wan and later built Vader's castle.","utapau":"Sinkhole world where Obi-Wan hunted General Grievous.","endor":"Forest moon of the Ewoks, below the second Death Star.","kamino":"Ocean world of tall cloners who grew the Republic's clone army.","yavin":"Jungle moon with old temples, base of the Rebels when they destroyed the first Death Star.","felucia":"Fungus jungle world where Aayla Secura fell during Order 66.","dathomir":"Red world of the Nightsisters, birthplace of Maul and Asajj Ventress.","lothal":"Grassland world of Ezra Bridger and the Ghost crew in Rebels.","scarif":"Tropical world of the Imperial data vault, where Rogue One stole the Death Star plans.","jakku":"Desert world of starship wrecks where Rey scavenged.","exegol":"Hidden Sith world in the Unknown Regions where Palpatine returned.","ahch":"Remote ocean world of the first Jedi temple, where Luke went into exile.","starkiller":"First Order superweapon carved into a planet, destroyed by the Resistance.","dqar":"Jungle world that hid the Resistance base.","crait":"Salt world of an old Rebel base, where the Resistance made its last stand.","takodana":"Forest world of Maz Kanata's castle.","batuu":"Outer Rim trading post with Black Spire Outpost, the Galaxy's Edge park.","nevarro":"Volcanic world of the bounty hunters' guild, Greef Karga's town.","ferrix":"Salvage and shipyard world, Cassian Andor's adopted home.","jedha":"Desert moon of the holy city and its kyber crystals, hit by the Death Star.","kessel":"Spice-mining world of the Kessel Run.","moncala":"Ocean world of the Mon Calamari, who built the Rebel cruisers.","umbara":"Dark world where the 501st fought under the traitor General Krell.","teth":"Jungle world of the monastery where Anakin and Ahsoka rescued Jabba's son.","korriban":"Ancient Sith world of tombs, also called Moraband.","sorgan":"Quiet forest world where Mando and Cara Dune defended a village.","christophsis":"Crystal world where Ahsoka first joined Anakin.","mygeeto":"Frozen banking world where Ki-Adi-Mundi fell in Order 66.","serenno":"Count Dooku's home world.","pabu":"Island world of the Bad Batch's last refuge.","kijimi":"Snowy criminal city world where Zorii and Babu Frik live.","vandor":"Mountain world of the conveyex train heist in Solo.","mimban":"Mud world where Han met Chewbacca as an Imperial soldier.","abregado":"A busy spaceport world on the galaxy's trade routes.","saleucami":"Desert-swamp world where Grievous was hunted and Order 66 hit Stass Allie.","florrum":"Sulphur world of Hondo Ohnaka's pirate base.","tenoo":"High Republic world of the Jedi temple in Young Jedi Adventures.","atattin":"Hidden Old Republic mint world, home of the Skeleton Crew kids.","castilon":"Ocean world of the Colossus fuel platform in Resistance.","peridea":"Distant world in another galaxy, where Thrawn and Ezra were stranded.","elsewhere":"Sets that don't happen in one place or one story.","deathstar":"The Empire's first moon-sized battle station, destroyed at Yavin.","deathstar2":"The second, larger Death Star over Endor, destroyed as the Emperor fell.","stardestroyer":"The Empire's wedge-shaped warships, crewed by stormtroopers and officers.","executor":"Darth Vader's huge flagship.","venator":"Republic attack cruisers that carried the clones and Jedi in the Clone Wars.","malevolence":"Grievous's flagship and the Separatist droid fleet.","supremacy":"Snoke's giant flagship and the First Order fleet.","rebelfleet":"Admiral Ackbar's Home One and the Rebel Alliance fleet.","chimaera":"Grand Admiral Thrawn's Star Destroyer.","steadfast":"Palpatine's Sith Eternal fleet of planet-killing Star Destroyers from Exegol."};
 const LEADS={};UNITS.forEach(u=>{u[2].forEach(n=>(LEADS[n]=LEADS[n]||[]).push(u[0]));u[3].forEach(n=>(LEADS[n]=LEADS[n]||[]).push(u[0]))});
 const STYPE=Object.fromEntries(META.types);
 const SHIPC="#3a4a5c",UNITC="#3d7ea6";
@@ -1272,12 +1587,12 @@ function mfRender(d3,refit){
         cg.append("text").attr("x",cx*(R0+8)).attr("y",cy*(R0+8)+3).attr("text-anchor",cx>.2?"start":cx<-.2?"end":"middle").text(c)})})}
   mf.fpl=gAll.append("g").attr("class","mffp");
   const link=gAll.append("g").attr("class","mfl"+(mf.lay==="galaxy"?" gal":"")).selectAll("line").data(links).join("line").attr("stroke-width",d=>Math.min(5,1+Math.log2(d.w)));
-  const node=gAll.append("g").selectAll("g").data(nodes).join("g").attr("class",d=>"mfn t"+d.type).html(d=>shape(d)+`<title>${esc(tipOf(d))}</title>`);
+  const ZO={t:0,u:1,h:2,s:3,c:4},node=gAll.append("g").selectAll("g").data(nodes.slice().sort((a,b)=>(ZO[a.type]??3)-(ZO[b.type]??3))).join("g").attr("class",d=>"mfn t"+d.type).html(d=>`<g class="nsc">${shape(d)}</g><title>${esc(tipOf(d))}</title>`);
   const label=gAll.append("g").attr("class","mflab").selectAll("text").data(nodes).join("text").attr("fill",d=>d.col).text(d=>shortNm(d));
   mf.gcl=gAll.insert("g",".mfl").attr("class","mfclouds");
   const r=mfR;let k=mf.k;mf.shipAt=null;
-  const lod=()=>{const f=Math.min(1.5,Math.pow(k,-.55));svgEl.style.setProperty("--pk",Math.min(5,Math.max(1,1/k)).toFixed(2));label.attr("display",d=>mf.names||nodes.length<60||d.type==="t"||d.type==="u"||(d.type==="h"&&k>.8)||(d.type==="c"&&d.deg>=5&&k>.6)||k>1.25?null:"none").style("font-size",d=>(mfFS(d)*f).toFixed(1)+"px").attr("dy",d=>-(r(d)+3));
-    svg.classed("cities",k>.85);svg.classed("pics",IMG&&k>1.3);svg.classed("shipics",IMG&&k>.7);if(IMG&&k>1.3&&!mf.pics){mf.pics=true;node.filter(d=>d.type==="c"&&figOf(d.c)).append("image").attr("class","pic").attr("href",d=>`https://img.bricklink.com/ItemImage/MN/0/${figOf(d.c)}.png`).attr("x",d=>-r(d)+1).attr("y",d=>-r(d)+1).attr("width",d=>2*r(d)-2).attr("height",d=>2*r(d)-2).attr("clip-path","url(#holo-cc)").attr("preserveAspectRatio","xMidYMid slice")}};
+  const lod=()=>{const f=Math.min(1.5,Math.pow(k,-.55));svgEl.style.setProperty("--pk",Math.min(5,Math.max(1,1/k)).toFixed(2));svgEl.style.setProperty("--ns",Math.min(6,Math.max(1,Math.pow(k,-.75))).toFixed(2));label.attr("dy",null);label.attr("display",d=>mf.names||nodes.length<60||d.type==="t"||d.type==="u"||(d.type==="h"&&k>.8)||(d.type==="c"&&d.deg>=5&&k>.6)||k>1.25?null:"none").style("font-size",d=>(mfFS(d)*f).toFixed(1)+"px").attr("dy",d=>-(r(d)*Math.min(6,Math.max(1,Math.pow(k,-.75)))+3));
+    svg.classed("cities",k>.85);svg.classed("pics",IMG&&k>1.3);svg.classed("shipics",IMG&&k>.7);if(IMG&&k>1.3&&!mf.pics){mf.pics=true;node.filter(d=>d.type==="c"&&figOf(d.c)).select(".nsc").append("image").attr("class","pic").attr("href",d=>`https://img.bricklink.com/ItemImage/MN/0/${figOf(d.c)}.png`).attr("x",d=>-r(d)+1).attr("y",d=>-r(d)+1).attr("width",d=>2*r(d)-2).attr("height",d=>2*r(d)-2).attr("clip-path","url(#holo-cc)").attr("preserveAspectRatio","xMidYMid slice")}};
   let raf=0;
   Z=d3.zoom().scaleExtent([.05,8]).filter(e=>(e.type!=="wheel"||mfAct||e.ctrlKey||e.metaKey)&&(!e.ctrlKey||e.type==="wheel")&&!e.button)
     .on("zoom",e=>{gAll.attr("transform",e.transform);k=mf.k=e.transform.k;mf.t=e.transform;if(!raf)raf=requestAnimationFrame(()=>{raf=0;lod()})});
@@ -1288,13 +1603,15 @@ function mfRender(d3,refit){
   if(gal){const acc={};links.forEach(l=>{const a=l.source.id?l.source:g0.by[l.source],b=l.target.id?l.target:g0.by[l.target];[[a,b],[b,a]].forEach(([m,o])=>{if(m.type!=="c"&&o.type==="c"&&o.planet){const q=acc[m.id]||(acc[m.id]=[0,0,0]);q[0]+=px(o.planet);q[1]+=py(o.planet);q[2]++}})});
     nodes.forEach(n=>{if(n.type==="h"&&n.h.pl.length){n.tx=px(n.h.pl[0]);n.ty=py(n.h.pl[0])}else if(n.type==="c"||n.type==="u"){n.tx=px(n.planet);n.ty=py(n.planet)}else{const q=acc[n.id];if(q){n.tx=q[0]/q[2];n.ty=q[1]/q[2]}}});
     nodes.forEach(n=>{if(n.tx!=null||n.type==="h"&&n.h.pl.length)return;let x=0,y=0,c=0;links.forEach(l=>{const a=l.source.id?l.source:g0.by[l.source],b=l.target.id?l.target:g0.by[l.target];const o=a===n?b:b===n?a:null;if(o&&o.tx!=null){x+=o.tx;y+=o.ty;c++}});n.tx=c?x/c:0;n.ty=c?y/c:0});
+    {const byP={};nodes.filter(n=>n.type==="c"&&n.planet&&!(RIDE[n.name])).forEach(n=>(byP[n.planet]=byP[n.planet]||[]).push(n));
+      Object.entries(byP).forEach(([p,ns])=>{ns.sort((a,b)=>b.deg-a.deg);const R0=(mf.pr&&mf.pr[p])||40,cx=px(p),cy=py(p);ns.forEach((n,i)=>{const a=i*2.39996+.6,rr=R0+30+19*Math.sqrt(i+.5);n.tx=cx+Math.cos(a)*rr;n.ty=cy+Math.sin(a)*rr})})}
     nodes.forEach(n=>{if(!mf.pos[n.id]){n.x=n.tx+(Math.random()-.5)*40;n.y=n.ty+(Math.random()-.5)*40}})}
   sim=d3.forceSimulation(nodes)
     .force("link",d3.forceLink(links).id(d=>d.id).distance(l=>many?46:mf.mode==="army"?60:mf.mode==="story"?70:l.source.type==="h"||l.target.type==="h"?34:30).strength(gal?.015:many?.08:.45))
     .force("charge",d3.forceManyBody().strength(d=>d.type==="t"||d.type==="u"?-260:d.type==="h"?-90:d.type==="c"?-45-d.deg*5:-28).distanceMax(gal?90:600))
-    .force("x",d3.forceX(d=>gal?d.tx:0).strength(d=>gal?(d.type==="c"||d.type==="u"?.5:.25):.035))
-    .force("y",d3.forceY(d=>gal?d.ty:0).strength(d=>gal?(d.type==="c"||d.type==="u"?.5:.25):.045))
-    .force("collide",d3.forceCollide(d=>r(d)*(d.type==="h"?1.75:1)+(mf.names?10:3)).iterations(2))
+    .force("x",d3.forceX(d=>gal?d.tx:0).strength(d=>gal?(d.type==="c"?.35:d.type==="u"?.5:.25):.035))
+    .force("y",d3.forceY(d=>gal?d.ty:0).strength(d=>gal?(d.type==="c"?.35:d.type==="u"?.5:.25):.045))
+    .force("collide",d3.forceCollide(d=>r(d)*(d.type==="h"?1.75:1)+(mf.names?10:gal?7:3)).iterations(2))
     .alpha(known>nodes.length*.7?.35:1)
     .on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);node.attr("transform",d=>`translate(${d.x},${d.y})`);label.attr("x",d=>d.x).attr("y",d=>d.y)})
     .on("end",()=>{nodes.forEach(n=>mf.pos[n.id]=[n.x,n.y]);mfClouds()});
@@ -1334,7 +1651,7 @@ const sw=(col,kind)=>`<i style="${kind==="c"?`border:2px solid ${col};border-rad
 const btn=(id,label,col,kind,extra)=>`<li><button type="button" data-id="${esc(id)}">${sw(col,kind)}<span style="color:${col}">${esc(label)}</span>${extra?` <span class="lab">${esc(extra)}</span>`:""}</button></li>`;
 const cBtn=n=>{const c=CHMAP[n];const col=c?TYPEC[c.types[0]]:"#666";return btn("c:"+n,n,col,"c",c&&!c.has?"no minifig":"")};
 const sBtn=s=>btn("s:"+s.n,s.name,setCol(s),"s",`${s.y}${s.want?" · want"+(s.pri?" #"+s.pri:""):""}`);
-const sec=(t,items)=>items.length?`<span class="lab">${t}</span><ul>${items.join("")}</ul>`:"";
+const sec=(t,items,shut)=>items.length?`<details class="psec"${shut||items.length>14?"":" open"}><summary><span>${t}</span><em>${items.length}</em></summary><ul>${items.join("")}</ul></details>`:"";
 const d3sel=(q,f)=>ROOT.querySelectorAll(q).forEach(f);
 // planets tied to anything you tap: where it lives, where its sets happen, where its ship flies
 function placesOf(kind,key){const out=new Set(),add=q=>{if(q&&PLAN[q]&&q!=="elsewhere")out.add(q)};
@@ -1368,7 +1685,7 @@ function mfSelect(id){mf.sel=id;const g=mf.g;if(!g)return;let nb=id&&g.by[id]?ne
     h=`<span class="lab">Character · ${c.types.map(t=>`<b style="color:${TYPEC[t]}">${esc((TYPES.find(x=>x[0]===t)||[0,t])[1])}</b>`).join(" · ")}</span><h2 style="color:${col}">${esc(c.name)}</h2>
     <p>${c.ghost?"Not in your sets yet.":owned?`You have ${owned} of ${c.figs.length} minifig version${c.figs.length>1?"s":""}.`:"No minifig of this character yet."}</p>
     ${RIDE[c.name]?sec("Travels with",[btn("h:"+RIDE[c.name],RIDE[c.name],SHIPC,"h")]):""}%%PL%%
-    ${c.figs.length?`<span class="lab">Every minifig version · ${owned} of ${c.figs.length} owned</span><div class="alist figv">${c.figs.map(f=>`<div class="figrow"><i class="fv">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span>${ocHTML(f[2])}<b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${f[2]?"Have":"Want"}</span></span><a href="https://www.bricklink.com/v2/catalog/catalogitem.page?M=${encodeURIComponent(f[0])}" target="_blank" rel="noopener">BrickLink</a></div>`).join("")}</div>`:""}
+    ${c.figs.length?`<details class="psec" open><summary><span>Minifigs · ${owned} of ${c.figs.length} owned</span><em>${c.figs.length}</em></summary><div class="alist figv">${c.figs.map(f=>`<div class="figrow"><i class="fv${f[2]?" y":" n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span>${ocHTML(f[2])}<b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${f[2]?"Have":"Want"}</span></span><a href="https://www.bricklink.com/v2/catalog/catalogitem.page?M=${encodeURIComponent(f[0])}" target="_blank" rel="noopener">BrickLink</a></div>`).join("")}</div></details>`:""}
     ${sec("Clone units",c.units.map(u=>btn("u:"+u,UNIT[u][1],UNITC,"u",UNIT[u][2].includes(c.name)?"general":UNIT[u][3].includes(c.name)?"commander":"")))}
     ${sec("Ships",(CHSHIP[c.name]||[]).map(n=>btn("h:"+n,n,SHIPC,"h",SHIPS[n].sets.length+" set"+(SHIPS[n].sets.length>1?"s":""))))}
     ${sec("Stories",[...new Set(c.srcs)].map(s=>btn("t:"+s,SRCMAP[s]?SRCMAP[s][2]:s,ERAC[SRCMAP[s]?SRCMAP[s][1]:"alt"],"t")))}
@@ -1389,9 +1706,9 @@ function mfSelect(id){mf.sel=id;const g=mf.g;if(!g)return;let nb=id&&g.by[id]?ne
     ${sec("Jedi in command",u[2].map(cBtn))}${sec("Clone commanders",u[3].map(cBtn))}${sec("Troopers",tr.map(cBtn))}`}
   if(kind==="p"){const p=PLAN[key];if(!p)return;const a=PAS[key]||pas(key),fl=p[4]==="f",byS=(x,y)=>((CHMAP[y]||{sets:[]}).sets.length-(CHMAP[x]||{sets:[]}).sets.length);
     const ss=[...a.sets].map(n=>BYN[n]).filter(Boolean).sort((x,y)=>x.y-y.y),n=a.home.size+a.seen.size;
-    h=`<span class="lab">${fl?"Fleet or station":"Planet"} · ${n} character${n===1?"":"s"} · ${a.ships.size} ship${a.ships.size===1?"":"s"}</span><h2>${esc(p[1])}</h2>
+    h=`<span class="lab">${fl?"Fleet or station":"Planet"} · ${n} character${n===1?"":"s"} · ${a.ships.size} ship${a.ships.size===1?"":"s"}</span><h2>${esc(p[1])}</h2>${PDESC[key]?`<p class="pdesc">${esc(PDESC[key])}</p>`:""}
     ${IMG&&PIMG[key]?`<div class="img mfimg"><img src="${esc(PIMG[key])}" alt="" onerror="this.remove()"></div>`:""}
-    ${(CITIES[key]||[]).length?`<span class="lab">Places on ${esc(p[1])}</span><ul class="cities">${CITIES[key].map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+    ${(CITIES[key]||[]).length?`<details class="psec"><summary><span>Places on ${esc(p[1])}</span><em>${CITIES[key].length}</em></summary><ul class="cities">${CITIES[key].map(c=>`<li>${esc(c)}</li>`).join("")}</ul></details>`:""}
     ${sec(fl?"Serves aboard":"Lives or is stationed here",[...a.home].sort(byS).map(cBtn))}${sec("Also seen here, in your sets",[...a.seen].sort(byS).map(cBtn))}
     ${sec("Ships that come here",[...a.ships].sort().map(nm=>btn("h:"+nm,nm,SHIPC,"h",SHIPS[nm].sets.length+" set"+(SHIPS[nm].sets.length>1?"s":""))))}${sec("Sets that take place here",ss.map(sBtn))}`}
   const plB=pls.length?sec(kind==="h"?(SHIPS[key]&&SHIPS[key].ground?"Stays on":"Flies between"):kind==="c"?"Places":"Takes place on",pls.map(q=>btn("p:"+q,PLAN[q][1],"#8a7a55","p",kind==="c"&&CHMAP[key]&&CHMAP[key].planet===q?"home":""))):"";
@@ -1648,12 +1965,19 @@ let role="",PASS="",signMsg="",signOpen=false;
 function privOK(){return role==="admin"||!PRIV_STRIPPED}
 const ocHTML=own=>`<i class="oc ${own?"y":"n"}" title="${own?"Owned":"Not owned"}"></i>`;
 async function api(o){const r=await fetch(SCRIPT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...o,passcode:PASS})});return r.json()}
-function drawSignin(){const el=$("#signin");if(!el)return;
+function drawGate(){const G=id=>document.getElementById(id),g=G("gate");if(!g)return;g.hidden=!SCRIPT||!!role;const e=G("gate-err");if(e)e.textContent=signMsg||"";
+  const f=G("gate-form");if(f&&!f.dataset.w){f.dataset.w=1;f.onsubmit=ev=>{ev.preventDefault();const v=G("gate-pass").value.trim();if(v)signIn(v)}}}
+function drawSignin(){drawGate();const el=$("#signin");if(!el)return;
   if(role){el.innerHTML=`<span class="who">${role==="admin"?"Signed in · can edit":"Signed in as a guest"}</span><button type="button" id="so-out">Sign out</button>`;$("#so-out").onclick=()=>{role="";PASS="";canWrite=MODE==="editor"&&canWrite;try{sessionStorage.removeItem("holo-pass")}catch(e){}location.reload()};return}
   if(!signOpen){el.innerHTML=`<button type="button" id="so-in">Sign in</button>`;$("#so-in").onclick=()=>{signOpen=true;drawSignin();const i=$("#so-pass");if(i)i.focus()};return}
   el.innerHTML=SCRIPT?`<form id="so-form"><input id="so-pass" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit">Go</button></form>${signMsg?`<span class="err">${esc(signMsg)}</span>`:""}`:`<span class="err">Sign-in starts once the Google Sheet is set up.</span><button type="button" id="so-x">OK</button>`;
   if($("#so-x"))$("#so-x").onclick=()=>{signOpen=false;drawSignin()};
   if($("#so-form"))$("#so-form").onsubmit=e=>{e.preventDefault();signIn($("#so-pass").value.trim())}}
+// live BrickLink prices that your sheet keeps up to date; the page's own figures stay where the sheet has none yet
+let LIVE=null;
+async function livePrices(){try{const pr=await api({action:"prices"});if(!pr||!pr.ok)return;LIVE=pr;let k=0;
+  Object.entries(pr.sets||{}).forEach(([n,o])=>{const s=BYN[sheetKey(n)];if(!s)return;if(o.new!=null){s.bln=o.new;k++}if(o.used!=null)s.blu=o.used;s.liveAt=o.at});
+  if(k){render(false);if(openN)drawDrawer()}}catch(e){}}
 async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…";if(!quiet)drawSignin();
   try{const r=await api({action:"load"});if(!r.ok){PASS="";signMsg=r.error||"That passcode didn't work.";try{sessionStorage.removeItem("holo-pass")}catch(e){}drawSignin();return}
     role=r.role;signMsg="";signOpen=false;try{sessionStorage.setItem("holo-pass",p)}catch(e){}
@@ -1663,7 +1987,9 @@ async function signIn(p,quiet){if(!p||!SCRIPT)return;PASS=p;signMsg="Checking…
       if(Array.isArray(r.lists)){if(r.lists.length){LISTS=r.lists.filter(l=>l&&l.id&&!l.gone);lsEnsure()}else LISTS.forEach(l=>lsPersist(l))}}
     {const ks=Object.keys(r.status||{}),nS=ks.length,nM=ks.filter(k=>BYN[k]).length,nP=ks.filter(k=>BYN[k]&&numv(r.status[k].paid)!=null).length,bad=ks.find(k=>!BYN[k]);
     $("#subline").textContent=role==="admin"?(nS?`Signed in. Your sheet sent ${nS} rows; ${nM} matched sets here and ${nP} of those have a price paid.${bad?` Not matched: ${nS-nM}, for example \u201c${String(bad).slice(0,40)}\u201d.`:""}`:"Signed in, but your sheet sent no sets: its Status tab is empty or named differently."):"Your guest view of the collection. Tap any set for its details.";}
-    drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false)}
+    drawSignin();render(true);drawDrawer();if(mf.drawn)mfDraw(false);
+    if(role==="admin")api({action:"pricesets",sets:SETS.filter(s=>!s.gone&&(!s.want||tierOf(s)<=4)).map(s=>({n:s.n,want:s.want?(s.pri||4):0}))}).catch(()=>{});
+    livePrices()}
   catch(e){PASS="";signMsg="The sheet answered with an error ("+String(e&&e.message||e).slice(0,80)+"). Check the script is attached to the sheet.";drawSignin()}}
 // a change saves to the sheet (admin) or, on the old Claude page, to its own store
 async function save(s,patch,quiet){
@@ -1673,22 +1999,11 @@ async function save(s,patch,quiet){
   try{if(role==="admin"&&SCRIPT){const r=await api({action:"save",n:s.n,name:s.name,patch});if(!r.ok)throw 0}else if(db)await db.doc("status/"+sid(s.n)).set({...status[s.n],n:s.n});else throw 0;msg("Saved.")}
   catch(err){msg("That change didn't save. Try again, or reload the page.")}
 }
-// ---------- colour themes (L6): every theme keeps large, high-contrast text
-const THEMES=[["light","Light",0,"#ffffff","#ffffff","#14171c","#4a5260","#d5dae1","#eef0f3","#d9480f"],["dark","Dark",1,"#111418","#1a1f26","#f2f4f7","#b6bec9","#343c47","#232a33","#ff7a3d"],["contrast","High contrast",0,"#ffffff","#ffffff","#000000","#1f1f1f","#000000","#f0f0f0","#0040c0"],
- ["lightside","Light Side",0,"#f7f2e7","#fffdf7","#2b2418","#5e523e","#ddd2bc","#efe6d2","#2f6db3"],["darkside","Dark Side",1,"#0d0b0c","#1a1214","#f5eeee","#cdb6b6","#3d2a2d","#2a1c1f","#e0262d"],
- ["jedi","Jedi Order",0,"#eef3f8","#ffffff","#0f1c2b","#3d4f63","#cfdbe7","#e3ebf3","#1c64b4"],["sith","Sith",1,"#120708","#1e0c0e","#ffecec","#e3afb1","#4a1d21","#2d1215","#ff3b3f"],
- ["republic","Galactic Republic",0,"#f6f1e6","#fffdf8","#2a1e10","#5f4e34","#e3d6bd","#efe4cd","#b5121b"],["separatist","Separatists",1,"#1c1a14","#26231b","#f3ead6","#cbbd93","#474131","#33302a","#d6a636"],
- ["clone","Clone Trooper (501st)",0,"#f3f6fa","#ffffff","#0d1726","#3f4f66","#cdd8e6","#e1e9f3","#2a5cab"],["empire","Galactic Empire",0,"#e9ebee","#f7f8fa","#0f1114","#434c58","#c7cdd5","#dde1e6","#b3202a"],
- ["imperialnight","Imperial (dark)",1,"#0e1013","#181b20","#eef0f3","#b3bac4","#353a42","#22262c","#c8323a"],["rebel","Rebel Alliance",0,"#f4efe6","#fffaf2","#231a12","#5f4e3c","#e0d2bf","#f0e4d2","#d4541a"],
- ["newrepublic","New Republic",0,"#f2f6f3","#ffffff","#11201a","#41564c","#cfdcd4","#e2ece6","#1f8a4c"],["mando","Mandalorian",1,"#1d2124","#262b2f","#eef2f4","#b0bcc3","#3f474d","#30373c","#8fb8d1"],
- ["bounty","Bounty Hunters",1,"#1e1c19","#2a2722","#f1ebe1","#c7bba8","#49443b","#36322b","#79b26f"],["firstorder","First Order",1,"#0c0c0c","#161616","#f4f4f4","#c2c2c2","#333333","#222222","#e3242b"],
- ["resistance","Resistance",0,"#f5f0ea","#ffffff","#1d1a17","#564e45","#e2d8cc","#f0e7dc","#e8601c"],["tatooine","Tatooine",0,"#f6ead2","#fff8ea","#3a2410","#6e5132","#e6d1ad","#f1e0c0","#c0631b"],
- ["hoth","Hoth",0,"#eef4f8","#ffffff","#10202c","#42586a","#d1e0ea","#e3eef5","#3a7ca5"],["endor","Endor",0,"#e9efe4","#f8fbf5","#16210f","#47563c","#cdd9c2","#dde7d3","#4f7d2c"],
- ["mustafar","Mustafar",1,"#1b0f0a","#26150e","#ffeee2","#e6b9a0","#4e2a1b","#351d13","#ff6a1a"],["holocron","Holocron blue",1,"#08131f","#0f1e2e","#e6f3ff","#a6c8e4","#23405c","#15293d","#4fc3f7"]];
-function applyTheme(id){const t=THEMES.find(x=>x[0]===id)||THEMES[0],[,,dk,bg,pn,ink,mu,ln,sl,ac]=t,r=document.documentElement.style;
-  [["--bg",bg],["--panel",pn],["--ink",ink],["--muted",mu],["--line",ln],["--slot",sl],["--accent",ac],["--own",dk?"#4cc27a":"#1f8a4c"],["--gain",dk?"#4cc27a":"#1f8a4c"],["--loss",dk?"#ff6b5e":"#c2362f"]].forEach(([k,v])=>{r.setProperty(k,v);ROOT.style.setProperty(k,v)});
-  r.colorScheme=dk?"dark":"light";document.body.style.background=bg;document.body.style.color=ink;try{localStorage.setItem("holo-theme",t[0])}catch(e){}}
-function buildThemes(){const sel=$("#theme");sel.innerHTML=THEMES.map(t=>`<option value="${t[0]}">${esc(t[1])}</option>`).join("");let cur="light";try{cur=localStorage.getItem("holo-theme")||"light"}catch(e){}sel.value=THEMES.some(t=>t[0]===cur)?cur:"light";applyTheme(sel.value);sel.onchange=()=>{applyTheme(sel.value);if(tab==="mf"&&mf.drawn)mfDraw(false)}}
+// ---------- the two sides (round 7): Light side glows blue, Dark side glows red. Tokens live in theme.css.
+function applyTheme(id){const side=id==="dark"?"dark":"light",r=document.documentElement;r.dataset.side=side;r.style.colorScheme=side;
+  document.querySelectorAll(".hc-side button").forEach(b=>b.classList.toggle("on",b.dataset.side===side));try{localStorage.setItem("holo-side",side)}catch(e){}}
+function buildThemes(){let cur="light";try{cur=localStorage.getItem("holo-side")||"light"}catch(e){}applyTheme(cur);
+  document.querySelectorAll(".hc-side button").forEach(b=>b.onclick=()=>{applyTheme(b.dataset.side);if(tab==="mf"&&mf.drawn)mfDraw(false);if(tab==="pc")render(false)})}
 // ---------- scroll guard (T4, S3): the wheel moves sideways, and a sideways trackpad swipe never takes the browser back a page
 function wheelSide(el){el.addEventListener("wheel",e=>{if(e.ctrlKey||e.metaKey)return;const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;e.preventDefault();el.scrollLeft+=d*(e.deltaMode===1?40:e.deltaMode===2?el.clientWidth:1)},{passive:false});
   el.addEventListener("keydown",e=>{if(e.key==="ArrowRight")el.scrollLeft+=120;else if(e.key==="ArrowLeft")el.scrollLeft-=120;else if(e.key==="PageDown")el.scrollLeft+=el.clientWidth*.8;else if(e.key==="PageUp")el.scrollLeft-=el.clientWidth*.8;else return;e.preventDefault()});
@@ -1701,7 +2016,7 @@ const figHave=(s,num)=>s&&!s.want&&!s.gone?!((status[s.n]||{}).fx||[]).includes(
 // ---------- Star Wars Timeline: three rows that scroll together (T4–T11)
 const TL={open:{story:true,figs:true,sets:true},focus:"sets",pos:{}};
 const TSZ=[1,.82,.7,.6,.52,.52];
-function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:62,sets:32},W={story:1.35,figs:.7,sets:1.4};let rest=H,ws=0;
+function tlHeights(H){const ks=["story","figs","sets"],FOLD={story:66,figs:70,sets:34},W={story:1.3,figs:.95,sets:1.3};TL.focus=null;let rest=H,ws=0;
   ks.forEach(k=>{if(!TL.open[k])rest-=FOLD[k];else ws+=W[k]*(TL.focus===k?1.8:1)});const o={};ks.forEach(k=>o[k]=TL.open[k]?Math.max(90,rest*W[k]*(TL.focus===k?1.8:1)/ws):FOLD[k]);
   if(TL.open.story&&TL.focus!=="figs"){const need=Math.min(270,H*.42)-o.story;if(need>0){const from=TL.open.sets?"sets":TL.open.figs?"figs":null;if(from&&o[from]-need>=150){o[from]-=need;o.story+=need}}}return o}
 const STILLS={"Battle of Christophsis":[["Christophsis","https://lumiere-a.akamaihd.net/v1/images/databank_christophsis_01_169_2daae94e.jpeg?region=0%2C0%2C1560%2C878"]],
@@ -1749,7 +2064,7 @@ function renderTL(){
   if(TL.open.story)r1+=cols.map(o=>{const z=o.z,scn=z.scene,th=Math.max(0,Math.min(130,cellH-56-lc*17-(scn?18:0)));let mood="";
     if(th>=34){const st=STILLS[o.src[0]+"|"+z.k]||(scn&&o.src[0]===FILM.src?STILLS[scn.t]:null);
       if(st)mood=st.map(([l,u])=>`<div class="mt" style="width:${Math.round(th*1.6)}px;height:${th}px"><img src="${u}" alt="${esc(l)}" loading="lazy" onerror="this.remove()"><span>${esc(l)}</span></div>`).join("");
-      {const ss=(scn?scn.sets.map(([n])=>BYN[n]).filter(Boolean):o.sets).slice(0,8);mood+=(scn&&scn.where&&!st?`<div class="mt" style="width:${th}px;height:${th}px">${esc(scn.where)}</div>`:"")+ss.map(s=>`<div class="mt set" style="width:${th}px;height:${th}px" data-n="${esc(s.n)}">${IMG?`<img src="https://images.brickset.com/sets/images/${s.n}.jpg" alt="" loading="lazy" onerror="this.remove()">`:esc(s.n)}</div>`).join("")}}
+      if(!st&&scn&&scn.where)mood=`<div class="mt nost" style="width:${Math.round(th*1.6)}px;height:${th}px"><span>${esc(scn.where)}</span></div>`}
     return `<div class="scell" data-slot="${o.src[0]}|${esc(z.k)}" style="left:${o.x}px;top:66px;width:${o.w}px;height:${cellH}px;--lc:${lc}"><small>${esc(z.kick||"")}</small><h4>${esc(z.t)}</h4>${scn&&scn.where?`<small>${esc(scn.where)}${scn.ships?" · "+esc(scn.ships):""}</small>`:""}${scn&&scn.log?`<p>${esc(scn.log)}</p>`:""}${mood?`<div class="mood2">${mood}</div>`:""}</div>`}).join("");
   // row 3: sets, photo cards sized by owned, then want priority (T9–T11)
   let r3="";const cardAt={};
@@ -1760,23 +2075,23 @@ function renderTL(){
   cols.forEach((o,ci)=>{const subs=o.pk.cols.length?o.pk.cols:[{x:0,w:o.w-14,items:o.sets.map(s=>({s}))}];
     subs.forEach(c=>c.items.forEach(({s})=>s.figs.forEach(f=>{const k=ckey(f[1]),q=occ[k]||(occ[k]={nm:f[1],at:[]});q.at.push({ci,x:o.x+7+c.x+(c.w||60)/2,f,s,c,o})})))});
   if(!TL.open.figs){const per={};Object.values(occ).forEach(q=>q.at.forEach(a=>{const key=a.o.x+":"+a.c.x;(per[key]=per[key]||{a,list:[]}).list.push(a)}));
-    Object.values(per).forEach(({a,list})=>{const x0=a.o.x+7+a.c.x,w=Math.max(26,a.c.w||60),n=Math.max(1,Math.floor(w/22));list.slice(0,n).forEach((b,i)=>{const have=figHave(b.s,b.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(b.f[0])}" title="${esc(b.f[1])} (${esc(b.f[0])})" style="left:${x0+i*22}px;top:31px;width:21px;height:21px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${b.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</div>`})})}
-  else{const L=Math.max(1,Math.floor((rh.figs-34)/31)),runs=[];
+    Object.values(per).forEach(({a,list})=>{const x0=a.o.x+7+a.c.x,w=Math.max(26,a.c.w||60),n=Math.max(1,Math.floor(w/32));list.slice(0,n).forEach((b,i)=>{const have=figHave(b.s,b.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(b.f[0])}" title="${esc(b.f[1])} (${esc(b.f[0])})" style="left:${x0+i*32}px;top:32px;width:30px;height:30px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${b.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</div>`})})}
+  else{const LH=54,L=Math.max(1,Math.floor((rh.figs-32)/LH)),runs=[];
     Object.values(occ).forEach(q=>{const cis=[...new Set(q.at.map(a=>a.ci))].sort((a,b)=>a-b);let cur=null;cis.forEach(ci=>{if(cur&&cur.b===ci-1)cur.b=ci;else{cur={q,a:ci,b:ci};runs.push(cur)}})});
     runs.sort((x,y)=>(y.b-y.a)-(x.b-x.a)||y.q.at.length-x.q.at.length);const lanesU=Array.from({length:L},()=>[]),lanes=[];
     runs.forEach(rn=>{const li=lanesU.findIndex(u=>!u.some(([a,b])=>rn.a<=b&&rn.b>=a));if(li<0)return;lanesU[li].push([rn.a,rn.b]);rn.li=li;lanes.push(rn)});
-    lanes.forEach(rn=>{const q=rn.q,y=31+rn.li*31,tc=typeColor(q.nm),c=CHMAP[q.nm]||CHMAP[q.nm.replace(/\s*\(.*\)$/,"")],xa=cols[rn.a].x+4,xb=cols[rn.b].x+cols[rn.b].w-4;
-      r2+=`<div class="abar" data-ch="${esc(c?c.name:q.nm)}" style="left:${xa}px;top:${y+3}px;width:${xb-xa}px;--tc:${tc}" title="${esc(q.nm)}">${esc(q.nm)}</div>`;
-      const seen=new Set();q.at.filter(a=>a.ci>=rn.a&&a.ci<=rn.b).forEach(a=>{const k=Math.round(a.x)+a.f[0];if(seen.has(k))return;seen.add(k);const have=figHave(a.s,a.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(a.f[0])}" title="${esc(a.f[1])} (${esc(a.f[0])}) in ${esc(a.s.name)}" style="left:${a.x-13}px;top:${y}px;width:26px;height:26px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${a.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:esc(a.f[1].slice(0,2))}</div>`})});
+    lanes.forEach(rn=>{const q=rn.q,y=32+rn.li*LH,tc=typeColor(q.nm),c=CHMAP[q.nm]||CHMAP[q.nm.replace(/\s*\(.*\)$/,"")],xa=cols[rn.a].x+4,xb=cols[rn.b].x+cols[rn.b].w-4;
+      r2+=`<div class="abar" data-ch="${esc(c?c.name:q.nm)}" style="left:${xa}px;top:${y}px;width:${xb-xa}px;--tc:${tc}" title="${esc(q.nm)}"><span>${esc(q.nm)}</span></div>`;
+      const seen=new Set();q.at.filter(a=>a.ci>=rn.a&&a.ci<=rn.b).forEach(a=>{const k=Math.round(a.x)+a.f[0];if(seen.has(k))return;seen.add(k);const have=figHave(a.s,a.f[0]);r2+=`<div class="fcirc ${have?"y":"n"}" data-fig="${esc(a.f[0])}" title="${esc(a.f[1])} (${esc(a.f[0])}) in ${esc(a.s.name)}" style="left:${a.x-18}px;top:${y+16}px;width:36px;height:36px">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${a.f[0]}.png" alt="" loading="lazy" onerror="this.remove()">`:esc(a.f[1].slice(0,2))}</div>`})});
     if(!lanes.length)r2+=`<span class="lab" style="position:absolute;left:12px;top:34px">No minifigs in the sets shown.</span>`}
-  const row=(k,label,inner)=>`<div class="trow${TL.open[k]?"":" shut"}" data-row="${k}" style="top:${RY[k]}px;height:${rh[k]}px;width:${W}px"><button type="button" class="rh" data-rowt="${k}" aria-expanded="${TL.open[k]}">${label}</button>${inner}</div>`;
+  const row=(k,label,inner)=>`<div class="trow${TL.open[k]?"":" shut"}" data-row="${k}" style="top:${RY[k]}px;height:${rh[k]}px;width:${W}px"><div class="rbar" data-rowt="${k}" role="button" tabindex="0" aria-expanded="${TL.open[k]}" title="${TL.open[k]?"Fold":"Open"} ${label}"><span class="rbl">${label}</span></div>${inner}</div>`;
   h+=row("story","Storyline",r1)+row("figs","Minifig arcs",r2)+row("sets","Sets",r3);
   const keep=sc.scrollLeft;inn.style.width=W+"px";inn.innerHTML=h;sc.scrollLeft=keep;
   const msg=$("#boardmsg");if(!drawn.some(storyOn)){msg.style.display="block";msg.textContent="No sets match. Open more stories on the left, or tap Clear selection."}else msg.style.display="none";
 }
 function tlWire(){const inn=$("#tlinner"),sc=$("#tlscroll");wheelSide(sc);
   inn.addEventListener("click",e=>{if(moved)return;const t=e.target;
-    const rt=t.closest("[data-rowt]");if(rt){const k=rt.dataset.rowt;if(TL.open[k]&&TL.focus!==k&&k!=="figs"){TL.focus=k}else{TL.open[k]=!TL.open[k];if(TL.open[k])TL.focus=k}renderTL();return}
+    const rt=t.closest("[data-rowt]");if(rt){const k=rt.dataset.rowt;TL.open[k]=!TL.open[k];renderTL();return}
     const uf=t.closest("[data-unfold]");if(uf){const k=uf.dataset.unfold;filters.off.delete(k);if(filters.canon2!=="all"&&!canonOK(SRCMAP[k]))filters.canon2="all";if(filters.by==="sub"){filters.by="story"}render(true);setTimeout(()=>tlJump(k),40);return}
     const n=t.closest("[data-n]");if(n){pick(BYN[n.dataset.n],false);return}
     const fg=t.closest("[data-fig]");if(fg){dlist=listOf("onefig",fg.dataset.fig);openN=null;drawDrawer();return}
@@ -1821,7 +2136,7 @@ function appearsIn(s){const out=[];const add=(id,z,also)=>{const src=SRCMAP[id];
 function figPlanet(f){const c=CHMAP[f[1]];return c&&c.planet&&PLAN[c.planet]?PLAN[c.planet][1]:""}
 function figsHTML(s,edit){if(!s.figs.length)return`<p class="saved">No minifigs in this set.</p>`;
   return `<div class="alist">${s.figs.map(f=>{const have=figHave(s,f[0]),c=CHMAP[f[1]],other=SETS.filter(x=>x.n!==s.n&&x.figs.some(g=>g[0]===f[0])),pl=figPlanet(f);
-    return `<div class="figrow"><button type="button" data-fig="${esc(f[0])}" title="${esc(f[1])} (${esc(f[0])})">${ocHTML(have)}<span><b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])}${pl?" · "+esc(pl):""}${other.length?" · in "+other.length+" other set"+(other.length>1?"s":""):""}</span></span><em>${fmt2(st(s).now==="Used"?f[3]:f[2])}</em></button>${edit?`<label class="ck mini"><input type="checkbox" data-fx="${esc(f[0])}"${have?" checked":""}>Have it</label>`:""}</div>`}).join("")}</div>`}
+    return `<div class="figrow"><button type="button" data-fig="${esc(f[0])}" title="${esc(f[1])} (${esc(f[0])})"><i class="fv ${have?"y":"n"}">${IMG?`<img src="https://img.bricklink.com/ItemImage/MN/0/${encodeURIComponent(f[0])}.png" alt="" loading="lazy" onerror="this.remove()">`:""}</i><span><b>${esc(f[1])}</b><br><span class="lab">${esc(f[0])} · ${have?"have":"missing"}${other.length?" · in "+other.length+" other set"+(other.length>1?"s":""):""}</span></span><em>${fmt2(st(s).now==="Used"?f[3]:f[2])}</em></button>${edit?`<label class="ck mini"><input type="checkbox" data-fx="${esc(f[0])}"${have?" checked":""}>Have it</label>`:""}</div>`}).join("")}</div>`}
 function drawDrawer(){
   const d=$("#drawer");
   if(!openN&&dlist){d.innerHTML=`<div class="dhead"><div><span class="lab">${esc(dlist.kind)}</span><h2>${esc(dlist.title)}</h2></div></div>${dlist.html}`;d.scrollTop=0;wireList(d);return}
@@ -1847,8 +2162,7 @@ function drawDrawer(){
   ${ROUGH[s.n]?`<p class="rough">${esc(ROUGH[s.n])}</p>`:""}<p class="saved" style="margin:0">${PO[s.n]?`Set alone, box and instructions from BrickLink's part-out value, 6-month average sold (${PO[s.n].c.toLowerCase()}, ${PO[s.n].d}). Minifigs from your Brickset export.`:`Minifig values from your Brickset export.${unk.length?" The "+unk.join(", ")+" aren't priced yet.":""}`}</p></div>`;
   const life=`<dt>Released</dt><dd>${s.ld?niceDate(s.ld):s.ly||s.y}${s.rp!=null?` · <span class="lab">launch price</span> ${fmt2(s.rp)}`:""}</dd><dt>Retired</dt><dd>${s.ed?(dt(s.ed)>new Date()?"Still on sale (due to leave "+niceDate(s.ed)+")":niceDate(s.ed)):s.ey?s.ey:"Not known"}</dd>`;
   const facts=`<dl class="facts"><dt>Status</dt><dd>${esc(stat)}</dd>${P&&!s.want&&!s.gone?`<dt>Paid</dt><dd><b>${s.paid!=null?fmt2(s.paid):"Not noted"}</b>${s.paid!=null?` <span class="lab">${fmt2(s.price)} + ${fmt2(tx)} tax and shipping</span>`:""}</dd><dt>Bought</dt><dd>${t.bought?niceDate(t.bought):"Date not noted"}${t.store&&t.store!=="Not noted"?" · "+esc(t.store):""}</dd>`:""}<dt>Worth now</dt><dd><b class="${r!=null&&s.paid!=null&&!s.want&&P?(r>=s.paid?"pos":"neg"):""}">${fmt2(r)}</b> <span class="lab">${t.now==="Used"?"used":"NIB"} · BrickLink average sold</span></dd>${life}
-    <dt>Type</dt><dd>${esc(STYPE[s.ty]||"Set")} · ${s.pcs} pieces</dd><dt>Stickers</dt><dd>${HASL.has(s.n)?(STK.has(s.n)?"Yes, has stickers":"None, all printed"):"Not known yet"}</dd>
-    <dt>Box era</dt><dd>${esc((BOXERAS.find(b=>b[2]===boxEra(s))||[0,0,0,""])[3])}</dd>${s.want||s.gone?"":`<dt>Box</dt><dd>${({have:"Have it",no:"Don't have it",none:"Not marked"})[has3(t.cbox)]}</dd><dt>Instructions</dt><dd>${({have:"Have them",no:"Don't have them",none:"Not marked"})[has3(t.cinst)]}</dd><dt>Condition</dt><dd>${esc(NOWL[t.now]||t.now||"Not marked")}</dd>`}
+    <dt>Set</dt><dd>${esc(STYPE[s.ty]||"Set")} · ${s.pcs} pieces${HASL.has(s.n)?(STK.has(s.n)?" · stickers":" · all printed"):""}</dd>${s.want||s.gone||P||ED?"":`<dt>Box</dt><dd>${({have:"Have it",no:"Don't have it",none:"Not marked"})[has3(t.cbox)]}</dd><dt>Instructions</dt><dd>${({have:"Have them",no:"Don't have them",none:"Not marked"})[has3(t.cinst)]}</dd><dt>Condition</dt><dd>${esc(NOWL[t.now]||t.now||"Not marked")}</dd>`}
     </dl>`;
   // admin: what's in the collection, and its parts
   const ownSel=ED?`<div class="edit"><span class="lab">Change it · saves as you go</span><div class="row"><label class="lab" for="e-own">In your collection</label><select id="e-own"><option value="1">Owned</option>${[1,2,3,4].map(i=>`<option value="w${i}">Want · priority ${i}</option>`).join("")}<option value="0">Not in my collection</option></select></div><span class="saved" id="savemsg"></span></div>`:"";
@@ -1915,12 +2229,12 @@ function drawDrawer(){
     d.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>save(s,{miss:miss.filter((_,i)=>i!==+b.dataset.del)}))}
 }
 // ---------- price charts: worth over time (A3/A4) — launch price on the day it came out, to today's value, with a mark where it retired
-function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set from its launch price on release day to what it's worth today. The diamond marks when LEGO retired it. Hover a line for the set.";
+function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set from its launch price on release day to what it's worth today (price scale grows by steps, so cheap and costly sets both show). The diamond marks when LEGO retired it. Tap a line to pick out that set.";
   const W=640,H=300,L=48,R=14,T=12,B=28,now=new Date(),rows=v.filter(s=>s.rp!=null&&resale(s)!=null);
   if(!rows.length){svg.innerHTML=`<text x="320" y="150" text-anchor="middle" class="lab">No sets here have a launch date and price yet.</text>`;$("#legend").innerHTML="";return}
   const t0=Math.min(...rows.map(s=>relT(s))),t1=now.getTime(),vmax=Math.max(...rows.map(s=>Math.max(s.rp,resale(s))));
-  const X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>H-B-Math.sqrt(v/vmax)*(H-B-T);let g="";
-  [0,25,50,100,200,400,800,1600].filter(x=>x<=vmax*1.05).forEach(x=>{g+=`<line x1="${L}" x2="${W-R}" y1="${Y(x)}" y2="${Y(x)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(x)+4}" text-anchor="end" fill="var(--muted)">$${x}</text>`});
+  const lo=Math.log10(5),hi=Math.log10(vmax*1.15),X=t=>L+(t-t0)/(t1-t0)*(W-L-R),Y=v=>H-B-(Math.log10(Math.max(5,v))-lo)/(hi-lo)*(H-B-T);let g="";
+  [10,25,50,100,250,500,1000,2500,5000,10000,25000].filter(x=>x<=vmax*1.15).forEach(x=>{g+=`<line x1="${L}" x2="${W-R}" y1="${Y(x)}" y2="${Y(x)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(x)+4}" text-anchor="end" fill="var(--muted)">$${x}</text>`});
   for(let y=new Date(t0).getFullYear()+1;y<=now.getFullYear();y++){const x=X(new Date(y,0,1).getTime());if((y-1999)%Math.max(1,Math.ceil((now.getFullYear()-new Date(t0).getFullYear())/10))===0)g+=`<text x="${x}" y="${H-8}" text-anchor="middle" fill="var(--muted)">${y}</text><line x1="${x}" x2="${x}" y1="${T}" y2="${H-B}" stroke="var(--line)" stroke-dasharray="2 4"/>`}
   rows.forEach(s=>{const a=relT(s),r=resale(s),up=r>=s.rp,c=up?"var(--gain)":"var(--loss)",e=s.ed?dt(s.ed):null;
     g+=`<g data-n="${esc(s.n)}" class="tl-l"><line x1="${X(a)}" y1="${Y(s.rp)}" x2="${X(t1)}" y2="${Y(r)}" stroke="${c}" stroke-width="${s.want?1:1.6}" stroke-opacity=".55"${s.want?' stroke-dasharray="3 3"':""}/><circle cx="${X(a)}" cy="${Y(s.rp)}" r="2.5" fill="var(--muted)"/><circle cx="${X(t1)}" cy="${Y(r)}" r="3.5" fill="${c}"/>`;
@@ -1930,7 +2244,7 @@ function chartTime(v){const svg=$("#chart");$("#clab").textContent="Each set fro
 function statsTime(v){const all=v.filter(s=>s.rp!=null&&resale(s)!=null);if(!all.length){$("#stats").innerHTML="";return}
   const mine=all.filter(s=>!s.want),wnt=all.filter(s=>s.want),rows=mine.length?mine:all,wcost=wnt.reduce((a,s)=>a+resale(s),0);
   const rp=rows.reduce((a,s)=>a+s.rp,0),now=rows.reduce((a,s)=>a+resale(s),0),best=[...rows].sort((a,b)=>resale(b)/b.rp-resale(a)/a.rp)[0],ret=rows.filter(s=>s.ed&&dt(s.ed)<new Date()).length;
-  $("#stats").innerHTML=`<div class="stat"><b>${fmt(rp)}</b><small>launch prices of the ${rows.length} ${mine.length?"sets you own":"sets shown"}</small></div><div class="stat"><b class="${now>=rp?"pos":"neg"}">${fmt(now)}</b><small>what they're worth today</small></div><div class="stat"><b>${Math.round((now/rp-1)*100)}%</b><small>change since launch</small></div><div class="stat"><b>${ret}</b><small>retired by LEGO</small></div><div class="stat"><button type="button" class="lrow" data-n="${esc(best.n)}"><span><b>${esc(best.name)}</b><span class="lab">${fmt(best.rp)} at launch → ${fmt(resale(best))} now</span></span></button><small>biggest climb</small></div>${mine.length&&wnt.length?`<div class="stat"><b>${fmt(wcost)}</b><small>to buy the ${wnt.length} wanted sets shown, at today's prices</small></div>`:""}`;
+  $("#stats").innerHTML=`<div class="stat"><b>${fmt(rp)}</b><small>launch prices of the ${rows.length} ${mine.length?"sets you own":"sets shown"}</small></div><div class="stat"><b class="${now>=rp?"pos":"neg"}">${fmt(now)}</b><small>what they're worth today</small></div><div class="stat"><b>${Math.round((now/rp-1)*100)}%</b><small>change since launch</small></div><div class="stat"><b>${ret}</b><small>retired by LEGO</small></div><div class="stat"><button type="button" class="lrow" data-n="${esc(best.n)}"><b>${esc(best.name)}</b><small>biggest climb: ${fmt(best.rp)} → ${fmt(resale(best))}</small></button></div>${mine.length&&wnt.length?`<div class="stat"><b>${fmt(wcost)}</b><small>to buy the ${wnt.length} wanted sets shown, at today's prices</small></div>`:""}`;
   $("#stats").querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{openN=b.dataset.n;drawDrawer()})}
 // ---------- tabs and drawing
 function showTab(t){tab=t;["tl","so","mf","pc","pt","ls"].forEach(x=>{$("#pane-"+x).hidden=x!==t;const b=$("#tab-"+x);b.classList.toggle("on",x===t);b.setAttribute("aria-selected",x===t)});
@@ -1962,9 +2276,11 @@ function groupSets(){const out=[],has=n=>!!CHMAP[n];
 function mfClouds(){if(!mf.g||!mf.gcl||!zb)return;const L=mf.gcl,d3=zb.d3;L.selectAll("*").remove();if(!mf.groups.size)return;
   groupSets().forEach(([label,names,col])=>{const ns=names.map(n=>mf.g.by["c:"+n]).filter(n=>n&&n.x!=null);if(!ns.length)return;const pts=[];
     ns.forEach(n=>{const r=mfR(n)+16;for(let a=0;a<8;a++)pts.push([n.x+Math.cos(a*Math.PI/4)*r,n.y+Math.sin(a*Math.PI/4)*r])});
-    const hull=d3.polygonHull(pts);if(!hull)return;const cx=d3.mean(hull,p=>p[0]),top=d3.min(hull,p=>p[1]);
-    L.append("path").attr("class","gcloud").attr("style","--gc:"+col).attr("d",d3.line().curve(d3.curveCatmullRomClosed.alpha(.6))(hull));
-    L.append("text").attr("class","gcloud-t").attr("style","--gc:"+col).attr("x",cx).attr("y",top-6).text(label)})}
+    const cx=d3.mean(ns,n=>n.x),cy=d3.mean(ns,n=>n.y),gl=L.append("g").attr("class","gweb").attr("style","--gc:"+col);
+    if(ns.length>1)ns.forEach((n,i)=>{const m=ns[(i+1)%ns.length];gl.append("line").attr("class","gring").attr("x1",n.x).attr("y1",n.y).attr("x2",m.x).attr("y2",m.y)});
+    ns.forEach(n=>gl.append("line").attr("class","gspoke").attr("x1",cx).attr("y1",cy).attr("x2",n.x).attr("y2",n.y));
+    gl.append("circle").attr("class","ghub").attr("cx",cx).attr("cy",cy).attr("r",6);
+    gl.append("text").attr("class","gcloud-t").attr("x",cx).attr("y",cy-12).text(label)})}
 function mfControls(){
   const tg=$("#mf-have");const drawHave=()=>{tg.innerHTML=[["own","Owned"],["want","Wanted, priority 1 to 3"],["allw","Add priority 4 wants"],["lack","Only characters I don't have yet"]].map(([k,l])=>`<button type="button" class="chip${mf[k]?" on":""}" data-k="${k}" aria-pressed="${mf[k]}">${l}</button>`).join("");
     tg.querySelectorAll("button").forEach(b=>b.onclick=()=>{mf[b.dataset.k]=!mf[b.dataset.k];drawHave();mfDraw(false)})};drawHave();
@@ -1991,6 +2307,11 @@ function mfControls(){
   $("#mf-in").onclick=()=>zby(1.4);$("#mf-out").onclick=()=>zby(.7);$("#mf-fit").onclick=mfFit}
 
 $("#note").textContent=IMG?"Photos from Brickset and BrickLink. Worth now is the BrickLink average sold price, new or used to match each set. This page shows the owner's record and can't be edited here.":"Set photos are placeholders on this page; the Cargo page shows them. Worth now is the BrickLink average sold price, new or used to match each set. Your record saves for everyone who opens this page, and only you can change it.";
+// the tool has its own zooms, so pinch and ctrl+scroll never zoom the whole page
+document.addEventListener("wheel",e=>{if(e.ctrlKey||e.metaKey)e.preventDefault()},{passive:false});
+["gesturestart","gesturechange"].forEach(k=>document.addEventListener(k,e=>e.preventDefault(),{passive:false}));
+const STEPSHUT=new Set();
+document.addEventListener("click",e=>{const h=e.target.closest(".steps>.step>.sth");if(!h||e.target.closest("button,input,select"))return;const st=h.parentElement,k=h.textContent.trim();st.classList.toggle("shut");st.classList.contains("shut")?STEPSHUT.add(k):STEPSHUT.delete(k);h.setAttribute("aria-expanded",!st.classList.contains("shut"))});
 buildThemes();drawSignin();buildControls();mfControls();tlWire();wheelSide($("#soscroll"));pxAwait();["tl","so","mf","pc","pt","ls"].forEach(x=>$("#tab-"+x).addEventListener("click",()=>showTab(x)));drawDrawer();render(true);
 try{const p=sessionStorage.getItem("holo-pass");if(p&&SCRIPT)signIn(p,true)}catch(e){}
 if(MODE==="editor"){(async()=>{try{
