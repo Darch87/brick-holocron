@@ -1434,8 +1434,8 @@ html[data-saber="green"] .lmp.y{background:radial-gradient(circle at 38% 32%,#f2
 /* left panel: the story list takes the slack and scrolls; Show keeps its full height; Narrow shrinks only on short screens */
 @media (min-width:761px){
   #controls>#st-show{flex:0 0 auto}
-  #controls>#st-narrow{flex:0 1 auto;min-height:96px}
-  #controls>#st-stories,#controls>.step.soonly{flex:1 1 0;min-height:140px}
+  #controls>#st-narrow{flex:1 1 0;min-height:96px;max-height:max-content}
+  #controls>#st-stories,#controls>.step.soonly{flex:3 1 0;min-height:140px}
 }
 /* find results drop over the panel below the find box instead of being squeezed inside it */
 .findbox{overflow:visible!important}
