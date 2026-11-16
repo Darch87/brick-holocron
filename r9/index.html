@@ -1427,6 +1427,9 @@ html[data-saber="green"] .lmp.y{background:radial-gradient(circle at 38% 32%,#f2
 .lever.hz .arm i{top:0;bottom:0;left:50%;right:auto;width:12px;height:auto;margin:0 0 0 -6px}
 .lever.drag .arm{cursor:grabbing}.lever:hover .arm i,.lever.drag .arm i{box-shadow:0 0 12px var(--lc),0 0 24px var(--lc)}
 @media (max-width:760px){.lever{display:none}.side,.side *,.tlscroll{scrollbar-width:thin}.tlwrap{flex:none;height:72vh;min-height:420px}.tabrow .hc-lights{justify-content:flex-start}}
+/* the saber rod is the axis now: no plain line under it */
+.ax2{border-bottom:0!important}
+.ax2 .yr2::after{background:var(--saber)!important;opacity:.6}
 
 </style>
 
@@ -5475,7 +5478,7 @@ function hiltSVG(k){const P=HILTS[k]||HILTS.blue,id="h"+k;
   return `<svg viewBox="0 0 62 16" aria-hidden="true"><defs>${defs}</defs>${body}</svg>`}
 function tlRod(){const O=$("#tlov"),sc=$("#tlscroll");if(!O||!TL8.W)return;const rod=O.querySelector(".tlrod");if(!rod)return;
   const k=curSaber(),hi=rod.querySelector(".hilt");if(hi.dataset.k!==k){hi.dataset.k=k;hi.innerHTML=hiltSVG(k)}
-  const max=Math.max(1,TL8.W-sc.clientWidth),p=Math.max(0,Math.min(1,sc.scrollLeft/max));rod.querySelector(".blade").style.width=`calc((100% - 78px) * ${p.toFixed(4)})`}
+  const max=Math.max(1,TL8.W-sc.clientWidth),p=Math.max(0,Math.min(1,sc.scrollLeft/max));rod.querySelector(".blade").style.width=`calc(26px + (100% - 104px) * ${p.toFixed(4)})`}
 // ---- cockpit window: stars that streak like the jump to hyperspace while the timeline moves
 const STAR={s:[],v:0,lx:null,lt:0,raf:0};
 const RMO=matchMedia("(prefers-reduced-motion: reduce)");
@@ -5751,7 +5754,7 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 // layout check, only with ?dbg in the address
 if(/[?&]dbg\b/.test(location.search))setTimeout(()=>{const q=s=>[...document.querySelectorAll(s)].map(e=>{const r=e.getBoundingClientRect(),c=getComputedStyle(e);return s+" "+Math.round(r.left)+","+Math.round(r.top)+" "+Math.round(r.width)+"x"+Math.round(r.height)+" d="+c.display+" fd="+c.flexDirection+" h="+e.hidden+" ov="+c.overflowY}).join("\n");
   const d=document.createElement("pre");d.id="dbgout";d.style.cssText="position:fixed;left:0;bottom:0;z-index:99999;background:#fff;color:#000;font:11px monospace;max-height:60vh;overflow:auto;margin:0;padding:6px";
-  d.textContent=[".side.left","#controls","#findbox","#controls>.step","#controls>.focusbar",".side.right","#tlscroll",".lever"].map(q).join("\n")+"\n"+[[300,560],[308,620],[312,700]].map(([x,y])=>x+","+y+": "+document.elementsFromPoint(x,y).slice(0,5).map(e=>{const r=e.getBoundingClientRect();return e.tagName+"."+String(e.className&&e.className.baseVal!=null?e.className.baseVal:e.className).replace(/ /g,".")+"["+Math.round(r.left)+","+Math.round(r.top)+" "+Math.round(r.width)+"x"+Math.round(r.height)+"]"}).join(" > ")).join("\n");document.body.appendChild(d)},4000);
+  d.textContent=[".side.left","#controls","#findbox","#controls>.step","#controls>.focusbar",".side.right","#tlscroll",".lever"].map(q).join("\n")+"\n"+[[300,560],[305,540],[312,700]].map(([x,y])=>x+","+y+": "+[...document.querySelectorAll("body *")].filter(e=>{const r=e.getBoundingClientRect();return r.width&&r.width<200&&r.left<=x&&r.right>=x&&r.top<=y&&r.bottom>=y}).map(e=>{const r=e.getBoundingClientRect();return e.tagName+"."+String(e.className&&e.className.baseVal!=null?e.className.baseVal:e.className).replace(/ /g,".")+"["+Math.round(r.left)+","+Math.round(r.top)+" "+Math.round(r.width)+"x"+Math.round(r.height)+"]"}).join(" > ")).join("\n");document.body.appendChild(d)},4000);
 
 document.addEventListener("click",e=>{const h=e.target.closest(".steps>.step>.sth");if(!h||e.target.closest("button,input,select"))return;const st=h.parentElement,k=h.textContent.trim();st.classList.toggle("shut");st.classList.contains("shut")?STEPSHUT.add(k):STEPSHUT.delete(k);h.setAttribute("aria-expanded",!st.classList.contains("shut"))});
 buildThemes();drawSignin();buildControls();mfControls();tlWire();wheelSide($("#soscroll"));pxAwait();["tl","so","mf","pc","pt","ls"].forEach(x=>$("#tab-"+x).addEventListener("click",()=>showTab(x)));drawDrawer();render(true);
