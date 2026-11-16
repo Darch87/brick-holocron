@@ -5748,6 +5748,10 @@ function levWire(){if(levWire.on)return;levWire.on=1;levScan();setInterval(levSc
 function r9Init(){drawHolo();drawTabs();aurekWire();levWire()}
 {const ap=applySaber;applySaber=function(k){ap(k);drawHolo();if(typeof tlRod==="function")try{tlRod()}catch(e){}}}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",r9Init);else setTimeout(r9Init,0);
+// layout check, only with ?dbg in the address
+if(/[?&]dbg\b/.test(location.search))setTimeout(()=>{const q=s=>[...document.querySelectorAll(s)].map(e=>{const r=e.getBoundingClientRect(),c=getComputedStyle(e);return s+" "+Math.round(r.left)+","+Math.round(r.top)+" "+Math.round(r.width)+"x"+Math.round(r.height)+" d="+c.display+" fd="+c.flexDirection+" h="+e.hidden+" ov="+c.overflowY}).join("\n");
+  const d=document.createElement("pre");d.id="dbgout";d.style.cssText="position:fixed;left:0;bottom:0;z-index:99999;background:#fff;color:#000;font:11px monospace;max-height:60vh;overflow:auto;margin:0;padding:6px";
+  d.textContent=[".side.left","#controls","#findbox","#controls>.step","#controls>.focusbar",".side.right","#tlscroll",".lever"].map(q).join("\n");document.body.appendChild(d)},4000);
 
 document.addEventListener("click",e=>{const h=e.target.closest(".steps>.step>.sth");if(!h||e.target.closest("button,input,select"))return;const st=h.parentElement,k=h.textContent.trim();st.classList.toggle("shut");st.classList.contains("shut")?STEPSHUT.add(k):STEPSHUT.delete(k);h.setAttribute("aria-expanded",!st.classList.contains("shut"))});
 buildThemes();drawSignin();buildControls();mfControls();tlWire();wheelSide($("#soscroll"));pxAwait();["tl","so","mf","pc","pt","ls"].forEach(x=>$("#tab-"+x).addEventListener("click",()=>showTab(x)));drawDrawer();render(true);
