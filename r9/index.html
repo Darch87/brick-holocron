@@ -1273,7 +1273,7 @@ html[data-saber="darksaber"] #holo,html[data-saber="white"] #holo{--glow-txt:#e9
 /* 4 + 11 + 33 left panel: Find locked on top, the panels below share the height */
 @media (min-width:761px){
   .side.left{overflow:hidden!important;display:flex;flex-direction:column;padding:8px}
-  #controls{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+  #controls{flex:1;min-height:0;display:flex;flex-direction:column;flex-wrap:nowrap!important;gap:8px}
   #controls>.findbox,#controls>.focusbar{flex:none}
   #controls>.step{flex:0 1 auto;min-height:72px;overflow-y:auto;overflow-x:hidden}
   #controls>.step>.sth{position:sticky;top:-8px;z-index:2;background:linear-gradient(rgba(0,0,0,.85),rgba(0,0,0,.6));margin:-8px -8px 6px;padding:8px}
@@ -1281,7 +1281,7 @@ html[data-saber="darksaber"] #holo,html[data-saber="white"] #holo{--glow-txt:#e9
   .main,.main>.pane{overflow:hidden!important}
   .side.right{overflow-y:auto}
 }
-.findbox{position:relative;display:flex;flex-direction:column;gap:7px;padding:10px;border:2px solid var(--yellow);border-radius:8px;background:#000;box-shadow:0 0 14px -2px var(--yellow),inset 0 0 10px rgba(242,194,48,.25);overflow:hidden}
+.findbox{position:relative;display:flex;flex-direction:column;flex-wrap:nowrap!important;gap:7px;padding:10px;border:2px solid var(--yellow);border-radius:8px;background:#000;box-shadow:0 0 14px -2px var(--yellow),inset 0 0 10px rgba(242,194,48,.25);overflow:hidden}
 .findbox .tgl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .findbox .tgl path{fill:none;stroke:var(--yellow);stroke-width:.6;vector-effect:non-scaling-stroke;opacity:.85;filter:drop-shadow(0 0 2px var(--yellow))}
 .findbox>*:not(.tgl){position:relative;z-index:1}
