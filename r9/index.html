@@ -5309,11 +5309,15 @@ function buildControls(){
   seg("g-dir",[["1","Low to high"],["-1","High to low"]],()=>String(soDir),v=>soDir=+v);
   drawSortKeys();
   const fi=$("#find"),fr=document.createElement("div");fr.className="hits";fi.after(fr);
-  fi.addEventListener("input",()=>{const q=fi.value.trim().toLowerCase();if(q.length<2){fr.innerHTML="";return}
-    const hits=SETS.map(s=>{const n=s.n.toLowerCase(),f=s.figs.find(f=>f[0].toLowerCase().startsWith(q)||f[1].toLowerCase().includes(q));
-      const sc=n===q||n===q+"-1"?0:n.startsWith(q)?1:s.name.toLowerCase().includes(q)?2:f?3:9;return[sc,s,f]}).filter(x=>x[0]<9).sort((a,b)=>a[0]-b[0]||a[1].y-b[1].y).slice(0,8);
-    fr.innerHTML=hits.length?hits.map(([sc,s,f])=>`<button type="button" data-n="${esc(s.n)}"${sc===3?` data-f="${esc(f[0])}"`:""}>${ocHTML(!s.want)}<b style="color:${setCol(s)}">${esc(sc===3?f[1]:s.name)}</b> <span class="lab">${esc(sc===3?f[0]+" · in "+s.name:s.n)}</span></button>`).join(""):`<span class="saved">No set or minifig matches.</span>`;
-    fr.querySelectorAll("button").forEach(b=>b.onclick=()=>{const s=BYN[b.dataset.n];if(!["tl","so","pc"].includes(tab))showTab("tl");if(b.dataset.f&&tab==="tl"){panelGo({k:"fig",v:b.dataset.f});return}pick(s,true)})});
+  fi.addEventListener("input",()=>{fr.hidden=false;const q=fi.value.trim().toLowerCase();if(q.length<2){fr.innerHTML="";return}
+    const sets=SETS.map(s=>{const n=s.n.toLowerCase(),sc=n===q||n===q+"-1"?0:n.startsWith(q)?1:s.name.toLowerCase().includes(q)?2:9;return[sc,s,null]}).filter(x=>x[0]<9).sort((a,b)=>a[0]-b[0]||a[1].y-b[1].y);
+    const seen=new Set(),figs=[];SETS.forEach(s=>s.figs.forEach(f=>{if(seen.has(f[0]))return;if(f[0].toLowerCase().startsWith(q)||f[1].toLowerCase().includes(q)){seen.add(f[0]);figs.push([3,s,f])}}));
+    figs.sort((a,b)=>(a[2][1].toLowerCase().startsWith(q)?0:1)-(b[2][1].toLowerCase().startsWith(q)?0:1)||a[1].y-b[1].y);
+    const ns=Math.min(sets.length,figs.length?5:8),hits=sets.slice(0,ns).concat(figs.slice(0,10-ns));
+    fr.innerHTML=hits.length?hits.map(([sc,s,f])=>`<button type="button" data-n="${esc(s.n)}"${sc===3?` data-f="${esc(f[0])}"`:""}>${ocHTML(!s.want)}<b style="color:${setCol(s)}">${esc(sc===3?f[1]:s.name)}</b> <span class="lab">${esc(sc===3?f[0]+" · minifig":s.n)}</span></button>`).join(""):`<span class="saved">No set or minifig matches.</span>`;
+    fr.querySelectorAll("button").forEach(b=>b.onclick=()=>{fr.hidden=true;const s=BYN[b.dataset.n];if(!["tl","so","pc"].includes(tab))showTab("tl");if(b.dataset.f&&tab==="tl"){panelGo({k:"fig",v:b.dataset.f});return}pick(s,true)})});
+  fi.addEventListener("focus",()=>{if(fr.innerHTML)fr.hidden=false});
+  document.addEventListener("pointerdown",e=>{if(!e.target.closest(".findbox"))fr.hidden=true},true);
   fi.addEventListener("keydown",e=>{if(e.key==="Enter"){const b=fr.querySelector("button");if(b)b.click()}});
   buildPC();
   $("#clearall").addEventListener("click",()=>{resetFilters();focus=null;openN=null;hl=null;dlist=null;PSEL=null;syncFocus();render(true);drawDrawer()});
