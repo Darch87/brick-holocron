@@ -6132,7 +6132,7 @@ const fxOn=()=>document.documentElement.dataset.fx!=="off";
 function fxSet(on,save){document.documentElement.dataset.fx=on?"on":"off";const b=$("#fxbtn");if(b){b.setAttribute("aria-pressed",on);b.classList.toggle("on",on);b.textContent=on?"Effects on":"Effects off";b.title=on?"Turn the moving effects off":"Turn the moving effects on"}
   if(save)try{localStorage.setItem("holo-fx",on?"1":"0")}catch(e){}
   setTimeout(()=>{try{starDraw();tcDraw(0);skinClear();reelApply()}catch(e){}},0)}
-function fxWire(){const b=$("#fxbtn");if(!b||b.dataset.w)return;b.dataset.w=1;let s=null;try{s=localStorage.getItem("holo-fx")}catch(e){}
+function fxWire(){const b=$("#fxbtn");if(!b||b.dataset.w)return;b.dataset.w=1;let s=null;try{s=localStorage.getItem("holo-fx")}catch(e){}const qf=new URLSearchParams(location.search).get("fx");if(qf==="0"||qf==="1")s=qf;
   fxSet(s==null?!RMO.matches:s==="1");b.onclick=()=>fxSet(!fxOn(),true);
   if(RMO.addEventListener)RMO.addEventListener("change",()=>{let v=null;try{v=localStorage.getItem("holo-fx")}catch(e){}if(v==null)fxSet(!RMO.matches)})}
 
