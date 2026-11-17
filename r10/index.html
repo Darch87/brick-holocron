@@ -1767,6 +1767,9 @@ html[data-saber="palpatine"] .rinfo{background:#05040a!important}
   animation:crtroll2 8s linear infinite,crtflick 13s steps(1) infinite!important}
 @keyframes crtroll2{from{background-position:0 140%,0 0}to{background-position:0 -140%,0 -240px}}
 
+/* test switch: ?anim=0 stops the css loops */
+html.noanim *,html.noanim *::before,html.noanim *::after{animation:none!important}
+
 </style>
 
 <div class="gate" id="gate" hidden><div class="gbox hc-panel"><div class="hc-strip">Brick Holocron · access</div>
@@ -6138,7 +6141,8 @@ function fxWire(){const b=$("#fxbtn");if(!b||b.dataset.w)return;b.dataset.w=1;le
 
 // ---- one animation clock for the hyperspace window, the targeting computer and the skin effects
 const FX={lt:0};
-function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn())return;if(t-FX.lt<40)return;FX.lt=t;
+const QP=new URLSearchParams(location.search);if(QP.get("anim")==="0")document.documentElement.classList.add("noanim");
+function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn()||QP.get("cv")==="0")return;if(t-FX.lt<40)return;FX.lt=t;
   try{if(tab==="tl")starDraw(t)}catch(e){}try{tcDraw(t)}catch(e){}try{skinDraw(t)}catch(e){}}
 function cvFit(cv){const w=cv.clientWidth,h=cv.clientHeight,dp=cv.id==="fxcv"?1:Math.min(2,devicePixelRatio||1);if(!w||!h)return null;
   if(cv.width!==Math.round(w*dp)||cv.height!==Math.round(h*dp)){cv.width=Math.round(w*dp);cv.height=Math.round(h*dp)}const c=cv.getContext&&cv.getContext("2d");if(!c)return null;c.setTransform(dp,0,0,dp,0,0);return{c,w,h}}
