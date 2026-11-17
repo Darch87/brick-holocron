@@ -1759,6 +1759,13 @@ html[data-fx="off"] .side.left::after,html[data-fx="off"] .side.right::after,htm
 html[data-saber="darksaber"] .side.left,html[data-saber="darksaber"] .side.right,
 html[data-saber="palpatine"] .side.left,html[data-saber="palpatine"] .side.right{background:#000!important}
 html[data-saber="palpatine"] .rinfo{background:#05040a!important}
+/* lighter CRT: the panels no longer repaint every frame; the scanlines and band roll on their own layer */
+.side.left,.side.right{animation:none!important}
+.side.left::after,.side.right::after{will-change:transform;
+  background:linear-gradient(transparent 0,color-mix(in srgb,var(--saber) 9%,transparent) 46%,rgba(255,255,255,.07) 50%,transparent 57%) 0 0/100% 300% no-repeat,
+  repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px) 0 0/100% 240px!important;
+  animation:crtroll2 8s linear infinite,crtflick 13s steps(1) infinite!important}
+@keyframes crtroll2{from{background-position:0 140%,0 0}to{background-position:0 -140%,0 -240px}}
 
 </style>
 
@@ -6131,9 +6138,9 @@ function fxWire(){const b=$("#fxbtn");if(!b||b.dataset.w)return;b.dataset.w=1;le
 
 // ---- one animation clock for the hyperspace window, the targeting computer and the skin effects
 const FX={lt:0};
-function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn())return;if(t-FX.lt<32)return;FX.lt=t;
+function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn())return;if(t-FX.lt<40)return;FX.lt=t;
   try{if(tab==="tl")starDraw(t)}catch(e){}try{tcDraw(t)}catch(e){}try{skinDraw(t)}catch(e){}}
-function cvFit(cv){const w=cv.clientWidth,h=cv.clientHeight,dp=Math.min(2,devicePixelRatio||1);if(!w||!h)return null;
+function cvFit(cv){const w=cv.clientWidth,h=cv.clientHeight,dp=cv.id==="fxcv"?1:Math.min(2,devicePixelRatio||1);if(!w||!h)return null;
   if(cv.width!==Math.round(w*dp)||cv.height!==Math.round(h*dp)){cv.width=Math.round(w*dp);cv.height=Math.round(h*dp)}const c=cv.getContext&&cv.getContext("2d");if(!c)return null;c.setTransform(dp,0,0,dp,0,0);return{c,w,h}}
 
 // ---- the cockpit window: idle stars twinkle; scrolling throws them into blue-white hyperspace streaks
