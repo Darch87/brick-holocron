@@ -6194,8 +6194,8 @@ function tcDraw(t){const cv=$("#tccv");if(!cv||!cv.offsetParent)return;const f=c
 // drawn as a few SVG strokes (not a full-screen canvas) so the browser only repaints the little bits that change
 let SK={p:[],b:[],nb:0,k:"",sv:null,pool:[]};
 const SVGNS="http://www.w3.org/2000/svg";
-function skinCv(){let sv=$("#fxcv");if(!sv){sv=document.createElementNS(SVGNS,"svg");sv.id="fxcv";sv.setAttribute("class","fxcv");sv.setAttribute("aria-hidden","true");document.body.appendChild(sv);SK.pool=[]}SK.sv=sv;return sv}
-function skinClear(){SK.p.forEach(p=>p.el&&p.el.remove());SK.b.forEach(b=>b.g&&b.g.remove());SK.p=[];SK.b=[];const sv=$("#fxcv");if(sv)sv.textContent="";SK.pool=[]}
+function skinCv(){let sv=document.getElementById("fxcv");if(!sv){sv=document.createElementNS(SVGNS,"svg");sv.id="fxcv";sv.setAttribute("class","fxcv");sv.setAttribute("aria-hidden","true");document.body.appendChild(sv);SK.pool=[]}SK.sv=sv;return sv}
+function skinClear(){SK.p.forEach(p=>p.el&&p.el.remove());SK.b.forEach(b=>b.g&&b.g.remove());SK.p=[];SK.b=[];const sv=document.getElementById("fxcv");if(sv)sv.textContent="";SK.pool=[]}
 function skinEdges(){const out=[];document.querySelectorAll("#holo .side.left,#holo .side.right,#tlwrap").forEach(el=>{if(!el.offsetParent)return;const r=el.getBoundingClientRect();if(r.width<20)return;out.push(r)});return out}
 function edgePt(rs){const r=rs[Math.random()*rs.length|0];let u=Math.random()*2*(r.width+r.height);
   if(u<r.width)return{x:r.left+u,y:r.top,nx:0,ny:-1};u-=r.width;if(u<r.height)return{x:r.right,y:r.top+u,nx:1,ny:0};u-=r.height;if(u<r.width)return{x:r.right-u,y:r.bottom,nx:0,ny:1};u-=r.width;return{x:r.left,y:r.bottom-u,nx:-1,ny:0}}
