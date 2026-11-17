@@ -1685,7 +1685,7 @@ html[data-saber="palpatine"] .side.left,html[data-saber="palpatine"] .side.right
 html[data-saber="palpatine"] .side .step,html[data-saber="palpatine"] .side details.rsec{background:#000!important}
 html[data-saber="palpatine"] .side.left::before,html[data-saber="palpatine"] .side.right::before{animation:palglow 1.9s steps(1) infinite}
 @keyframes palglow{0%,100%{box-shadow:0 0 12px -2px #6d55e8}18%{box-shadow:0 0 0 1px #bfe2ff,0 0 26px 2px #4aa8ff,inset 0 0 30px rgba(74,168,255,.35)}21%{box-shadow:0 0 12px -2px #6d55e8}56%{box-shadow:0 0 0 1px #e2d8ff,0 0 28px 3px #8a6bff,inset 0 0 34px rgba(138,107,255,.4)}58%{box-shadow:0 0 12px -2px #6d55e8}60%{box-shadow:0 0 0 1px #fff,0 0 20px 2px #8a6bff}62%{box-shadow:0 0 12px -2px #6d55e8}}
-.fxcv{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:28}
+.fxcv{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:28;overflow:visible}
 
 /* the four red targeting arrows are the cursor everywhere; they close in over anything you can press */
 html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='%23ff2a1f' stroke='%23000' stroke-width='1' stroke-linejoin='round'%3E%3Cpath d='M16 12.5 12.6 4.5h6.8z'/%3E%3Cpath d='M16 19.5 12.6 27.5h6.8z'/%3E%3Cpath d='M12.5 16 4.5 12.6v6.8z'/%3E%3Cpath d='M19.5 16 27.5 12.6v6.8z'/%3E%3C/g%3E%3C/svg%3E") 16 16,crosshair}
@@ -6191,26 +6191,33 @@ function tcDraw(t){const cv=$("#tccv");if(!cv||!cv.offsetParent)return;const f=c
   const dg=$("#tcdig");if(dg){const n=lock?0:Math.max(0,Math.round(1108*(1-cyc/.86)));const s=String(n).padStart(6,"0");if(dg.textContent!==s)dg.textContent=s;dg.classList.toggle("lock",lock)}}
 
 // ---- skin effects drawn round the panel edges: Darksaber sparks, Palpatine's force lightning
-let SK={p:[],b:[],nb:0,k:""};
-function skinCv(){let cv=$("#fxcv");if(!cv){cv=document.createElement("canvas");cv.id="fxcv";cv.className="fxcv";cv.setAttribute("aria-hidden","true");document.body.appendChild(cv)}return cv}
-function skinClear(){const cv=$("#fxcv");if(cv){const c=cv.getContext&&cv.getContext("2d");if(c){c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cv.width,cv.height)}}SK.p=[];SK.b=[]}
+// drawn as a few SVG strokes (not a full-screen canvas) so the browser only repaints the little bits that change
+let SK={p:[],b:[],nb:0,k:"",sv:null,pool:[]};
+const SVGNS="http://www.w3.org/2000/svg";
+function skinCv(){let sv=$("#fxcv");if(!sv){sv=document.createElementNS(SVGNS,"svg");sv.id="fxcv";sv.setAttribute("class","fxcv");sv.setAttribute("aria-hidden","true");document.body.appendChild(sv);SK.pool=[]}SK.sv=sv;return sv}
+function skinClear(){SK.p.forEach(p=>p.el&&p.el.remove());SK.b.forEach(b=>b.g&&b.g.remove());SK.p=[];SK.b=[];const sv=$("#fxcv");if(sv)sv.textContent="";SK.pool=[]}
 function skinEdges(){const out=[];document.querySelectorAll("#holo .side.left,#holo .side.right,#tlwrap").forEach(el=>{if(!el.offsetParent)return;const r=el.getBoundingClientRect();if(r.width<20)return;out.push(r)});return out}
 function edgePt(rs){const r=rs[Math.random()*rs.length|0];let u=Math.random()*2*(r.width+r.height);
   if(u<r.width)return{x:r.left+u,y:r.top,nx:0,ny:-1};u-=r.width;if(u<r.height)return{x:r.right,y:r.top+u,nx:1,ny:0};u-=r.height;if(u<r.width)return{x:r.right-u,y:r.bottom,nx:0,ny:1};u-=r.width;return{x:r.left,y:r.bottom-u,nx:-1,ny:0}}
+function skLine(){const sv=SK.sv;let el=SK.pool.pop();if(!el){el=document.createElementNS(SVGNS,"line");el.setAttribute("stroke-linecap","round");sv.appendChild(el)}el.style.display="";return el}
 function skinDraw(t){const k=curSaber();if(k!=="darksaber"&&k!=="palpatine"){if(SK.k){skinClear();SK.k=""}return}
-  const cv=skinCv(),f=cvFit(cv);if(!f)return;const {c,w,h}=f;if(SK.k!==k){SK.p=[];SK.b=[];SK.k=k}c.clearRect(0,0,w,h);const rs=skinEdges();if(!rs.length)return;
-  if(k==="darksaber"){for(let i=0;i<3;i++)if(Math.random()<.55){const e=edgePt(rs),sp=1.5+Math.random()*3.5,a=Math.atan2(e.ny,e.nx)+(Math.random()-.5)*1.6;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,l:1})}
-    if(Math.random()<.04){const e=edgePt(rs);for(let i=0;i<14;i++){const a=Math.random()*7,sp=2+Math.random()*5;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1})}}
-    c.lineCap="round";
-    SK.p=SK.p.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.18;p.vx*=.97;p.l-=.045;if(p.l<=0)return false;c.strokeStyle=`rgba(255,${235+20*p.l|0},${200+55*p.l|0},${p.l.toFixed(2)})`;c.lineWidth=1.6*p.l+.4;c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x-p.vx*2,p.y-p.vy*2);c.stroke();return true});
-    if(SK.p.length>300)SK.p.splice(0,SK.p.length-300)}
-  else{if(t>SK.nb){SK.nb=t+120+Math.random()*700;const e=edgePt(rs),horiz=e.ny!==0,len=80+Math.random()*220,pts=[];let x=e.x,y=e.y;const dir=Math.random()<.5?-1:1;
-      for(let s=0;s<=len;s+=10){pts.push([x,y]);if(horiz){x+=10*dir;y=e.y+(Math.random()-.5)*14+e.ny*Math.random()*6}else{y+=10*dir;x=e.x+(Math.random()-.5)*14+e.nx*Math.random()*6}}
-      const br=[];for(let i=0;i<3;i++){const p=pts[Math.random()*pts.length|0];if(!p)continue;let bx=p[0],by=p[1];const b=[[bx,by]];for(let j=0;j<5;j++){bx+=(e.nx||(Math.random()-.5))*9+(Math.random()-.5)*8;by+=(e.ny||(Math.random()-.5))*9+(Math.random()-.5)*8;b.push([bx,by])}br.push(b)}
-      SK.b.push({pts,br,l:1,col:Math.random()<.5?"138,107,255":"80,170,255"})}
-    SK.b=SK.b.filter(b=>{b.l-=.12;if(b.l<=0)return false;const fl=Math.random()<.3?.3:1;const path=a=>{c.beginPath();a.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()};
-      if(!FX.lite){c.strokeStyle=`rgba(${b.col},${(b.l*fl*.22).toFixed(2)})`;c.lineWidth=9;path(b.pts)}c.strokeStyle=`rgba(${b.col},${(b.l*fl).toFixed(2)})`;c.lineWidth=3;path(b.pts);b.br.forEach(path);
-      c.strokeStyle=`rgba(255,255,255,${(b.l*fl*.9).toFixed(2)})`;c.lineWidth=1;path(b.pts);return true})}}
+  if(t-(SK.lt||0)<70)return;SK.lt=t;
+  const sv=skinCv();if(SK.k!==k){skinClear();SK.k=k}let rs=null;const edges=()=>rs||(rs=skinEdges());
+  if(k==="darksaber"){
+    if(SK.p.length<70){for(let i=0;i<2;i++)if(Math.random()<.5){const R=edges();if(!R.length)break;const e=edgePt(R),sp=2+Math.random()*4,a=Math.atan2(e.ny,e.nx)+(Math.random()-.5)*1.6;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,l:1,el:skLine()})}
+      if(Math.random()<.04){const R=edges();if(R.length){const e=edgePt(R);for(let i=0;i<12;i++){const a=Math.random()*7,sp=2.5+Math.random()*5;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1,el:skLine()})}}}}
+    SK.p=SK.p.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.25;p.vx*=.96;p.l-=.07;const el=p.el;
+      if(p.l<=0){el.style.display="none";SK.pool.push(el);return false}
+      el.setAttribute("x1",p.x.toFixed(1));el.setAttribute("y1",p.y.toFixed(1));el.setAttribute("x2",(p.x-p.vx*2.5).toFixed(1));el.setAttribute("y2",(p.y-p.vy*2.5).toFixed(1));
+      el.setAttribute("stroke",`rgba(255,${235+20*p.l|0},${200+55*p.l|0},${p.l.toFixed(2)})`);el.setAttribute("stroke-width",(1.8*p.l+.5).toFixed(1));return true});return}
+  // Palpatine: a jagged bolt crawls along an edge now and then, flickers and fades
+  if(t>SK.nb&&SK.b.length<4){SK.nb=t+150+Math.random()*700;const R=edges();if(R.length){const e=edgePt(R),horiz=e.ny!==0,len=80+Math.random()*220,pts=[];let x=e.x,y=e.y;const dir=Math.random()<.5?-1:1;
+    for(let s=0;s<=len;s+=10){pts.push([x,y]);if(horiz){x+=10*dir;y=e.y+(Math.random()-.5)*14+e.ny*Math.random()*6}else{y+=10*dir;x=e.x+(Math.random()-.5)*14+e.nx*Math.random()*6}}
+    const P=a=>"M"+a.map(([x,y])=>x.toFixed(1)+" "+y.toFixed(1)).join("L");let d=P(pts);
+    for(let i=0;i<3;i++){const p=pts[Math.random()*pts.length|0];if(!p)continue;let bx=p[0],by=p[1];const b=[[bx,by]];for(let j=0;j<5;j++){bx+=(e.nx||(Math.random()-.5))*9+(Math.random()-.5)*8;by+=(e.ny||(Math.random()-.5))*9+(Math.random()-.5)*8;b.push([bx,by])}d+=P(b)}
+    const col=Math.random()<.5?"#8a6bff":"#50aaff",g=document.createElementNS(SVGNS,"g");g.setAttribute("fill","none");g.setAttribute("stroke-linejoin","round");
+    g.innerHTML=`<path d="${d}" stroke="${col}" stroke-width="9" opacity=".22"/><path d="${d}" stroke="${col}" stroke-width="3"/><path d="${d}" stroke="#fff" stroke-width="1" opacity=".9"/>`;sv.appendChild(g);SK.b.push({g,l:1})}}
+  SK.b=SK.b.filter(b=>{b.l-=.17;if(b.l<=0){b.g.remove();return false}b.g.setAttribute("opacity",(b.l*(Math.random()<.3?.3:1)).toFixed(2));return true})}
 
 // ---- the stories list turns like a drum: rows tilt away above and below the middle, like a slot-machine reel
 function reelApply(){const w=$("#st-stories .reelwrap");if(!w||!w.offsetParent)return;const r=w.getBoundingClientRect(),hc=r.top+r.height/2,R=r.height/2||1,live=fxOn();
