@@ -1710,6 +1710,40 @@ html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 html[data-fx="off"] *,html[data-fx="off"] *::before,html[data-fx="off"] *::after{animation:none!important;transition:none!important}
 html[data-fx="off"] .side.left::after,html[data-fx="off"] .side.right::after,html[data-fx="off"] .fxcv{display:none}
 
+/* ---- round 10 browser-check fixes ---- */
+@media (min-width:761px){
+  #controls>#st-stories:not(.shut){flex:1 1 0!important;min-height:230px!important}
+  #controls>#st-narrow:not(.shut){flex:0 1 auto!important;min-height:112px!important}
+  #st-stories>.reelwrap{min-height:96px!important}
+}
+.reel{padding-block:28px!important}
+/* keep the header's switch clear of the throttle lever */
+#controls>.step>.sth{padding-right:26px!important}
+/* collection keys: tighter so the stories reel has room */
+#g-show{gap:5px!important}
+#g-show .chip.key,#markown{padding-block:5px!important}
+.mkown{margin-top:5px!important;padding-top:5px!important}
+/* glyph keys: unlit keys readable, canon cream, extended red */
+.tkey .cap{max-width:38px;filter:brightness(.62) saturate(.7)}
+.tkey:hover .cap{filter:brightness(.85)}
+.tkey.k-can .cap{background:linear-gradient(#efe9d2,#c7bf9f)}
+.tkey.k-ext .cap{background:linear-gradient(#ff5d4c,#c41a0e)!important}
+/* red-cap safety switch, redrawn: a guarded toggle whose red cover flips up when on */
+.alltog.rcs{gap:6px!important;padding:0!important;align-self:center}
+.rcs .rc-plate{width:22px!important;height:28px!important;perspective:80px;border-radius:3px;overflow:visible}
+.rcs .rc-plate::before{width:10px;height:10px;margin:-5px;top:62%}
+.rcs .rc-led{left:50%!important;top:3px!important;margin-left:-2px;width:4px;height:4px}
+.rcs .rc-bat{top:auto!important;bottom:50%!important;height:11px!important;transform-origin:50% 100%;transform:translateY(5px) rotate(160deg)!important}
+.rcs.on .rc-bat{transform:translateY(5px) rotate(0)!important}
+.rcs .rc-cap{left:-2px!important;right:-2px!important;top:-2px!important;bottom:-2px!important;height:auto!important;border-radius:4px!important;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.0) 0 4px,rgba(255,255,255,.14) 4px 5px),linear-gradient(rgba(255,90,70,.92),rgba(190,12,0,.88))!important;
+  border:1px solid #ffb4a6!important;box-shadow:inset 0 2px 2px rgba(255,255,255,.5),0 2px 3px #000,0 0 8px rgba(255,40,20,.5)!important;
+  transform-origin:50% 0!important;transform:rotateX(0deg)!important;transition:transform .32s cubic-bezier(.3,1.5,.5,1)!important;backface-visibility:visible}
+.rcs.on .rc-cap{transform:rotateX(-118deg)!important;opacity:.9}
+.rcs:not(.on):hover .rc-cap{transform:rotateX(-28deg)!important}
+.rcs.on:hover .rc-cap{transform:rotateX(-100deg)!important}
+.rcs .rc-lab{padding-top:0!important;font-size:10px}
+
 </style>
 
 <div class="gate" id="gate" hidden><div class="gbox hc-panel"><div class="hc-strip">Brick Holocron · access</div>
@@ -6185,6 +6219,8 @@ function r10Init(){headWire();fxWire();reelWire();markWire();findWire();pressWir
   document.addEventListener("scroll",levTilt,{capture:true,passive:true});
   if(!FX.on){FX.on=1;requestAnimationFrame(fxLoop)}starSize();tcDraw(0);addEventListener("resize",()=>{starSize();tcDraw(0)})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",r10Init);else setTimeout(r10Init,0);
+// the stories section has its own lever on the reel, so the section itself gets none
+LEVSEL[0][0]="#controls > .step:not(#st-stories)";
 
 document.addEventListener("click",e=>{const h=e.target.closest(".steps>.step>.sth");if(!h||e.target.closest("button,input,select"))return;const st=h.parentElement,k=h.textContent.trim();st.classList.toggle("shut");st.classList.contains("shut")?STEPSHUT.add(k):STEPSHUT.delete(k);h.setAttribute("aria-expanded",!st.classList.contains("shut"))});
 buildThemes();drawSignin();buildControls();mfControls();tlWire();wheelSide($("#soscroll"));pxAwait();["tl","so","mf","pc","pt","ls"].forEach(x=>$("#tab-"+x).addEventListener("click",()=>showTab(x)));drawDrawer();render(true);
