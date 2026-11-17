@@ -1769,6 +1769,9 @@ html[data-saber="palpatine"] .rinfo{background:#05040a!important}
 
 /* test switch: ?anim=0 stops the css loops */
 html.noanim *,html.noanim *::before,html.noanim *::after{animation:none!important}
+/* no white text in the right panel on the other tabs either: glowing text in the saber colour */
+.side.right #drawer:not(.rp) :is(h2,h3,h4,p,li,.saved,.lab,label,span,em,b){color:var(--glow-txt)}
+.side.right #drawer:not(.rp) .lab{color:color-mix(in srgb,var(--saber) 75%,#888)}
 
 </style>
 
@@ -6004,6 +6007,8 @@ function wirePanel(d){
 // router: the timeline uses the new panel; Collection and Value keep the record panel
 function drawDrawer(){const d=$("#drawer");
   if(tab==="tl"){if(openN&&!(PSEL&&PSEL.k==="set"&&PSEL.v===openN)){const n=openN;if(PSEL)PH.push(PSEL);PSEL={k:"set",v:n};renderTL()}return drawPanel()}
+  // other tabs: the same blank red targeting screen until a set is picked
+  if(!openN&&!dlist){d.classList.add("rp");const keep=PSEL;PSEL=null;RSCR.last="";d.innerHTML=rframe({num:["- - - -","- -"],kick:"Targeting computer",title:"No target selected",sub:"Tap a set to see it here."});PSEL=keep;return}
   d.classList.remove("rp");return drawRecord()}
 
 // ---- sign-in: name, passcode and a lightsaber. Guests are remembered on this device and keep their own lists.
