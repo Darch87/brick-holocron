@@ -6140,10 +6140,12 @@ function fxWire(){const b=$("#fxbtn");if(!b||b.dataset.w)return;b.dataset.w=1;le
   if(RMO.addEventListener)RMO.addEventListener("change",()=>{let v=null;try{v=localStorage.getItem("holo-fx")}catch(e){}if(v==null)fxSet(!RMO.matches)})}
 
 // ---- one animation clock for the hyperspace window, the targeting computer and the skin effects
-const FX={lt:0};
+const FX={lt:0,iv:50,avg:0,lite:0,sl:0};
 const QP=new URLSearchParams(location.search);if(QP.get("anim")==="0")document.documentElement.classList.add("noanim");
-function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn()||QP.get("cv")==="0")return;if(t-FX.lt<40)return;FX.lt=t;
-  try{if(tab==="tl")starDraw(t)}catch(e){}try{tcDraw(t)}catch(e){}try{skinDraw(t)}catch(e){}}
+function fxLoop(t){requestAnimationFrame(fxLoop);if(document.hidden||!fxOn()||QP.get("cv")==="0")return;if(t-FX.lt<FX.iv)return;FX.lt=t;const t0=performance.now();
+  try{if(tab==="tl"&&(STAR.v||t-FX.sl>110)){FX.sl=t;starDraw(t)}}catch(e){}try{tcDraw(t)}catch(e){}try{skinDraw(t)}catch(e){}
+  // keep the effects from hogging a slow computer: if frames get expensive, draw less often and drop the glows
+  const dt=performance.now()-t0;FX.avg=FX.avg*.9+dt*.1;if(FX.avg>9){FX.iv=Math.min(250,FX.iv*1.2);FX.lite=1}else if(FX.avg<3&&FX.iv>50)FX.iv=Math.max(50,FX.iv*.97)}
 function cvFit(cv){const w=cv.clientWidth,h=cv.clientHeight,dp=cv.id==="fxcv"?1:Math.min(2,devicePixelRatio||1);if(!w||!h)return null;
   if(cv.width!==Math.round(w*dp)||cv.height!==Math.round(h*dp)){cv.width=Math.round(w*dp);cv.height=Math.round(h*dp)}const c=cv.getContext&&cv.getContext("2d");if(!c)return null;c.setTransform(dp,0,0,dp,0,0);return{c,w,h}}
 
@@ -6174,7 +6176,7 @@ function starDraw(t){const cv=$("#tlstars");if(!cv)return;const f=cvFit(cv);if(!
 // ---- the targeting computer on the left: trench lines rushing at you, red bars closing in, digits counting down
 function tcDraw(t){const cv=$("#tccv");if(!cv||!cv.offsetParent)return;const f=cvFit(cv);if(!f)return;const {c,w,h}=f;t=t||0;
   c.clearRect(0,0,w,h);const Y="#ffc63a",cx=w/2,cy=h*.44,m=5,x0=m,y0=m,x1=w-m,y1=h-m,iw=w*.1,ih=h*.09,ix0=cx-iw/2,ix1=cx+iw/2,iy0=cy-ih/2,iy1=cy+ih/2;
-  c.save();c.strokeStyle=Y;c.lineWidth=1.3;c.shadowColor="#ff9a00";c.shadowBlur=5;c.globalAlpha=.9;
+  c.save();c.strokeStyle=Y;c.lineWidth=1.3;c.globalAlpha=.9;
   c.beginPath();if(c.roundRect)c.roundRect(x0,y0,x1-x0,y1-y0,10);else c.rect(x0,y0,x1-x0,y1-y0);c.stroke();
   const lerp=(a,b,u)=>a+(b-a)*u;c.beginPath();
   [0,1/3,2/3,1].forEach(u=>{c.moveTo(lerp(x0,x1,u),y0);c.lineTo(lerp(ix0,ix1,u),iy0);c.moveTo(lerp(x0,x1,u),y1);c.lineTo(lerp(ix0,ix1,u),iy1)});
@@ -6183,7 +6185,7 @@ function tcDraw(t){const cv=$("#tccv");if(!cv||!cv.offsetParent)return;const f=c
   const ph=(t/1500)%1;c.lineWidth=1.1;
   for(let i=0;i<5;i++){const u=((i/5)+ph)%1,e=u*u*u;c.globalAlpha=.25+.7*e;c.strokeRect(lerp(ix0,x0,e),lerp(iy0,y0,e),lerp(iw,x1-x0,e),lerp(ih,y1-y0,e))}
   c.globalAlpha=1;c.beginPath();c.arc(cx,cy,ih*.42,0,7);c.stroke();
-  const cyc=(t/3200)%1,lock=cyc>.86,d=lock?0:(1-cyc/.86)*w*.3+2;c.strokeStyle="#ff3a2a";c.shadowColor="#ff2010";c.lineWidth=lock?3:2;c.globalAlpha=lock&&((t/90|0)%2)?.35:1;
+  const cyc=(t/3200)%1,lock=cyc>.86,d=lock?0:(1-cyc/.86)*w*.3+2;c.strokeStyle="#ff3a2a";c.lineWidth=lock?3:2;c.globalAlpha=lock&&((t/90|0)%2)?.35:1;
   c.beginPath();c.moveTo(cx-d,y0+3);c.lineTo(cx-d,y1-3);c.moveTo(cx+d,y0+3);c.lineTo(cx+d,y1-3);c.stroke();
   c.lineWidth=2;c.beginPath();c.moveTo(cx-iw*.9,cy);c.lineTo(cx-iw*.55,cy);c.moveTo(cx+iw*.55,cy);c.lineTo(cx+iw*.9,cy);c.stroke();c.restore();
   const dg=$("#tcdig");if(dg){const n=lock?0:Math.max(0,Math.round(1108*(1-cyc/.86)));const s=String(n).padStart(6,"0");if(dg.textContent!==s)dg.textContent=s;dg.classList.toggle("lock",lock)}}
@@ -6199,16 +6201,16 @@ function skinDraw(t){const k=curSaber();if(k!=="darksaber"&&k!=="palpatine"){if(
   const cv=skinCv(),f=cvFit(cv);if(!f)return;const {c,w,h}=f;if(SK.k!==k){SK.p=[];SK.b=[];SK.k=k}c.clearRect(0,0,w,h);const rs=skinEdges();if(!rs.length)return;
   if(k==="darksaber"){for(let i=0;i<3;i++)if(Math.random()<.55){const e=edgePt(rs),sp=1.5+Math.random()*3.5,a=Math.atan2(e.ny,e.nx)+(Math.random()-.5)*1.6;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,l:1})}
     if(Math.random()<.04){const e=edgePt(rs);for(let i=0;i<14;i++){const a=Math.random()*7,sp=2+Math.random()*5;SK.p.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:1})}}
-    c.lineCap="round";c.shadowColor="#fff";c.shadowBlur=6;
+    c.lineCap="round";
     SK.p=SK.p.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.18;p.vx*=.97;p.l-=.045;if(p.l<=0)return false;c.strokeStyle=`rgba(255,${235+20*p.l|0},${200+55*p.l|0},${p.l.toFixed(2)})`;c.lineWidth=1.6*p.l+.4;c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x-p.vx*2,p.y-p.vy*2);c.stroke();return true});
-    if(SK.p.length>400)SK.p.splice(0,SK.p.length-400);c.shadowBlur=0}
+    if(SK.p.length>300)SK.p.splice(0,SK.p.length-300)}
   else{if(t>SK.nb){SK.nb=t+120+Math.random()*700;const e=edgePt(rs),horiz=e.ny!==0,len=80+Math.random()*220,pts=[];let x=e.x,y=e.y;const dir=Math.random()<.5?-1:1;
       for(let s=0;s<=len;s+=10){pts.push([x,y]);if(horiz){x+=10*dir;y=e.y+(Math.random()-.5)*14+e.ny*Math.random()*6}else{y+=10*dir;x=e.x+(Math.random()-.5)*14+e.nx*Math.random()*6}}
       const br=[];for(let i=0;i<3;i++){const p=pts[Math.random()*pts.length|0];if(!p)continue;let bx=p[0],by=p[1];const b=[[bx,by]];for(let j=0;j<5;j++){bx+=(e.nx||(Math.random()-.5))*9+(Math.random()-.5)*8;by+=(e.ny||(Math.random()-.5))*9+(Math.random()-.5)*8;b.push([bx,by])}br.push(b)}
       SK.b.push({pts,br,l:1,col:Math.random()<.5?"138,107,255":"80,170,255"})}
     SK.b=SK.b.filter(b=>{b.l-=.12;if(b.l<=0)return false;const fl=Math.random()<.3?.3:1;const path=a=>{c.beginPath();a.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()};
-      c.shadowColor=`rgb(${b.col})`;c.shadowBlur=14;c.strokeStyle=`rgba(${b.col},${(b.l*fl).toFixed(2)})`;c.lineWidth=3;path(b.pts);b.br.forEach(path);
-      c.shadowBlur=0;c.strokeStyle=`rgba(255,255,255,${(b.l*fl*.9).toFixed(2)})`;c.lineWidth=1;path(b.pts);return true})}}
+      if(!FX.lite){c.strokeStyle=`rgba(${b.col},${(b.l*fl*.22).toFixed(2)})`;c.lineWidth=9;path(b.pts)}c.strokeStyle=`rgba(${b.col},${(b.l*fl).toFixed(2)})`;c.lineWidth=3;path(b.pts);b.br.forEach(path);
+      c.strokeStyle=`rgba(255,255,255,${(b.l*fl*.9).toFixed(2)})`;c.lineWidth=1;path(b.pts);return true})}}
 
 // ---- the stories list turns like a drum: rows tilt away above and below the middle, like a slot-machine reel
 function reelApply(){const w=$("#st-stories .reelwrap");if(!w||!w.offsetParent)return;const r=w.getBoundingClientRect(),hc=r.top+r.height/2,R=r.height/2||1,live=fxOn();
