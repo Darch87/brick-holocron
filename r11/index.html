@@ -6176,7 +6176,7 @@ function panelStory(o){const p=String(o.v).split("|"),src=SRCMAP[p[0]];if(!src){
   if(!img){for(const [k,a] of Object.entries(STILLS))if(k.startsWith(src[0]+"|")){const st=placeStills(a);if(st[0]){img=st[0][1];break}}}
   const figs=figList(ss.flatMap(s=>s.figs.map(f=>[s,f])).sort((a,b)=>(TORD[(chOf(a[1])||{types:["locals"]}).types[0]]??6)-(TORD[(chOf(b[1])||{types:["locals"]}).types[0]]??6)));
   const own=ss.filter(s=>!s.want),wnt=ss.filter(s=>s.want);
-  return rframe({img,num:[code||srcShort(src).slice(0,12).toUpperCase(),yl||""],cols:[ERAC[src[1]]],kick,title,
+  return rframe({img,num:[code||numLab(srcShort(src)),yl||""],cols:[ERAC[src[1]]],kick,title,
     secs:(syn?rsec("Synopsis",null,`<p class="rsyn">${esc(trimTo(syn,700))}</p>`):"")+rsec("Related minifigs",null,figs)+rsec("Related sets",ss.length,setList(own.concat(wnt)))})}
 function panelLoc(label,at){const id=locOf(label)||(PLAN[label]?label:null),P=id?PLAN[id]:null,img=(id&&PIMG[id])||stillOf(label);
   const desc=(id&&(PDESC2[id]||PDESC[id]))||"";
@@ -6184,7 +6184,7 @@ function panelLoc(label,at){const id=locOf(label)||(PLAN[label]?label:null),P=id
   const slots=[];Object.entries(STILLS).forEach(([k,a])=>{if(a.some(x=>x[0]===label)){const pp=k.split("|");if(SRCMAP[pp[0]])slots.push([pp[0],pp[1]])}});
   const figs=figList(ss.flatMap(s=>s.figs.map(f=>[s,f])));
   const stories=tagList(slots.map(([sid2,k])=>{const src=SRCMAP[sid2],z=slotsOf(src).find(z=>z.k===k);return rstoryTag(sid2,z,srcShort(src)+(z?" · "+z.t:""))}));
-  return rframe({img,num:[P?P[1].toUpperCase().slice(0,12):label.toUpperCase().slice(0,12),P&&P[4]==="p"?"PLANET":"PLACE"],cols:locCols(label),kick:P?(P[4]==="p"?"Planet":"Place"):"Location",title:label,
+  return rframe({img,num:[numLab(P?P[1]:label),P&&P[4]==="p"?"PLANET":"PLACE"],cols:locCols(label),kick:P?(P[4]==="p"?"Planet":"Place"):"Location",title:label,
     secs:(desc?rsec("About",null,`<p class="rsyn">${esc(desc)}</p>`):"")+rsec("Stories",slots.length,stories)+rsec("Related minifigs",null,figs)+rsec("Related sets",ss.length,setList(ss))})}
 function wirePanel(d){
   const b=$("#rback");if(b)b.onclick=panelBack;const fw=$("#rfwd");if(fw)fw.onclick=panelFwd;rnumRoll(d);
@@ -6522,6 +6522,8 @@ function rreelApply(w){if(!w||!w.offsetParent)return;const r=w.getBoundingClient
     el.style.transform=`perspective(420px) rotateX(${(-u*50).toFixed(1)}deg) scaleX(${(1-.1*u*u).toFixed(3)})`;el.style.opacity=(1-.6*u*u).toFixed(2)})}
 {let q=0;document.addEventListener("scroll",e=>{const t=e.target;if(!t||!t.classList||!t.classList.contains("rlist"))return;if(!q)q=requestAnimationFrame(()=>{q=0;rreelApply(t)})},{capture:true,passive:true})}
 document.addEventListener("toggle",e=>{const l=e.target&&e.target.closest&&e.target.closest(".rlist");if(l)requestAnimationFrame(()=>rreelApply(l))},true);
+// ---- a short name for the red number bar: drop "Star Wars:" and "The", keep whole words up to 18 letters
+function numLab(x){let w=String(x||"").toUpperCase().replace(/^(LEGO )?STAR WARS:?\s*/,"").replace(/^THE /,"").replace(/\s*\(.*?\)\s*/g," ").trim().split(/\s+/);let o=w.shift()||"";while(w.length&&(o+" "+w[0]).length<=18)o+=" "+w.shift();if(w.length)o=o.replace(/( (OF|THE|AND|&|A|IN|ON))+$/,"");return o}
 // ---- the red number bar: the figures roll into place, and long names shrink to fit
 function rnumFit(b){b.style.removeProperty("font-size");let fs=parseFloat(getComputedStyle(b).fontSize)||18;let n=0;while(b.scrollWidth>b.clientWidth+1&&fs>9&&n++<14){fs-=1;b.style.setProperty("font-size",fs+"px","important")}}
 function rnumRoll(d){d.querySelectorAll(".rnum b[data-v]").forEach(b=>{const v=b.dataset.v;b.textContent=v;rnumFit(b);requestAnimationFrame(()=>rnumFit(b));if(!v||!fxOn()||!d.querySelector(".tscr.go"))return;
