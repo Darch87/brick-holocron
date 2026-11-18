@@ -1973,6 +1973,11 @@ ol.eps code,.epc code{color:var(--ec)!important}
 .tscr.go .tsgrid i{animation-duration:.8s!important}
 .tscr.go .tsimg{animation-duration:.8s!important}
 html[data-fx="off"] .rlist>details>summary,html[data-fx="off"] .rtog{transform:none!important;opacity:1!important}
+/* browser check: the side rail layout wins over the old fold rules, and hidden sections stay hidden */
+@media (min-width:761px){
+  #controls>.step,#controls>#st-stories:not(.shut){flex-direction:row!important}
+}
+#controls>.step[hidden]{display:none!important}
 
 </style>
 
