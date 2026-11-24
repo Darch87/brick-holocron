@@ -202,6 +202,7 @@ a.row{color:var(--ink);text-decoration:none}
 .pill.want{background:none}
 /* panels (browse, detail, scan, sign-in) cover the list in portrait */
 .panel{position:absolute;inset:0;background:var(--panel);display:flex;flex-direction:column;z-index:5;min-width:0}
+.panel.over{position:fixed;z-index:8;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 #detail{margin:6px;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--bevel);overflow:hidden;padding-bottom:env(safe-area-inset-bottom)}
 .phead{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--sub2)}
 .phead h2{font:var(--f-head);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -296,7 +297,7 @@ details.grp>:not(summary){margin:10px 12px 12px}
 #reader{width:100%;max-width:480px;margin:0 auto;border-radius:var(--r);overflow:hidden;background:#000}
 .ph0{color:var(--ink3);font-size:12px;padding:4px;text-align:center}
 .side{display:none}
-.toast{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--panel);border-radius:var(--r);padding:10px 14px;font-size:14px;z-index:20;max-width:90%}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--panel);border-radius:var(--r);padding:10px 14px;font-size:14px;z-index:20;max-width:90%}
 /* first screen: sign in before the tool */
 #gate{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));overflow-y:auto}
 #gate .box{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--bevel);padding:18px}
@@ -421,14 +422,14 @@ table.src tr.ask td{background:var(--chipon)}
       <div class="scroll" id="scroller"><div id="list"></div></div>
       <section class="panel" id="browse" hidden></section>
       <section class="panel" id="scan" hidden></section>
-      <section class="panel" id="sign" hidden></section>
       <section class="panel" id="find" hidden></section>
-      <section class="panel" id="alerts" hidden></section>
     </div>
     <div class="side" id="side"><div class="placeholder" id="ph">Tap a set or minifig to see it here.</div></div>
   </div>
 </div>
 <section class="panel" id="detail" hidden></section>
+<section class="panel over" id="sign" hidden></section>
+<section class="panel over" id="alerts" hidden></section>
 <div id="gate" hidden></div>
 <script>
 const ERAS=[["hr","Old Republic & High Republic","before 232 BBY"],["pt","Fall of the Jedi","32–19 BBY"],["ie","Reign of the Empire","19–5 BBY"],["reb","Age of Rebellion","5 BBY–4 ABY"],["nr","New Republic","9–11 ABY"],["fo","Rise of the First Order","34–35 ABY"],["alt","Outside the timeline","alternate & mixed"]];
@@ -529,7 +530,7 @@ function buildLights(root){const k=document.documentElement.dataset.saber||"blue
   g.innerHTML=SABERS.map(([v,c,l])=>`<button type="button" data-saber="${v}" style="--c:${c}" aria-label="${l} lightsaber" aria-pressed="${v===k}" class="${v===k?"on":""}"></button>`).join("");
   g.querySelectorAll("button").forEach(b=>b.onclick=()=>applySaber(b.dataset.saber))})}
 buildLights();
-function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;$("#app").appendChild(d);setTimeout(()=>d.remove(),2600)}
+function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
 const img=(u,alt)=>`<img src="${esc(u)}" alt="${esc(alt||"")}" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph0',textContent:'No photo'}))">`;
 // ---------- lists
 function setList(){const f=S.f.sets,q=S.q.trim().toLowerCase(),qn=q.replace(/[^0-9a-z-]/g,"");
@@ -647,7 +648,7 @@ function placeDetail(){const d=$("#detail"),side=$("#side");if(isWide()){if(d.pa
 function openItem(key,tab){const[k,id]=[key[0],key.slice(2)];if(k==="s"&&!BYN[id])return;ASK="";PQ="";
   if(detail)stack.push(detail);detail={k,id,tab:tab||null};history.pushState({holo:stack.length+1},"");drawDetail();render()}
 function closeDetail(){detail=stack.pop()||null;if(detail)drawDetail();else{$("#detail").hidden=true;placeDetail()}render()}
-window.addEventListener("popstate",()=>{if(detail)closeDetail();else{hidePanel("browse");hidePanel("scan");hidePanel("sign");hidePanel("find");hidePanel("alerts")}});
+window.addEventListener("popstate",()=>{hidePanel("sign");hidePanel("alerts");if(detail)closeDetail();else{hidePanel("browse");hidePanel("scan");hidePanel("sign");hidePanel("find");hidePanel("alerts")}});
 function back(){history.back()}
 function drawDetail(){placeDetail();const d=$("#detail");d.hidden=false;if(detail.k==="s")drawSet(d);else if(detail.k==="e")drawListing(d);else drawFig(d);d.querySelector(".scroll").scrollTop=0}
 function tabsHTML(list,on){return`<div class="ptabs">${list.map(([v,l])=>`<button data-tab="${v}" class="${on===v?"on":""}">${l}</button>`).join("")}</div>`}
@@ -992,7 +993,7 @@ api=async o=>{await new Promise(r=>setTimeout(r,300));
 matchMedia("(orientation:landscape) and (min-width:600px)").addEventListener("change",()=>{placeDetail();if(detail)drawDetail()});
 window.addEventListener("resize",()=>placeDetail());
 setPage("sets");placeDetail();
-
+if(D.script){const p=store.get("pass",null);if(p)signIn(p,true);else livePrices()}
 openFromHash();
 drawFindN();
 if("serviceWorker"in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
